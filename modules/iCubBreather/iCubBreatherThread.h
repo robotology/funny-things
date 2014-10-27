@@ -55,7 +55,7 @@ protected:
     IEncoders          *iencs;
     IControlMode2      *imod;
     Vector             *encs;
-    Vector             *encs_0;
+    Vector              encs_0;
     int                 jnts;
 
     bool isRunning;

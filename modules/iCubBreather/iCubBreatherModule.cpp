@@ -166,7 +166,7 @@ class iCubBreather: public RFModule
             string robot        = "icub";
             string part         = "left_arm";
             int    verbosity    =      0;    // verbosity
-            int    rate         =     10;    // rate of the iCubBreatherThread
+            int    rate         =    500;    // rate of the iCubBreatherThread
             int    numWaypoints =      1;
 
             //******************* NAME ******************

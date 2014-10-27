@@ -37,9 +37,15 @@ bool iCubBreatherThread::threadInit()
     }
 
     iencs -> getAxes(&jnts);
+    encs_0.resize(jnts,0.0);
+
     encs   = new Vector(jnts,0.0);
-    encs_0 = new Vector(jnts,0.0);
-    iencs -> getEncoders(encs_0->data());
+    printf("encs %s\n", encs->toString(3,3).c_str());
+    iencs -> getEncoders(encs->data());
+    printf("encs %s\n", encs->toString(3,3).c_str());
+
+    encs_0 = *encs;
+    printMessage(0,"Home position set to %s\n",encs_0.toString(3,3).c_str());
     yarp::os::Random::seed(int(yarp::os::Time::now()));
 
     return true;
@@ -50,6 +56,7 @@ void iCubBreatherThread::run()
     if (isRunning)
     {
         Vector newTarget = computeNewTarget();
+        printMessage(0,"New target: %s\n",newTarget.toString(3,3).c_str());
         goToTarget(newTarget);
     }
 }
@@ -58,7 +65,7 @@ Vector iCubBreatherThread::computeNewTarget()
 {
     // Let's put the simplest stuff and make it complex afterwards
     Vector noise(jnts,0.0);
-    for (int i = 0; i < jnts; i++)
+    for (int i = 0; i < 7; i++)
     {
         noise[i] = yarp::os::Random::normal();
     }
@@ -67,7 +74,7 @@ Vector iCubBreatherThread::computeNewTarget()
 
     for (int i = 0; i < jnts; i++)
     {
-        result[i] = (*encs_0)[i] + noise[i];
+        result[i] = encs_0[i] + noise[i];
     }
     
     return result;
@@ -132,21 +139,31 @@ bool iCubBreatherThread::setCtrlModes(const string &_s)
 
 bool iCubBreatherThread::goToTarget(const Vector &nT)
 {
-    if (setCtrlModes("position"))
+    VectorOf<int> jointsToSet;
+    if (!areJointsHealthyAndSet(jointsToSet,"position"))
     {
-        return ipos -> positionMove(nT.data());
+        stopBreathing();
+        printMessage(0,"ERROR: joints are not healthy!");
+        return false;
     }
     else
     {
-        printMessage(0,"ERROR: setCtrlModes returned false!\n");
-        return false;
+        if (setCtrlModes("position"))
+        {
+            return ipos -> positionMove(nT.data());
+        }
+        else
+        {
+            printMessage(0,"ERROR: setCtrlModes returned false!\n");
+            return false;
+        }
     }
-    
+    return true;
 }
 
 bool iCubBreatherThread::goHome()
 {
-    return goToTarget(*encs_0);
+    return goToTarget(encs_0);
 }
 
 
@@ -187,9 +204,7 @@ void iCubBreatherThread::threadRelease()
     printMessage(0,"Closing controllers..\n");
         dd.close();
         delete encs;
-        delete encs_0;
         encs   = 0;
-        encs_0 = 0;
 }
 
 // empty line to make gcc happy
