@@ -1,10 +1,18 @@
 #include "iCubBreatherThread.h"
 
-iCubBreatherThread::iCubBreatherThread(int _rate, string _name, string _robot, string _part, int _v) :
-                                           RateThread(_rate), name(_name), robot(_robot),
-                                           verbosity(_v), part(_part)
+iCubBreatherThread::iCubBreatherThread(int _rate, string _name, string _robot, string _part, bool _autoStart,
+                                       double _noiseStd, double _refSpeeds, int _v, const ResourceFinder &_rf) :
+                                       RateThread(_rate), name(_name), robot(_robot),
+                                       verbosity(_v), part(_part), noiseStd(_noiseStd), refSpeeds(_refSpeeds)
 {
-    isRunning = false;
+    if (_autoStart)
+        isRunning = true;
+    else
+        isRunning = false;
+    onStart   = true;
+
+    ResourceFinder &rf = const_cast<ResourceFinder&>(_rf);
+    noiseStdBottle = rf.findGroup(part.c_str());
 }
 
 bool iCubBreatherThread::threadInit()
@@ -19,7 +27,7 @@ bool iCubBreatherThread::threadInit()
 
     if (!dd.open(Opt))
     {
-        printMessage(0,"ERROR: could not open head PolyDriver!\n");
+        printMessage(0,"ERROR: could not open %s PolyDriver!\n",part.c_str());
         return false;
     }
 
@@ -39,20 +47,55 @@ bool iCubBreatherThread::threadInit()
     iencs -> getAxes(&jnts);
     encs_0.resize(jnts,0.0);
 
-    encs   = new Vector(jnts,0.0);
-    printf("encs %s\n", encs->toString(3,3).c_str());
-    iencs -> getEncoders(encs->data());
-    printf("encs %s\n", encs->toString(3,3).c_str());
+    Vector tmp(jnts,0.0);
+    for (int i = 0; i < jnts; i++)
+    {
+        tmp[i] = refSpeeds;
+    }
+    ipos->setRefSpeeds(tmp.data());
 
-    encs_0 = *encs;
-    printMessage(0,"Home position set to %s\n",encs_0.toString(3,3).c_str());
-    yarp::os::Random::seed(int(yarp::os::Time::now()));
+    // Set the standard deviations
+    if (!noiseStdBottle.isNull())
+    {
+        Bottle *bns = noiseStdBottle.find("noiseStd").asList();
+        for (int i = 0; i < jnts; i++)
+        {
+            noiseStDvtns.push_back(bns->get(i).asDouble());
+        }
+    }
+    else
+    {
+        for (int i = 0; i < jnts; i++)
+        {
+            noiseStDvtns.push_back(noiseStd);
+        }
+    }
+
+
+
+    yarp::math::Rand::init();
+    // yarp::os::Random::seed(int(yarp::os::Time::now()));
 
     return true;
 }
 
 void iCubBreatherThread::run()
 {
+    if (onStart)
+    {
+        // This is there only for avoiding some printing issues. Remove it if you want
+        Time::delay(0.1);
+
+        if (!iencs->getEncoders(encs_0.data()))
+        {
+            printMessage(0,"ERROR: Error reading encoders, check connectivity with the robot!\n");
+        }
+        else
+        {
+            printMessage(0,"Home position %s\n",encs_0.toString(3,3).c_str());
+            onStart = false;
+        }
+    }
     if (isRunning)
     {
         Vector newTarget = computeNewTarget();
@@ -65,9 +108,9 @@ Vector iCubBreatherThread::computeNewTarget()
 {
     // Let's put the simplest stuff and make it complex afterwards
     Vector noise(jnts,0.0);
-    for (int i = 0; i < 7; i++)
+    for (int i = 0; i < jnts; i++)
     {
-        noise[i] = yarp::os::Random::normal();
+        noise[i] = yarp::os::Random::normal(0,noiseStDvtns[i]);
     }
 
     Vector result(jnts,0.0);
@@ -80,9 +123,33 @@ Vector iCubBreatherThread::computeNewTarget()
     return result;
 }
 
+bool iCubBreatherThread::goToTarget(const Vector &nT)
+{
+    VectorOf<int> jointsToSet;
+    if (!areJointsHealthyAndSet(jointsToSet,"position"))
+    {
+        stopBreathing();
+        printMessage(0,"ERROR: joints are not healthy!");
+        return false;
+    }
+    else
+    {
+        if (setCtrlModes("position"))
+        {
+            return ipos -> positionMove(nT.data());
+        }
+        else
+        {
+            printMessage(0,"ERROR: setCtrlModes returned false!\n");
+            return false;
+        }
+    }
+    return true;
+}
+
 bool iCubBreatherThread::areJointsHealthyAndSet(VectorOf<int> &jointsToSet,const string &_s)
 {
-    VectorOf<int> modes(encs->size());
+    VectorOf<int> modes(jnts);
     imod->getControlModes(modes.getFirst());
 
     for (size_t i=0; i<modes.size(); i++)
@@ -137,30 +204,6 @@ bool iCubBreatherThread::setCtrlModes(const string &_s)
     return true;
 }
 
-bool iCubBreatherThread::goToTarget(const Vector &nT)
-{
-    VectorOf<int> jointsToSet;
-    if (!areJointsHealthyAndSet(jointsToSet,"position"))
-    {
-        stopBreathing();
-        printMessage(0,"ERROR: joints are not healthy!");
-        return false;
-    }
-    else
-    {
-        if (setCtrlModes("position"))
-        {
-            return ipos -> positionMove(nT.data());
-        }
-        else
-        {
-            printMessage(0,"ERROR: setCtrlModes returned false!\n");
-            return false;
-        }
-    }
-    return true;
-}
-
 bool iCubBreatherThread::goHome()
 {
     return goToTarget(encs_0);
@@ -183,7 +226,7 @@ int iCubBreatherThread::printMessage(const int l, const char *f, ...) const
 {
     if (verbosity>=l)
     {
-        fprintf(stdout,"*** %s:  ",name.c_str());
+        fprintf(stdout,"*** %s: ",name.c_str());
 
         va_list ap;
         va_start(ap,f);
@@ -203,8 +246,6 @@ void iCubBreatherThread::threadRelease()
 
     printMessage(0,"Closing controllers..\n");
         dd.close();
-        delete encs;
-        encs   = 0;
 }
 
 // empty line to make gcc happy

@@ -27,6 +27,8 @@
 #include <yarp/dev/Drivers.h>
 #include <yarp/dev/all.h>
 
+#include <yarp/math/Rand.h> 
+
 #include <iostream>
 #include <string>
 #include <stdarg.h>
@@ -48,6 +50,10 @@ protected:
     string name;        // Name of the module (to change port names accordingly)  
     string robot;       // Name of the robot (to address both icub and icubSim)
     string part;        // Arm to control (either "right_arm" or "left_arm")
+    std::vector <double> noiseStDvtns;
+    yarp::os::Bottle noiseStdBottle;
+    double refSpeeds;
+    double noiseStd;
 
     // Classical interfaces
     PolyDriver          dd;   // head device driver
@@ -59,6 +65,7 @@ protected:
     int                 jnts;
 
     bool isRunning;
+    bool onStart;
 
     /**
      * Changes the control modes of the torso to either position or velocity
@@ -94,7 +101,8 @@ protected:
 
 public:
     // CONSTRUCTOR
-    iCubBreatherThread(int _rate, string _name, string _robot, string _part, int _v);
+    iCubBreatherThread(int _rate, string _name, string _robot,
+                       string _part, bool _autoStart, double _noiseStd, double _refSpeeds, int _v, const ResourceFinder &_rf);
     // INIT
     virtual bool threadInit();
     // RUN

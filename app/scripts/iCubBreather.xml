@@ -1,0 +1,30 @@
+<application>
+    <name>iCubBreather</name>
+
+    <module>
+        <name>iCubBreather</name>
+        <parameters>--part right_arm</parameters>
+        <node>localhost</node>
+        <stdio></stdio>
+    </module>
+    <module>
+        <name>iCubBreather</name>
+        <parameters>--part left_arm</parameters>
+        <node>localhost</node>
+        <stdio></stdio>
+    </module>
+    <module>
+        <name>iCubBreather</name>
+        <parameters>--part torso</parameters>
+        <node>localhost</node>
+        <stdio></stdio>
+    </module>
+    <module>
+        <name>iCubBreather</name>
+        <parameters>--part head</parameters>
+        <node>localhost</node>
+        <stdio></stdio>
+    </module>
+    
+
+</application>

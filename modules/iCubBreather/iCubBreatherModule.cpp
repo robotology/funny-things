@@ -166,8 +166,11 @@ class iCubBreather: public RFModule
             string robot        = "icub";
             string part         = "left_arm";
             int    verbosity    =      0;    // verbosity
-            int    rate         =    500;    // rate of the iCubBreatherThread
+            int    rate         =   2000;    // rate of the iCubBreatherThread
             int    numWaypoints =      1;
+            bool   autoStart    =  false;
+            double noiseStd     =    0.5;
+            double refSpeeds    =   10.0;
 
             //******************* NAME ******************
                 if (rf.check("name"))
@@ -194,6 +197,23 @@ class iCubBreather: public RFModule
                 }
                 else printf(("*** "+name+": could not find verbosity option in the config file; using %i as default\n").c_str(),verbosity);
 
+
+            //******************* NOISESTD ******************
+                if (rf.check("noiseStd"))
+                {
+                    noiseStd = rf.find("noiseStd").asDouble();
+                    printf(("*** "+name+": noiseStd set to %i\n").c_str(),noiseStd);
+                }
+                else printf(("*** "+name+": could not find noiseStd option in the config file; using %g as default\n").c_str(),noiseStd);
+
+            //******************* REFPEEDS ******************
+                if (rf.check("refSpeeds"))
+                {
+                    refSpeeds = rf.find("refSpeeds").asDouble();
+                    printf(("*** "+name+": refSpeeds set to %i\n").c_str(),refSpeeds);
+                }
+                else printf(("*** "+name+": could not find refSpeeds option in the config file; using %g as default\n").c_str(),refSpeeds);
+
             //******************* ROBOT ******************
                 if (rf.check("robot"))
                 {
@@ -210,9 +230,16 @@ class iCubBreather: public RFModule
                 }
                 else printf(("*** "+name+": could not find part option in the config file; using %s as default\n").c_str(),part.c_str());
 
+            //************* AUTOSTART *******************
+                if (rf.check("autoStart"))
+                {
+                    autoStart = true;
+                }
+
 
             //****************** THREAD ******************
-                iCubBreatherThrd = new iCubBreatherThread(rate, name, robot, part, verbosity);
+                iCubBreatherThrd = new iCubBreatherThread(rate, name, robot, part, autoStart,
+                                                          noiseStd, refSpeeds, verbosity, rf);
 
                 iCubBreatherThrd -> start();
                 bool strt = 1;
@@ -264,13 +291,13 @@ int main(int argc, char * argv[])
     {    
         cout << endl << "IMU IDENTIFIER module" << endl;
         cout << endl << "Options:" << endl;
-        cout << "   --context      path:  where to find the called resource. Default gazeStabilization." << endl;
-        cout << "   --from         from:  the name of the .ini file. Default iCubBreather.ini." << endl;
-        cout << "   --name         name:  the name of the module. Default iCubBreather." << endl;
-        cout << "   --robot        robot: the name of the robot. Default icub." << endl;
-        cout << "   --rate         rate:  the period used by the thread. Default 10ms." << endl;
-        cout << "   --verbosity    int:   verbosity level. Default 0." << endl;
-        cout << "   --iterations   int:   number of times the identifier iterates over the waypoints. Default 1." << endl;
+        cout << "   --context      path:   where to find the called resource. Default gazeStabilization." << endl;
+        cout << "   --from         from:   the name of the .ini file. Default iCubBreather.ini." << endl;
+        cout << "   --name         name:   the name of the module. Default iCubBreather." << endl;
+        cout << "   --robot        robot:  the name of the robot. Default icub." << endl;
+        cout << "   --rate         rate:   the period used by the thread. Default 500ms." << endl;
+        cout << "   --noiseStd     double: standard deviation of the noise. Default 1.0." << endl;
+        cout << "   --verbosity    int:    verbosity level. Default 0." << endl;
         cout << endl;
         return 0;
     }
