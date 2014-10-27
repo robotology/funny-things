@@ -39,6 +39,8 @@ bool iCubBreatherThread::threadInit()
     iencs -> getAxes(&jnts);
     encs   = new Vector(jnts,0.0);
     encs_0 = new Vector(jnts,0.0);
+    iencs -> getEncoders(encs_0->data());
+    yarp::os::Random::seed(int(yarp::os::Time::now()));
 
     return true;
 }
@@ -47,8 +49,54 @@ void iCubBreatherThread::run()
 {
     if (isRunning)
     {
-        /* code */
+        Vector newTarget = computeNewTarget();
+        goToTarget(newTarget);
     }
+}
+
+Vector iCubBreatherThread::computeNewTarget()
+{
+    // Let's put the simplest stuff and make it complex afterwards
+    Vector noise(jnts,0.0);
+    for (int i = 0; i < jnts; i++)
+    {
+        noise[i] = yarp::os::Random::normal();
+    }
+
+    Vector result(jnts,0.0);
+
+    for (int i = 0; i < jnts; i++)
+    {
+        result[i] = (*encs_0)[i] + noise[i];
+    }
+    
+    return result;
+}
+
+bool iCubBreatherThread::areJointsHealthyAndSet(VectorOf<int> &jointsToSet,const string &_s)
+{
+    VectorOf<int> modes(encs->size());
+    imod->getControlModes(modes.getFirst());
+
+    for (size_t i=0; i<modes.size(); i++)
+    {
+        if ((modes[i]==VOCAB_CM_HW_FAULT) || (modes[i]==VOCAB_CM_IDLE))
+            return false;
+
+        if (_s=="velocity")
+        {
+            if (modes[i]!=VOCAB_CM_MIXED || modes[i]!=VOCAB_CM_VELOCITY)
+                jointsToSet.push_back(i);
+        }
+        else if (_s=="position")
+        {
+            if (modes[i]!=VOCAB_CM_MIXED || modes[i]!=VOCAB_CM_POSITION)
+                jointsToSet.push_back(i);
+        }
+
+    }
+
+    return true;
 }
 
 bool iCubBreatherThread::setCtrlModes(const string &_s)
@@ -82,12 +130,23 @@ bool iCubBreatherThread::setCtrlModes(const string &_s)
     return true;
 }
 
+bool iCubBreatherThread::goToTarget(const Vector &nT)
+{
+    if (setCtrlModes("position"))
+    {
+        return ipos -> positionMove(nT.data());
+    }
+    else
+    {
+        printMessage(0,"ERROR: setCtrlModes returned false!\n");
+        return false;
+    }
+    
+}
+
 bool iCubBreatherThread::goHome()
 {
-    setCtrlModes("position");
-    ipos -> positionMove((*encs_0).data());
-
-    return true;
+    return goToTarget(*encs_0);
 }
 
 

@@ -68,10 +68,22 @@ protected:
     bool setCtrlModes(const string &_s);
 
     /**
+     * Check the state of each joint to be controlled
+     * @param  jointsToSet vector of integers that defines the joints to be set
+     * @param  _s mode to set. It can be either "position" or "velocity"
+     * @return             true/false if success/failure
+     */
+    bool areJointsHealthyAndSet(VectorOf<int> &jointsToSet,const string &_s);
+
+    /**
      * goes into home configuration (i.e. 0 0 0)
      * @return    true/false if success/failure
      */
     bool goHome();
+
+    bool goToTarget(const Vector &nT);
+
+    Vector computeNewTarget();
 
     /**
     * Prints a message according to the verbosity level:
