@@ -25,3 +25,6 @@ add_subdirectory(modules)
 
 ## add apps
 add_subdirectory(app)
+
+## install script (it does not work)
+# install(TARGETS ./app/scripts/dea-scriping.sh DESTINATION bin)

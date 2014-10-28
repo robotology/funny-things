@@ -68,7 +68,6 @@ protected:
     std::vector <double> noiseStDvtns;
     std::vector <double> refSpeeds;
 
-
     /**
      * Changes the control modes of the torso to either position or velocity
      * @param  _s mode to set. It can be either "position" or "velocity"
