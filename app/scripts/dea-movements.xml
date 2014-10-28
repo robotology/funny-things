@@ -32,5 +32,10 @@
         <stdio></stdio>
     </module>
     
+    <connection>
+        <from>/iCubBlinker/emotions/raw</from>
+        <to>/icub/face/raw/in</to>
+        <protocol>tcp</protocol>
+    </connection>    
 
 </application>

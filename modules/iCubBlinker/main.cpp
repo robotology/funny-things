@@ -66,7 +66,7 @@ public:
     /***************************************************************/
     bool configure(ResourceFinder &rf)
     {
-        string name=rf.check("name",Value("blinker")).asString().c_str();
+        string name=rf.check("name",Value("iCubBlinker")).asString().c_str();
         min_dt=rf.check("min_dt",Value(3.0)).asDouble();
         max_dt=rf.check("max_dt",Value(10.0)).asDouble();
         blinking=rf.check("autoStart");
