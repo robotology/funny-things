@@ -21,7 +21,7 @@
     </module>
     <module>
         <name>iCubBreather</name>
-        <parameters>--name iCubBreatherH --part head --autoStart</parameters>
+        <parameters>--name iCubBreatherH --part head --autoStart --rate 1500</parameters>
         <node>localhost</node>
         <stdio></stdio>
     </module>
