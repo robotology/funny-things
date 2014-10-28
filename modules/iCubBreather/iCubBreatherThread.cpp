@@ -1,9 +1,9 @@
 #include "iCubBreatherThread.h"
 
 iCubBreatherThread::iCubBreatherThread(int _rate, string _name, string _robot, string _part, bool _autoStart,
-                                       double _noiseStd, double _refSpeeds, int _v, const ResourceFinder &_rf) :
+                                       double _noiseStd, double _refSpeed, int _v, const ResourceFinder &_rf) :
                                        RateThread(_rate), name(_name), robot(_robot),
-                                       verbosity(_v), part(_part), noiseStd(_noiseStd), refSpeeds(_refSpeeds)
+                                       verbosity(_v), part(_part), noiseStd(_noiseStd), refSpeed(_refSpeed)
 {
     if (_autoStart)
         isRunning = true;
@@ -50,7 +50,7 @@ bool iCubBreatherThread::threadInit()
     Vector tmp(jnts,0.0);
     for (int i = 0; i < jnts; i++)
     {
-        tmp[i] = refSpeeds;
+        tmp[i] = refSpeed;
     }
     ipos->setRefSpeeds(tmp.data());
 
@@ -71,7 +71,10 @@ bool iCubBreatherThread::threadInit()
         }
     }
 
-
+    for (int i = 0; i < noiseStDvtns.size(); i++)
+    {
+        printMessage(1,"Noise Std Deviantion link #%i: %g\n",i,noiseStDvtns[i]);
+    }    
 
     yarp::math::Rand::init();
     // yarp::os::Random::seed(int(yarp::os::Time::now()));

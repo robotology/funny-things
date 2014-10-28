@@ -197,12 +197,11 @@ class iCubBreather: public RFModule
                 }
                 else printf(("*** "+name+": could not find verbosity option in the config file; using %i as default\n").c_str(),verbosity);
 
-
             //******************* NOISESTD ******************
                 if (rf.check("noiseStd"))
                 {
                     noiseStd = rf.find("noiseStd").asDouble();
-                    printf(("*** "+name+": noiseStd set to %i\n").c_str(),noiseStd);
+                    printf(("*** "+name+": noiseStd set to %g\n").c_str(),noiseStd);
                 }
                 else printf(("*** "+name+": could not find noiseStd option in the config file; using %g as default\n").c_str(),noiseStd);
 
@@ -210,7 +209,7 @@ class iCubBreather: public RFModule
                 if (rf.check("refSpeeds"))
                 {
                     refSpeeds = rf.find("refSpeeds").asDouble();
-                    printf(("*** "+name+": refSpeeds set to %i\n").c_str(),refSpeeds);
+                    printf(("*** "+name+": refSpeeds set to %g\n").c_str(),refSpeeds);
                 }
                 else printf(("*** "+name+": could not find refSpeeds option in the config file; using %g as default\n").c_str(),refSpeeds);
 
@@ -283,7 +282,7 @@ int main(int argc, char * argv[])
 {
     ResourceFinder rf;
     rf.setVerbose(false);
-    rf.setDefaultContext("gazeStabilization");
+    rf.setDefaultContext("deaMovements");
     rf.setDefaultConfigFile("iCubBreather.ini");
     rf.configure(argc,argv);
 
@@ -297,7 +296,9 @@ int main(int argc, char * argv[])
         cout << "   --robot        robot:  the name of the robot. Default icub." << endl;
         cout << "   --rate         rate:   the period used by the thread. Default 500ms." << endl;
         cout << "   --noiseStd     double: standard deviation of the noise. Default 1.0." << endl;
+        cout << "   --refSpeeds    double: The reference speeds at the joints. Default 5.0." << endl;
         cout << "   --verbosity    int:    verbosity level. Default 0." << endl;
+        cout << "   --autoStart    flag:   if to autostart the module or not. Default no." << endl;
         cout << endl;
         return 0;
     }

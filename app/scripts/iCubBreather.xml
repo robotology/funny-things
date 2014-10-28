@@ -3,25 +3,25 @@
 
     <module>
         <name>iCubBreather</name>
-        <parameters>--part right_arm</parameters>
+        <parameters>--name iCubBreatherRA--part right_arm --autoStart</parameters>
         <node>localhost</node>
         <stdio></stdio>
     </module>
     <module>
         <name>iCubBreather</name>
-        <parameters>--part left_arm</parameters>
+        <parameters>--name iCubBreatherLA --part left_arm --autoStart</parameters>
         <node>localhost</node>
         <stdio></stdio>
     </module>
     <module>
         <name>iCubBreather</name>
-        <parameters>--part torso</parameters>
+        <parameters>--name iCubBreatherT --part torso --autoStart</parameters>
         <node>localhost</node>
         <stdio></stdio>
     </module>
     <module>
         <name>iCubBreather</name>
-        <parameters>--part head</parameters>
+        <parameters>--name iCubBreatherH --part head --autoStart</parameters>
         <node>localhost</node>
         <stdio></stdio>
     </module>
