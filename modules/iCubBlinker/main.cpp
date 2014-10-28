@@ -75,7 +75,7 @@ public:
         Network::connect(emotionsPort.getName().c_str(),"/icub/face/raw/in");
 
         rpcPort.open(("/"+name+"/rpc").c_str());
-        attach(rpcPort);        
+        attach(rpcPort);
 
         Rand::init();
         doubleBlinkCnt=0;
@@ -128,6 +128,7 @@ public:
     {
         LockGuard lg(mutex);
         int ack=Vocab::encode("ack");
+        int nack=Vocab::encode("nack");
 
         string cmd=command.get(0).asString().c_str();
         if (cmd=="start")
@@ -145,6 +146,8 @@ public:
             reply.addVocab(ack);
             reply.addString(blinking?"on":"off");
         }
+        else if (cmd=="blink")
+            reply.addVocab(blink()?ack:nack);
         else
             return RFModule::respond(command,reply);
 
