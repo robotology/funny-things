@@ -32,7 +32,7 @@ In the meanwhile, it reads both references at the PID level, and the gyro output
 through the IMU:o port for later log and use.
 
 \section lib_sec Libraries 
-YARP and OpenCV
+YARP
 
 \section parameters_sec Parameters
 
@@ -73,7 +73,6 @@ Linux (Ubuntu 14.04, Debian Wheezy).
 */ 
 
 #include <yarp/os/RFModule.h>
-#include <yarp/os/Time.h>
 #include <yarp/os/Network.h>
 #include <yarp/os/RateThread.h>
 #include <yarp/os/RpcClient.h>
@@ -85,8 +84,6 @@ Linux (Ubuntu 14.04, Debian Wheezy).
 
 #include <iostream>
 #include <string.h> 
-#include <ctime>
-#include <sstream>
 
 #include "iCubBreatherThread.h"
 

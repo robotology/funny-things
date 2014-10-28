@@ -32,7 +32,6 @@
 #include <iostream>
 #include <string>
 #include <stdarg.h>
-#include <sstream>
 #include <vector>
 
 using namespace yarp::os;

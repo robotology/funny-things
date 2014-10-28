@@ -3,7 +3,7 @@
 
     <module>
         <name>iCubBreather</name>
-        <parameters>--name iCubBreatherRA--part right_arm --autoStart</parameters>
+        <parameters>--name iCubBreatherRA --part right_arm --autoStart</parameters>
         <node>localhost</node>
         <stdio></stdio>
     </module>
