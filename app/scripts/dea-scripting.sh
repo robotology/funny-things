@@ -41,7 +41,6 @@ OPTIONS:
 
 ******************************************************************************************
 EXAMPLE USAGE:
-./configure.sh -p \#646464 -> the panel_icons option requires a HEX color to use
 
 ******************************************************************************************
 EOF
@@ -50,32 +49,135 @@ EOF
 ##########################################################################################
 # FUNCTIONS:                                                                             #
 ##########################################################################################
-blink_eyes() {
-    echo "Buongiorno capo!" | yarp write ... /iSpeak
+speak() {
+    echo "\"$1\"" | yarp write ... /iSpeak
+}
+
+blink() {
+    echo "blink" | yarp rpc /iCubBlinker/rpc
+}
+
+greet_with_right_thumb_up() {
+    echo "Thumb Up TODO"
 }
 
 greet_like_god() {
-
+    echo "God TODO"
 }
 
-smile() {
-
+grasp_apple() {
+    echo "grasp_apple TODO"
 }
 
-close_left_hand() {
-
+mostra_muscoli() {
+    echo "mostra_muscoli TODO"
 }
 
-close_right_hand() {
-
+passa_e_chiudi() {
+    speak "aicab passa e chiude."
+    sleep 2.0
+    blink
 }
 
-greet_with_thumb() {
-
+buongiorno_capo() {
+    speak "Buongiorno capo!"
+    sleep 2.0
+    blink
 }
 
-take_apple() {
+ciao() {
+    speak "Ciao! Mi chiamo aicab."
+}
 
+script_1() {
+    buongiorno_capo
+    greet_like_god
+    speak "Oggi, aicab e' andato a caccia di novità sulle quattro ruote."
+    sleep 2.0
+    blink
+}
+
+script_2() {
+    speak "Capo, ci pensi?"
+    sleep 2.0
+    blink
+    sleep 1.0
+    speak "E' stata usata una stampante 3D, proprio come quelle del laboratorio degli Xmeikers!"
+    sleep 7.0
+    blink 
+    speak "Solo..."
+    sleep 1.0
+    speak "Un po' piu' grande."
+    sleep 2.0
+    blink
+}
+
+script_3() {
+    speak "Cosi', anche chi guida potrà schiacciare un pisolino durante il viaggio."
+    sleep 4.0
+    speak "Per oggi dal dipartimento ricerca e' tutto."
+    sleep 3.0
+    blink
+    passa_e_chiudi
+    greet_with_right_thumb_up
+}
+
+script_4() {
+    buongiorno_capo
+    greet_like_god
+    speak "Oggi, aicab ha fatto un corso accelerato di cucina"
+    sleep 4.0
+    blink
+    speak "per saperne di piu' su quello che voi chiamate cibo."
+    sleep 4.0
+    blink
+    speak "Preparatevi a restare a bocca aperta!"
+    sleep 4.0
+    blink
+}
+
+script_5() {
+    speak "aicab ha sentito dire che voi umani andate matti per questa cioccolata..."
+    sleep 6.0
+    blink
+}
+
+script_6() {
+    grasp_apple
+    speak "Pensa capo, un giorno questa mela potrebbe avere il gusto di ba na na!"
+    sleep 2.0
+    speak "Anche per oggi, dal reparto Ricerca e Innovazione e' tutto."
+    sleep 6.0
+    blink
+    passa_e_chiudi
+    greet_with_right_thumb_up
+}
+
+script_7() {
+    buongiorno_capo
+    greet_like_god
+    speak "Oggi, aicab ha scovato delle novita' che nel giro di qualche anno renderanno voi umani"
+    sleep 3.0
+    blink
+    mostra_muscoli
+    speak "Dei supereroi"
+}
+
+script_8() {
+    speak "E ora Capo. il potere che tutti vorrebbero."
+    sleep 4.0
+    blink
+    speak "La telecinesi. La capacita' di controllare gli oggetti con la mente."
+    sleep 4.0
+    blink
+}
+
+script_9() {
+    speak "Certo che a quel punto, perdersi tra i pensieri potrebbe diventare un problema."
+    sleep 6.0 && blink
+    speak "Anche per oggi, dal reparto Ricerca e Innovazione e' tutto."
+    sleep 4.0 && blink
+    passa_e_chiudi
 }
 
 ##########################################################################################
@@ -84,41 +186,9 @@ take_apple() {
 echo "***********************************************************************************"
 echo ""
 
-TARGET_KEY=""
-TARGET_SUBKEY=""
-
-while getopts "hp:f:r:u" opt; do
-    case $opt in
-        h)
-            usage
-            exit 1
-        ;;
-        ##################################################################################
-        u)
-          TARGET_KEY="update"
-          
-          echo "Restoring the iconset to its original state..."
-          restore_panel_icons
-          restore_folder_colors
-          
-          echo "Updating the repository..."
-          git pull origin master
-        ;;
-        ##################################################################################
-        \?)
-            echo "Invalid option: -$OPTARG" >&2
-            echo ""
-            usage
-            exit 1
-        ;;
-        :)
-            echo "Option -$OPTARG requires an argument." >&2
-            echo ""
-            usage
-            exit 1
-        ;;
-    esac
-done
+echo "stop"  | yarp rpc /iCubBlinker/rpc
+$1
+#echo "start" | yarp rpc /iCubBlinker/rpc
 
 if [[ $# -eq 0 ]] ; then 
     echo "No options were passed!"
