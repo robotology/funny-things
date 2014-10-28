@@ -234,6 +234,7 @@ bool iCubBreatherThread::goHome()
 
 bool iCubBreatherThread::startBreathing()
 {
+    onStart = true;
     isRunning = true;
     return true;
 }
