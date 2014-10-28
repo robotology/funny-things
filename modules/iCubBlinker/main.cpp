@@ -28,22 +28,32 @@ using namespace yarp::math;
 /***************************************************************/
 class Blinker: public RFModule
 {
-private:
+private:    
+    Port emotionsPort;
+    RpcServer rpcPort;
+
     Mutex mutex;
-    RpcServer rpc;
     bool blinking;
+    double min_dt,max_dt,dt,t0;
 
 public:
     /***************************************************************/
     bool configure(ResourceFinder &rf)
     {
         string name=rf.check("name",Value("blinker")).asString().c_str();
+        min_dt=rf.check("min_dt",Value(3.0)).asDouble();
+        max_dt=rf.check("max_dt",Value(10.0)).asDouble();
         blinking=rf.check("auto-start");
 
-        rpc.open(("/"+name+"/rpc").c_str());
-        attach(rpc);
+        emotionsPort.open(("/"+name+"/emotions/raw").c_str());
+        Network::connect(emotionsPort.getName().c_str(),"/icub/face/raw/in");
+
+        rpcPort.open(("/"+name+"/rpc").c_str());
+        attach(rpcPort);        
 
         Rand::init();
+        dt=Rand::scalar(min_dt,max_dt);
+        t0=Time::now();
 
         return true;
     }
@@ -51,20 +61,43 @@ public:
     /***************************************************************/
     bool close()
     {
-        rpc.close();
+        emotionsPort.close();
+        rpcPort.close();
         return true;
     }
 
     /***************************************************************/
     double getPeriod()
     {
-        return 1.0;
+        return 0.1;
     }
 
     /***************************************************************/
     bool updateModule()
     {
         LockGuard lg(mutex);
+
+        if (Time::now()-t0>=dt)
+        {
+            if (emotionsPort.getOutputCount()>0)
+            {
+                // close eyelids
+                Bottle cmd;
+                cmd.addString("S00");
+                emotionsPort.write(cmd);
+
+                Time::delay(0.05);
+
+                // open eyelids
+                cmd.clear();
+                cmd.addString("S5A");
+                emotionsPort.write(cmd);
+            }
+
+            dt=Rand::scalar(min_dt,max_dt);
+            t0=Time::now();
+        }
+
         return true;
     }
 
