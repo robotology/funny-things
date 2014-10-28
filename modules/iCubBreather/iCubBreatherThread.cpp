@@ -12,7 +12,7 @@ iCubBreatherThread::iCubBreatherThread(int _rate, string _name, string _robot, s
     onStart   = true;
 
     ResourceFinder &rf = const_cast<ResourceFinder&>(_rf);
-    noiseStdBottle = rf.findGroup(part.c_str());
+    groupPartBottle = rf.findGroup(part.c_str());
 }
 
 bool iCubBreatherThread::threadInit()
@@ -47,20 +47,16 @@ bool iCubBreatherThread::threadInit()
     iencs -> getAxes(&jnts);
     encs_0.resize(jnts,0.0);
 
-    Vector tmp(jnts,0.0);
-    for (int i = 0; i < jnts; i++)
+    // Find the standard deviations and the ref speeds
+    if (!groupPartBottle.isNull())
     {
-        tmp[i] = refSpeed;
-    }
-    ipos->setRefSpeeds(tmp.data());
+        Bottle *bns = groupPartBottle.find("noiseStds").asList();
+        Bottle *brf = groupPartBottle.find("refSpeeds").asList();
 
-    // Set the standard deviations
-    if (!noiseStdBottle.isNull())
-    {
-        Bottle *bns = noiseStdBottle.find("noiseStd").asList();
         for (int i = 0; i < jnts; i++)
         {
             noiseStDvtns.push_back(bns->get(i).asDouble());
+            refSpeeds.push_back(brf->get(i).asDouble());
         }
     }
     else
@@ -68,13 +64,36 @@ bool iCubBreatherThread::threadInit()
         for (int i = 0; i < jnts; i++)
         {
             noiseStDvtns.push_back(noiseStd);
+            refSpeeds.push_back(refSpeed);
         }
     }
 
-    for (int i = 0; i < noiseStDvtns.size(); i++)
+    if (verbosity >= 1)
     {
-        printMessage(1,"Noise Std Deviantion link #%i: %g\n",i,noiseStDvtns[i]);
-    }    
+        printMessage(1,"Noise std deviations: ");
+        for (int i = 0; i < noiseStDvtns.size(); i++)
+        {
+            printf("%g\t",i,noiseStDvtns[i]);
+        }
+        printf("\n");
+
+        printMessage(1,"Ref speeds          : ");
+        for (int i = 0; i < refSpeeds.size(); i++)
+        {
+            printf("%g\t",i,refSpeeds[i]);
+        }
+        printf("\n");
+    }
+
+ 
+
+    // Set the ref speeds
+    Vector tmp(jnts,0.0);
+    for (int i = 0; i < jnts; i++)
+    {
+        tmp[i] = refSpeeds[i];
+    }
+    ipos->setRefSpeeds(tmp.data());
 
     yarp::math::Rand::init();
     // yarp::os::Random::seed(int(yarp::os::Time::now()));

@@ -50,10 +50,8 @@ protected:
     string name;        // Name of the module (to change port names accordingly)  
     string robot;       // Name of the robot (to address both icub and icubSim)
     string part;        // Arm to control (either "right_arm" or "left_arm")
-    std::vector <double> noiseStDvtns;
-    yarp::os::Bottle noiseStdBottle;
-    double refSpeed;
     double noiseStd;
+    double refSpeed;
 
     // Classical interfaces
     PolyDriver          dd;   // head device driver
@@ -66,6 +64,11 @@ protected:
 
     bool isRunning;
     bool onStart;
+
+    yarp::os::Bottle groupPartBottle;
+    std::vector <double> noiseStDvtns;
+    std::vector <double> refSpeeds;
+
 
     /**
      * Changes the control modes of the torso to either position or velocity
@@ -102,7 +105,8 @@ protected:
 public:
     // CONSTRUCTOR
     iCubBreatherThread(int _rate, string _name, string _robot,
-                       string _part, bool _autoStart, double _noiseStd, double _refSpeed, int _v, const ResourceFinder &_rf);
+                       string _part, bool _autoStart, double _noiseStd,
+                       double _refSpeed, int _v, const ResourceFinder &_rf);
     // INIT
     virtual bool threadInit();
     // RUN
