@@ -2,6 +2,5 @@
 # Author: Alessandro Roncone
 # CopyPolicy: Released under the terms of the GNU GPL v2.0.
 
-find_package(OpenCV REQUIRED)
-
+add_subdirectory(iCubBlinker)
 add_subdirectory(iCubBreather)
