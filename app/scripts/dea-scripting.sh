@@ -54,12 +54,54 @@ blink() {
     sleep 0.5
 }
 
+arms_breathers() {
+    echo "$1" | yarp rpc /iCubBreatherRA/rpc:i
+    sleep 1.0
+    echo "$1" | yarp rpc /iCubBreatherLA/rpc:i
+}
+
+go_home_helper() {
+    echo "ctpq time $1 off 0 pos (-6.0 23.0 25.0 29.0 -24.0 -3.0 -3.0 19.0 29.0 8.0 30.0 32.0 42.0 50.0 50.0 114.0)" | yarp rpc /ctpservice/right_arm/rpc
+    echo "ctpq time $1 off 0 pos (-6.0 23.0 25.0 29.0 -24.0 -3.0 -3.0 19.0 29.0 8.0 30.0 32.0 42.0 50.0 50.0 114.0)" | yarp rpc /ctpservice/left_arm/rpc
+    sleep $1
+    sleep 0.5
+}
+
+go_home() {
+    arms_breathers "stop"
+    go_home_helper 2.0
+    arms_breathers "start"
+}
+
 greet_with_right_thumb_up() {
-    echo "Thumb Up TODO"
+    arms_breathers "stop"
+    echo "ctpq time 1.0 off 0 pos (-44.0 36.0 54.0 91.0 -45.0 0.0 12.0 21.0 14.0 0.0 0.0 59.0 140.0 80.0 125.0 210.0)" | yarp rpc /ctpservice/right_arm/rpc
+    sleep 1.5 && smile && sleep 1.5
+    go_home_helper 1.5
+    arms_breathers "start"
 }
 
 greet_like_god() {
-    echo "God TODO"
+    arms_breathers "stop"
+    echo "ctpq time 1.5 off 0 pos (-70.0 40.0 -7.0 100.0 60.0 -20.0 2.0 20.0 29.0 3.0 11.0 3.0 0.0 0.0 0.0 0.0)" | yarp rpc /ctpservice/right_arm/rpc
+    echo "ctpq time 1.5 off 0 pos (-70.0 40.0 -7.0 100.0 60.0 -20.0 2.0 20.0 29.0 3.0 11.0 3.0 0.0 0.0 0.0 0.0)" | yarp rpc /ctpservice/left_arm/rpc
+
+    echo "ctpq time 0.7 off 0 pos (-70.0 50.0 -30.0 80.0 40.0 -5.0 10.0)" | yarp rpc /ctpservice/right_arm/rpc
+    echo "ctpq time 0.7 off 0 pos (-70.0 50.0 -30.0 80.0 40.0 -5.0 10.0)" | yarp rpc /ctpservice/left_arm/rpc
+    
+    echo "ctpq time 0.7 off 0 pos (-70.0 40.0 -7.0 100.0 60.0 -20.0 2.0)" | yarp rpc /ctpservice/right_arm/rpc
+    echo "ctpq time 0.7 off 0 pos (-70.0 40.0 -7.0 100.0 60.0 -20.0 2.0)" | yarp rpc /ctpservice/left_arm/rpc
+
+    echo "ctpq time 0.7 off 0 pos (-70.0 50.0 -30.0 80.0 40.0 -5.0 10.0)" | yarp rpc /ctpservice/right_arm/rpc
+    echo "ctpq time 0.7 off 0 pos (-70.0 50.0 -30.0 80.0 40.0 -5.0 10.0)" | yarp rpc /ctpservice/left_arm/rpc
+    
+    echo "ctpq time 0.7 off 0 pos (-70.0 40.0 -7.0 100.0 60.0 -20.0 2.0)" | yarp rpc /ctpservice/right_arm/rpc
+    echo "ctpq time 0.7 off 0 pos (-70.0 40.0 -7.0 100.0 60.0 -20.0 2.0)" | yarp rpc /ctpservice/left_arm/rpc
+
+    go_home_helper 2.0
+    sleep 6.0
+
+    arms_breathers "start"
 }
 
 hold_pennello() {
@@ -82,6 +124,14 @@ mostra_muscoli() {
     echo "mostra_muscoli TODO"
 }
 
+graspa_volante() {
+    echo "TODO"
+}
+
+smolla_volante() {
+    echo "TODO"
+}
+
 passa_e_chiudi() {
     speak "aicab passa e chiude."
     sleep 2.0 && blink
@@ -89,7 +139,18 @@ passa_e_chiudi() {
 
 buongiorno_capo() {
     speak "Buongiorno capo!"
-    sleep 2.0 && blink
+    sleep 1.0 && blink
+    sleep 0.5 && smile
+}
+
+smile() {
+    echo "set all hap" | yarp rpc /icub/face/emotions/in
+}
+
+surprised() {
+    echo "set mou sur" | yarp rpc /icub/face/emotions/in
+    echo "set leb sur" | yarp rpc /icub/face/emotions/in
+    echo "set reb sur" | yarp rpc /icub/face/emotions/in
 }
 
 ciao() {
@@ -102,27 +163,27 @@ ciao() {
     rubrica1_1() {
         buongiorno_capo
         greet_like_god
-        speak "Oggi, aicab e' andato a caccia di novità sulle quattro ruote."
+        speak "Oggi, aicab e' andato a caccia di novita' sulle quattro ruote."
         sleep 2.0 && blink
     }
 
     rubrica1_2() {
         speak "Capo, ci pensi?"
         sleep 2.0 && blink
-        sleep 1.0
-        speak "E' stata usata una stampante 3D, proprio come quelle del laboratorio degli Xmeikers!"
+        smile     && sleep 1.0
+        speak "E' stata usata una stampante 3D, proprio come quelle del laboratorio degli X meikers!"
         sleep 7.0 && blink 
-        speak "Solo..."
-        sleep 1.0
-        speak "Un po' piu' grande."
-        sleep 2.0 && blink
+        speak " Solo, Un po' piu' grande."
+        sleep 3.0 && smile && blink
     }
 
     rubrica1_3() {
-        speak "Cosi', anche chi guida potrà schiacciare un pisolino durante il viaggio."
+        graspa_volante
+        speak "Cosi', anche chi guida potra' schiacciare un pisolino durante il viaggio."
         sleep 4.0
+        smolla_volante
         speak "Per oggi dal dipartimento ricerca e' tutto."
-        sleep 3.0 && blink
+        sleep 2.0 && blink
         passa_e_chiudi
         greet_with_right_thumb_up
     }
@@ -138,12 +199,15 @@ ciao() {
         speak "per saperne di piu' su quello che voi chiamate cibo."
         sleep 4.0 && blink
         speak "Preparatevi a restare a bocca aperta!"
-        sleep 4.0 && blink
+        sleep 2.0 && blink
+        sleep 1.0 && surprised
+        sleep 2.0 && smile
     }
 
     rubrica2_2() {
         speak "aicab ha sentito dire che voi umani andate matti per questa cioccolata..."
-        sleep 6.0 && blink
+        sleep 4.0 && blink
+        sleep 1.5 && smile
     }
 
     rubrica2_3() {
