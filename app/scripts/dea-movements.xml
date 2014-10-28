@@ -1,5 +1,5 @@
 <application>
-    <name>iCubBreather</name>
+    <name>Dea Movements</name>
 
     <module>
         <name>iCubBreather</name>
@@ -22,6 +22,12 @@
     <module>
         <name>iCubBreather</name>
         <parameters>--name iCubBreatherH --part head --autoStart</parameters>
+        <node>localhost</node>
+        <stdio></stdio>
+    </module>
+    <module>
+        <name>iCubBlinker</name>
+        <parameters>--autoStart</parameters>
         <node>localhost</node>
         <stdio></stdio>
     </module>

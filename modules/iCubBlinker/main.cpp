@@ -35,6 +35,32 @@ private:
     Mutex mutex;
     bool blinking;
     double min_dt,max_dt,dt,t0;
+    int doubleBlinkCnt;
+
+    /***************************************************************/
+    bool blink()
+    {
+        if (emotionsPort.getOutputCount()>0)
+        {
+            // close eyelids
+            Bottle cmd;
+            cmd.addString("S00");
+            emotionsPort.write(cmd);
+
+            Time::delay(0.05);
+
+            // open eyelids
+            cmd.clear();
+            cmd.addString("S5A");
+            emotionsPort.write(cmd);
+
+            Time::delay(0.05);
+
+            return true;
+        }
+        else
+            return false;
+    }
 
 public:
     /***************************************************************/
@@ -43,7 +69,7 @@ public:
         string name=rf.check("name",Value("blinker")).asString().c_str();
         min_dt=rf.check("min_dt",Value(3.0)).asDouble();
         max_dt=rf.check("max_dt",Value(10.0)).asDouble();
-        blinking=rf.check("auto-start");
+        blinking=rf.check("autoStart");
 
         emotionsPort.open(("/"+name+"/emotions/raw").c_str());
         Network::connect(emotionsPort.getName().c_str(),"/icub/face/raw/in");
@@ -52,6 +78,7 @@ public:
         attach(rpcPort);        
 
         Rand::init();
+        doubleBlinkCnt=0;
         dt=Rand::scalar(min_dt,max_dt);
         t0=Time::now();
 
@@ -79,19 +106,14 @@ public:
 
         if (Time::now()-t0>=dt)
         {
-            if (emotionsPort.getOutputCount()>0)
+            if (blinking)
             {
-                // close eyelids
-                Bottle cmd;
-                cmd.addString("S00");
-                emotionsPort.write(cmd);
-
-                Time::delay(0.05);
-
-                // open eyelids
-                cmd.clear();
-                cmd.addString("S5A");
-                emotionsPort.write(cmd);
+                blink();
+                if ((++doubleBlinkCnt)%5==0)
+                {
+                    blink();
+                    doubleBlinkCnt=0;
+                }
             }
 
             dt=Rand::scalar(min_dt,max_dt);
