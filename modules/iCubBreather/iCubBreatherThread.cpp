@@ -73,14 +73,14 @@ bool iCubBreatherThread::threadInit()
         printMessage(1,"Noise std deviations: ");
         for (int i = 0; i < noiseStDvtns.size(); i++)
         {
-            printf("%g\t",i,noiseStDvtns[i]);
+            printf("%g\t",noiseStDvtns[i]);
         }
         printf("\n");
 
         printMessage(1,"Ref speeds          : ");
         for (int i = 0; i < refSpeeds.size(); i++)
         {
-            printf("%g\t",i,refSpeeds[i]);
+            printf("%g\t",refSpeeds[i]);
         }
         printf("\n");
     }
