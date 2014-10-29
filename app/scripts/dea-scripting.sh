@@ -62,6 +62,10 @@ breathers() {
     echo "$1" | yarp rpc /iCubBreatherLA/rpc:i
 }
 
+head() {
+    echo "$1" | yarp rpc /iCubBreatherH/rpc:i
+}
+
 stop_breathers() {
     breathers "stop"
 }
@@ -196,6 +200,12 @@ surprised() {
     echo "set reb sur" | yarp rpc /icub/face/emotions/in
 }
 
+sad() {
+    echo "set mou sad" | yarp rpc /icub/face/emotions/in
+    echo "set leb sad" | yarp rpc /icub/face/emotions/in
+    echo "set reb sad" | yarp rpc /icub/face/emotions/in
+}
+
 ciao() {
     speak "Ciao! Mi chiamo aicab."
 }
@@ -245,6 +255,26 @@ closing_remarks() {
     smile
     greet_with_right_thumb_up   
     smile
+}
+
+no_testa() {
+    head "stop"
+    echo "ctpq time 0.5 off 0 pos (0.0 0.0  20.0 0.0 0.0 5.0)" | yarp rpc /ctpservice/head/rpc
+    echo "ctpq time 0.5 off 0 pos (0.0 0.0   0.0 0.0 0.0 5.0)" | yarp rpc /ctpservice/head/rpc
+    echo "ctpq time 0.5 off 0 pos (0.0 0.0  20.0 0.0 0.0 5.0)" | yarp rpc /ctpservice/head/rpc
+    echo "ctpq time 0.5 off 0 pos (0.0 0.0   0.0 0.0 0.0 5.0)" | yarp rpc /ctpservice/head/rpc
+    head "start"
+    go_home
+}
+
+fonzie() {
+    breathers "stop"
+    echo "ctpq time 1.5 off 0 pos ( -3.0 57.0   3.0 106.0 -9.0 -8.0 -10.0 22.0 10.0 10.0 20.0 62.0 146.0 90.0 130.0 250.0)" | yarp rpc /ctpservice/right_arm/rpc
+    echo "ctpq time 1.5 off 0 pos ( -3.0 57.0   3.0 106.0 -9.0 -8.0 -10.0 22.0 10.0 10.0 20.0 62.0 146.0 90.0 130.0 250.0)" | yarp rpc /ctpservice/left_arm/rpc
+    sleep 1.5
+    smile
+    go_home
+    breathers "start"
 }
 
 #######################################################################################
@@ -519,23 +549,32 @@ closing_remarks() {
         meteo_bot
     }
 
-    puntata1_234() {
+    puntata1_2() {
+        speak "Il 40 percento dei ragazzi? vorrebbe avere un monopattino speciale diverso da tutti gli altri. Quasi tutti vorrebbero che raccontasse qualcosa di loro."
+        sleep 2.0 && blink
+        sleep 3.0 && blink
+        sleep 3.0 && blink
+    }
+    
+    puntata1_3() {
+        speak "Il 70% dei ragazzi ha rilevato? nei normali monopattini, un grosso difetto: utilizzarli a lungo e' molto faticoso."
+        sleep 2.0 && blink
+        sleep 3.0 && blink
+        sleep 3.0 && blink
+        speak "aicab non conosce la fatica? ma ha capito che non e' una cosa bella."
+        no_testa
+        sleep 2.5 && sad
+    }
 
-        speak "Il 40 percento dei ragazzi vorrebbe avere un monopattino speciale diverso da tutti gli altri. Quasi tutti vorrebbero che raccontasse qualcosa di loro."
-        sleep 7.0 && blink
-        sleep 5.0 && blink
-
-        speak "l 70% dei ragazzi ha rilevato, nei normali monopattini"
-
-        (I CUB INCLINA LA TESTA DA UN LATO E TORNA IN POSIZIONE)
-        
-        speak "un grosso difetto: utilizzarli a lungo è molto faticoso. aicab non conosce la fatica"
-
-        (I CUB FA CENNO DI NO CON IL CAPO)
-        
-        "ma ha capito che non è una cosa bella."
-
-        (ICUB CON ESPRESSIONE TRISTE)
+    puntata1_4() {
+        speak "Infine? il 60% degli intervistati vorrebbe un monopattino piu' ricco di funzionalita'. Alcuni vorrebbero addirittura che fosse vivo come un animale domestico. O, un robot."
+        sleep 1.0 && blink
+        sleep 3.0 && blink
+        sleep 3.0 && blink
+        sleep 3.0 && blink
+        smile
+        fonzie
+        smile
     }
 
     puntata1_c() {
@@ -555,6 +594,51 @@ closing_remarks() {
         meteo_bot
     }
 
+    puntata2_2() {
+        speak "Il 55 percento di loro? pensa che ogni abito sara' unico e speciale. Avra' degli accessori in grado di distinguere chi lo indossa! Insomma, nel futuro tutti si vestiranno come aicab!"
+        sleep 2.0 && blink
+        sleep 3.0 && blink
+        sleep 3.0 && blink
+        sleep 2.0 && blink
+        fonzie
+        smile
+    }
+
+    puntata2_3() {
+        speak "Il 60 percento spera, in futuro? di indossare vestiti intelligenti?"
+        speak "Capaci di cambiare e modificarsi in risposta agli stimoli dell'ambiente esterno."
+        sleep 2.0 && blink
+        sleep 2.0 && blink
+        sleep 5.0 && blink
+        smile
+    }
+
+    puntata2_4() {
+        speak "Infine? il 70 percento dei ragazzi? pensa che i vestiti di oggi siano troppo noiosi."
+        speak "Gli indumenti di domani dovranno essere interattivi e divertenti!"
+        sleep 3.0 && blink
+        sleep 3.0 && blink
+        sleep 3.0 && blink
+        sleep 2.0 && smile
+    }
+    
+    puntata2_5() {
+        echo "ctpq time 1.5 off 0 pos (-42.0 36.0 -12.0 101.0 85.0 -45.0 -4.0 17.0 57.0 87.0 140.0 0.0 0.0 87.0 176.0 250.0)" | yarp rpc /ctpservice/right_arm/rpc
+        sleep 1.75
+        speak "Divertimento. Operazione mediante cui un essere umano trascorre il suo tempo in modo piacevole."
+        sleep 1.0 && blink
+        sleep 4.0 && blink
+        smile
+        echo "set leb cun" | yarp rpc /icub/face/emotions/in
+        echo "set reb cun" | yarp rpc /icub/face/emotions/in
+        sleep 0.5 && smile
+        sleep 0.5 && smile
+        echo "set leb cun" | yarp rpc /icub/face/emotions/in
+        echo "set reb cun" | yarp rpc /icub/face/emotions/in
+        sleep 1.5 && smile
+        go_home
+    }
+
     puntata2_c() {
         closing_remarks "0 3 FT2"  
     }
@@ -571,6 +655,40 @@ closing_remarks() {
         speak "Ecco i risultati."
         meteo_bot
     }
+
+    puntata3_2() {
+        speak "Il primo? Le macchinine si bloccano quando affrontano alcuni tipi di terreno, come la ghiaia, il fango? o i tappeti. Il 67% dei ragazzi lo trova insopportabile."
+        sleep 1.0 && blink
+        sleep 3.0 && blink 
+        sleep 3.0 && blink
+    }
+
+    puntata3_3() {
+        speak "Secondo l'82% dei ragazzi? pero'? il problema piu' grande sono le scale."
+        speak "Davanti a una scala, anche i modelli piu' avanzati devono fermarsi."
+        sleep 2.0 && blink
+        sleep 3.0 && blink
+        sleep 1.0 && blink
+        sleep 5.0 && blink
+        speak "Forse dovrebbero avere un sistema motorio avanzato come aicab!"
+        sleep 3.0
+        fonzie
+        echo "set leb cun" | yarp rpc /icub/face/emotions/in
+        echo "set reb cun" | yarp rpc /icub/face/emotions/in
+        sleep 0.5 && smile
+        sleep 0.5 && smile
+        echo "set leb cun" | yarp rpc /icub/face/emotions/in
+        echo "set reb cun" | yarp rpc /icub/face/emotions/in
+        sleep 0.5 && smile
+    }
+
+    puntata3_4() {
+        speak "Infine? secondo le analisi di aicab! il 60 percento dei ragazzi vorrebbe giocare con la macchina telecomandata anche di sera, E pilotarla senza perderla mai di vista."
+        sleep 1.0 && blink
+        sleep 1.0 && blink
+        sleep 5.0 && blink
+        smile
+    }    
 
     puntata3_c() {
         closing_remarks "3 6 Tielle 2 4"
