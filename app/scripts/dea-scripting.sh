@@ -706,6 +706,29 @@ fonzie() {
         meteo_bot
     }
 
+    puntata4_2() {
+        
+        speak "Il 50 percento dei ragazzi vorrebbe un televisore meno anonimo, piu' colorato? piu' giocoso? piu' adatto allo stile delle loro camerette."
+        sleep 4.0 && blink
+        sleep 4.0 && blink 
+    }
+
+    puntata4_3() {
+        
+        speak "Il 60 percento invece ha confessato di aver sempre paura che la mamma li sorprenda a guardare la tv di nascosto. A quanto pare, la specie mamma? e' ostile ai guardatori di tv."
+        sleep 8.0 && blink
+        sleep 3.0 && blink
+    }
+
+    puntata4_4() {
+        
+        speak "Infine, il 60 percento dei ragazzi perde il telecomando almeno una volta al giorno. La percentuale sale al 90 percento tra i ragazzi particolarmente disordinati che lasciano vestiti e giocattoli in giro."
+        
+        sleep 3.0 && blink
+        sleep 8.0 && alza_sopracciglio
+        sleep 6.0 && blink
+    }  
+
     puntata4_c() {
         closing_remarks "0 5 ics 1 2"  
     }
@@ -722,6 +745,33 @@ fonzie() {
         meteo_bot
     }
 
+
+    puntata5_2() {
+        
+        speak "Il 70 percento degli umani vorrebbe un tablet in grado di distinguersi dalla massa. Dovrebbe farsi notare anche quando non lo si usa."
+        sleep 3.0 && blink
+        sleep 7.0 && blink 
+    }
+
+    puntata5_3() {
+        
+        speak "Il dato piu' sorprendente e' che il 90 percento degli intervistati sogna un tablet capace di comunicare con il mondo esterno. I ragazzi vorrebbero che il gioco uscisse dello schermo. Digitale e analogico allo stesso tempo. Vorrebbero che il tablet fosse come aicab"
+
+        sleep 3.0 && blink
+        sleep 9.0 && blink
+        sleep 4.0 && smile
+        
+    }
+
+    puntata5_4() {
+        
+        speak "Infine il 79 percento vorrebbe poter condividere quello che c'e' sullo schermo con i propri amici, anche quando gli amici sono tanti e sono tutti nello stesso posto."
+        
+        sleep 8.0 && blink
+        sleep 5.0 && smile && sleep 0.5 && blink
+    }    
+
+
     puntata5_c() {
         closing_remarks "1 9 t 6 2"
     }
@@ -736,6 +786,32 @@ fonzie() {
         sleep 4.0 && blink
         sleep 5.5 && blink
         meteo_bot
+    }
+
+    puntata6_2() {
+        
+        speak "Il 70 percento dei ragazzi vorrebbe una bicicletta aggressiva, simile a una moto. I ragazzi la definiscono tosta? anche se aicab non capisce il significato di questa parola."
+        sleep 5.0 && blink
+        # (I CUB FA CENNO DI NO CON IL CAPO)
+        sleep 9.0 && no_testa 
+    }
+
+    puntata6_3() {
+        
+        speak "Secondo la meta' degli intervistati la bici perfetta dovrebbe essere imbattibile e super accessoriata. Piu' o meno come la macchina di zero zero sette, ma in versione bici."
+
+        # (I CUB INCLINA LA TESTA DA UN LATO E TORNA IN POSIZIONE)
+        sleep 9.0 && blink
+        sleep 8.0 && blink
+    }
+
+    puntata6_4() {
+        
+        speak "L'ultimo dato. il 60 percento dei ragazzi vorrebbe una bicicletta che riconosca il suo padrone. Una bici intelligente. Un po' come aicab."
+
+        # (I CUB INCLINA LA TESTA DA UN LATO E TORNA IN POSIZIONE)
+        sleep 9.0 && blink
+        sleep 5.0 && smile && sleep 0.5 && blink
     }
 
     puntata6_c() {
@@ -754,6 +830,37 @@ fonzie() {
         meteo_bot
     }
 
+    puntata7_2() {
+        
+        speak "Il 90 percento di loro vorrebbe che lo zaino fosse un oggetto divertente e pieno di sorprese, come quello di Babbo Natale."
+        sleep 7.0 && blink
+        sleep 4.0
+    }
+
+    puntata7_3() {
+        
+        speak "aicab non conosce questo Babbo Natale. Ma dev'essere un ciccione molto simpatico."
+
+        sleep 3.0 && blink && sleep 6.0 && smile
+    }
+
+    puntata7_4() {
+        
+        speak "L'85 percento dei ragazzi dice che gli zaini di scuola sono troppo pesanti da portare in spalla e da trascinare. Il tragitto da casa a scuola e' troppo faticoso."
+
+        sleep 14.0 && blink
+    }
+
+    puntata7_5() {
+        
+        speak "Per finire? il 65 percento sogna uno zaino da supereroe in grado di proteggerli dagli scherzi dei compagni, e soprattutto, dai bulli della scuola."
+
+        sleep 8.0 && blink
+        
+        #  (I CUB SBATTE LE PALPEBRE CON ESPRESSIONE ARRABBIATA)
+        sleep 9.0 && angry && sleep 1.0 && blink
+    }
+
     puntata7_c() {
         closing_remarks "s 3 uno t 4"
     }
@@ -768,6 +875,31 @@ fonzie() {
         sleep 3.5 && blink
         sleep 1.5 && blink
         meteo_bot
+    }
+
+
+    puntata8_2() {
+        
+        speak "Il sogno del 65 percento dei ragazzi e' possedere un giocattolo che assomigli a ciascuno di loro. E'  per questo che quando giocano, spesso fanno finta di essere uno dei personaggi."
+        sleep 3.0 && blink
+        sleep 5.0 && blink
+        sleep 6.0 && blink
+    }
+
+    puntata8_3() {
+        
+        speak "Secondo i miei dati, tra i giocattoli piu' diffusi al mondo ci sono le macchinine. I ragazzi si sfidano in continuazione, e l'80 percento di loro vorrebbe avere tra le mani delle auto super veloci!"
+
+        sleep 9.0 && blink && sleep 7.0 && blink
+    }
+
+    puntata8_4() {
+        
+        speak "Infine vi segnalo un problema. Il 90 percento dei ragazzi ha avuto esperienze di giocattoli rotti o rubati da fratellini e amici dispettosi. Qui c'e' un problema di sicurezza."
+
+        sleep 3.5 && blink
+        sleep 9.0 && alza_sopracciglio
+        sleep 4.0 && blink
     }
 
     puntata8_c() {
@@ -787,6 +919,33 @@ fonzie() {
         meteo_bot
     }
 
+
+    puntata9_2() {
+        
+        speak "Il 55 percento vorrebbe che fosse bella, divertente, funzionale, simile a un robot. Ma attenzione, aicab non e' una sveglia!"
+        
+        #(I CUB FA CENNO DI NO CON L'INDICE E ASSUME ESPRESSIONE ARRABBIATA) 
+        sleep 10.0 && no_indice && angry
+        sleep 5.0
+    }
+
+    puntata9_3() {
+        
+        speak "Il 70 percento dei ragazzi invece ha detto che la sveglia dovrebbe letteralmente buttarli giu' dal letto! Altrimenti e' troppo facile riaddormentarsi. E non va bene."
+
+        sleep 10.0 && blink
+        # (I CUB FA CENNO DI NO CON IL CAPO)
+        sleep 7.0 && cenno_no
+    }
+
+    puntata9_4() {
+        
+        speak "Per finire, il 60 percento dei ragazzi vorrebbe una sveglia intelligente. La mattina sono mezzi addormentati e hanno bisogno di un aiuto per pianificare la giornata."
+
+        sleep 8.0 && blink
+        sleep 9.0 && blink
+    }
+
     puntata9_c() {
         closing_remarks "0 5 xp2 3"
     }
@@ -801,6 +960,31 @@ fonzie() {
         sleep 3.5 && blink
         sleep 1.5 && blink
         meteo_bot
+    }
+
+    puntata10_2() {
+        
+        speak "Il 70 percento dei ragazzi dice che la cosa piu' bella del campeggio e' stare a contatto con la natura e che le tende troppo vistose rovinano l’atmosfera. (I CUB SBATTE LE PALPEBRE)"
+        
+        sleep 9.0 && blink
+        sleep 5.0 && blink
+    }
+
+    puntata10_3() {
+        
+        speak "Il 90 percento invece e' stufo di portare con se' batterie e lampadine di ricambio per la luce. Una tenda dovrebbe avere l'elettricita'. Altrimenti aicab come fa ad andare in campeggio? Nessuno pensa a aicab? "
+
+        sleep 13.0 && blink
+        # (I CUB CON ESPRESSIONE TRISTE)
+        sleep 8.5 && sad
+    }
+
+    puntata10_4() {
+        
+        speak "Infine, aicab ha scoperto che gli umani amano le sorprese. Ma non in campeggio. Il 65 percento infatti ha paura che ragni, insetti e altri animali entrino di nascosto nella tenda."
+
+        sleep 6.0 && blink
+        sleep 11.0 && blink
     }
 
     puntata10_c() {
