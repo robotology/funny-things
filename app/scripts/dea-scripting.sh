@@ -62,6 +62,14 @@ breathers() {
     echo "$1" | yarp rpc /iCubBreatherLA/rpc:i
 }
 
+breathersL() {
+    echo "$1" | yarp rpc /iCubBreatherLA/rpc:i
+}
+
+breathersR() {
+    echo "$1" | yarp rpc /iCubBreatherRA/rpc:i
+}
+
 head() {
     echo "$1" | yarp rpc /iCubBreatherH/rpc:i
 }
@@ -79,16 +87,40 @@ go_home_helper() {
     # echo "ctpq time $1 off 0 pos (-6.0 23.0 25.0 29.0 -24.0 -3.0 -3.0 19.0 29.0 8.0 30.0 32.0 42.0 50.0 50.0 114.0)" | yarp rpc /ctpservice/right_arm/rpc
     # echo "ctpq time $1 off 0 pos (-6.0 23.0 25.0 29.0 -24.0 -3.0 -3.0 19.0 29.0 8.0 30.0 32.0 42.0 50.0 50.0 114.0)" | yarp rpc /ctpservice/left_arm/rpc
     # This is with the arms over the table
-    echo "ctpq time $1 off 0 pos (-30.0 36.0 0.0 60.0 0.0 0.0 0.0 19.0 29.0 8.0 30.0 32.0 42.0 50.0 50.0 114.0)" | yarp rpc /ctpservice/right_arm/rpc
-    echo "ctpq time $1 off 0 pos (-30.0 36.0 0.0 60.0 0.0 0.0 0.0 19.0 29.0 8.0 30.0 32.0 42.0 50.0 50.0 114.0)" | yarp rpc /ctpservice/left_arm/rpc
-    echo "ctpq time 1.0 off 0 pos (0.0 0.0 10.0 0.0 0.0 5.0)" | yarp rpc /ctpservice/head/rpc
-    sleep $1
-    sleep 0.5
+    go_home_helperR $1
+    go_home_helperL $1
+    # echo "ctpq time 1.0 off 0 pos (0.0 0.0 10.0 0.0 0.0 5.0)" | yarp rpc /ctpservice/head/rpc
+    go_home_helperH $1
+}
+
+go_home_helperL()
+{
+    # echo "ctpq time $1 off 0 pos (-30.0 36.0 0.0 60.0 0.0 0.0 0.0 19.0 29.0 8.0 30.0 32.0 42.0 50.0 50.0 114.0)" | yarp rpc /ctpservice/left_arm/rpc
+    echo "ctpq time $1 off 0 pos (-6.0 23.0 25.0 29.0 -24.0 -3.0 -3.0 19.0 29.0 8.0 30.0 32.0 42.0 50.0 50.0 114.0)" | yarp rpc /ctpservice/left_arm/rpc
+}
+
+go_home_helperR()
+{
+    # echo "ctpq time $1 off 0 pos (-30.0 36.0 0.0 60.0 0.0 0.0 0.0 19.0 29.0 8.0 30.0 32.0 42.0 50.0 50.0 114.0)" | yarp rpc /ctpservice/right_arm/rpc
+    echo "ctpq time $1 off 0 pos (-6.0 23.0 25.0 29.0 -24.0 -3.0 -3.0 19.0 29.0 8.0 30.0 32.0 42.0 50.0 50.0 114.0)" | yarp rpc /ctpservice/right_arm/rpc
+}
+
+go_home_helperH()
+{
+    echo "ctpq time $1 off 0 pos (0.0 0.0 5.0 0.0 0.0 5.0)" | yarp rpc /ctpservice/head/rpc
+}
+
+go_homeH() {
+    head "stop"
+    go_home_helperH 1.5
+    sleep 2.0
+    head "start"
 }
 
 go_home() {
     breathers "stop"
     go_home_helper 2.0
+    sleep 2.5
     breathers "start"
 }
 
@@ -97,7 +129,17 @@ greet_with_right_thumb_up() {
     echo "ctpq time 1.0 off 0 pos (-44.0 36.0 54.0 91.0 -45.0 0.0 12.0 21.0 14.0 0.0 0.0 59.0 140.0 80.0 125.0 210.0)" | yarp rpc /ctpservice/right_arm/rpc
     sleep 1.5 && smile && sleep 1.5
     go_home_helper 1.5
+    sleep 2.0
     breathers "start"
+}
+
+greet_with_left_thumb_up() {
+    breathers "stop"
+    echo "ctpq time 2.0 off 0 pos (-44.0 36.0 54.0 91.0 -45.0 0.0 12.0 21.0 14.0 0.0 0.0 59.0 140.0 80.0 125.0 210.0)" | yarp rpc /ctpservice/left_arm/rpc
+    sleep 1.5 && smile && sleep 1.5
+    go_home_helperL 1.5
+    breathersL "start"
+    head "start"
 }
 
 greet_like_god() {
@@ -107,7 +149,8 @@ greet_like_god() {
     sleep 1.0
     echo "ctpq time 0.7 off 0 pos (-70.0 50.0 -30.0 80.0 40.0 -5.0 10.0)" | yarp rpc /ctpservice/right_arm/rpc
     echo "ctpq time 0.7 off 0 pos (-70.0 50.0 -30.0 80.0 40.0 -5.0 10.0)" | yarp rpc /ctpservice/left_arm/rpc
-    speak "Buongiorno capo!"
+    # speak "Buongiorno capo!"
+    speak "Bentornato. capo!"
     echo "ctpq time 0.7 off 0 pos (-70.0 40.0 -7.0 100.0 60.0 -20.0 2.0)" | yarp rpc /ctpservice/right_arm/rpc
     echo "ctpq time 0.7 off 0 pos (-70.0 40.0 -7.0 100.0 60.0 -20.0 2.0)" | yarp rpc /ctpservice/left_arm/rpc
 
@@ -116,7 +159,8 @@ greet_like_god() {
 
     # echo "ctpq time 0.7 off 0 pos (-70.0 40.0 -7.0 100.0 60.0 -20.0 2.0)" | yarp rpc /ctpservice/right_arm/rpc
     # echo "ctpq time 0.7 off 0 pos (-70.0 40.0 -7.0 100.0 60.0 -20.0 2.0)" | yarp rpc /ctpservice/left_arm/rpc
-    sleep 1.5 && smile
+    # sleep 1.5 && smile
+    sleep 1.0 && smile
 
     go_home_helper 2.0
 }
@@ -130,7 +174,7 @@ smolla_pennello() {
 }
 
 grasp_apple() {
-    echo "grasp_apple TODO"
+    echo "ctpq time 1.5 off 0 pos (-46.0 27.0 -2.0 65.0 -80.0 -24.0 11.0 17.0 87.0 0.0 52.0 14.0 77.0 13.0 73.0 250.0)" | yarp rpc /ctpservice/right_arm/rpc
 }
 
 release_apple() {
@@ -151,11 +195,21 @@ mostra_muscoli() {
 }
 
 graspa_volante() {
-    echo "TODO"
-}
+    # echo "ctpq time 1.5 off 0 pos (-45.0 19.0 11.0 55.0 2.0 -3.0 -17.0 12.0 53.0 0.0 91.0  61.0 106.0 71.0 114.0 250.0)" | yarp rpc /ctpservice/right_arm/rpc
+    # echo "ctpq time 1.5 off 0 pos (-45.0 19.0 11.0 58.0 2.0 -5.0 -9.0  10.0 54.0 2.0 106.0 64.0 111.0 61.0 100.0 250.0)" | yarp rpc /ctpservice/left_arm/rpc
 
-smolla_volante() {
-    echo "TODO"
+    breathers "stop"
+
+    echo "ctpq time 1.5 off 0 pos (0.0 -15.0 0.0)" | yarp rpc /ctpservice/torso/rpc
+    echo "ctpq time 1.5 off 0 pos (0.0 -15.0 0.0)" | yarp rpc /ctpservice/head/rpc
+    echo "ctpq time 1.5 off 0 pos (0.0  15.0 0.0)" | yarp rpc /ctpservice/torso/rpc
+    echo "ctpq time 1.5 off 0 pos (0.0  15.0 0.0)" | yarp rpc /ctpservice/head/rpc
+    echo "ctpq time 1.5 off 0 pos (0.0  0.0 0.0)" | yarp rpc /ctpservice/torso/rpc
+    echo "ctpq time 1.5 off 0 pos (0.0  0.0 0.0)" | yarp rpc /ctpservice/head/rpc
+    sleep 2.0 && blink
+    sleep 2.0 && blink
+    smile
+    head "start"
 }
 
 graspa_pallina() {
@@ -163,19 +217,21 @@ graspa_pallina() {
     echo "ctpq time 2.0 off 0 pos (-38.0 25.0 25.0 45.0 59.0 -11.0 -20.0 30.0 28.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0)" | yarp rpc /ctpservice/right_arm/rpc
     echo "ctpq time 0.75 off 0 pos (-30.0 0.0 -15.0 -10.0 0.0 10.0)" | yarp rpc /ctpservice/head/rpc
     sleep 2.5
-    echo "ctpq time 1.5 off 0 pos (-38.0 25.0 25.0 45.0 59.0 -11.0 -20.0 30.0 60.0 0.0 79.0 30.0 60.0 30.0 70.0 215.0)" | yarp rpc /ctpservice/right_arm/rpc
+    echo "ctpq time 1.5 off 0 pos (-38.0 25.0 25.0 45.0 59.0 -11.0 -20.0 30.0 90.0 0.0 70.0 60.0 80.0 60.0 80.0 215.0)" | yarp rpc /ctpservice/right_arm/rpc
     sleep 1.5
-    echo "ctpq time 1.5 off 0 pos (-38.0 48.0 7.0 71.0 -11.0 0.0  2.0 30.0 60.0 0.0 79.0 30.0 60.0 30.0 70.0 215.0)" | yarp rpc /ctpservice/right_arm/rpc
+    speak "$1"
+    echo "ctpq time 1.5 off 0 pos (-38.0 48.0 7.0 71.0 -11.0 0.0  2.0 30.0 90.0 0.0 70.0 60.0 80.0 60.0 80.0 215.0)" | yarp rpc /ctpservice/right_arm/rpc
     echo "ctpq time 1.5 off 0 pos (-20.0 0.0 -25.0 -10.0 10.0 10.0)" | yarp rpc /ctpservice/head/rpc
     sleep 2.0
     echo "ctpq time 1.0 off 0 pos (0.0 0.0 0.0 0.0 0.0 5.0)" | yarp rpc /ctpservice/head/rpc
 }
 
 smolla_pallina() {
-    echo "ctpq time 1.5 off 0 pos (-38.0 25.0 25.0 45.0 59.0 -11.0 -20.0 30.0 60.0 0.0 79.0 30.0 60.0 30.0 70.0 215.0)" | yarp rpc /ctpservice/right_arm/rpc
-    sleep 1.5
+    echo "ctpq time 1.5 off 0 pos (-38.0 25.0 25.0 45.0 59.0 -11.0 -20.0 30.0 90.0 0.0 70.0 60.0 80.0 60.0 80.0 215.0)" | yarp rpc /ctpservice/right_arm/rpc
+    smile && sleep 1.5 && smile
     echo "ctpq time 1.5 off 0 pos (-38.0 25.0 25.0 45.0 59.0 -11.0 -20.0 30.0 28.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0)" | yarp rpc /ctpservice/right_arm/rpc
     go_home_helper 2.0
+    smile
     breathers "start"
 }
 
@@ -185,7 +241,8 @@ passa_e_chiudi() {
 }
 
 buongiorno_capo() {
-    speak "Buongiorno? capo!"
+    # speak "Buongiorno? capo!"
+    speak "Bentornato. capo!"
     sleep 1.0 # && blink
     sleep 0.5 && smile
 }
@@ -259,10 +316,11 @@ closing_remarks() {
 
 no_testa() {
     head "stop"
-    echo "ctpq time 0.5 off 0 pos (0.0 0.0  20.0 0.0 0.0 5.0)" | yarp rpc /ctpservice/head/rpc
-    echo "ctpq time 0.5 off 0 pos (0.0 0.0   0.0 0.0 0.0 5.0)" | yarp rpc /ctpservice/head/rpc
-    echo "ctpq time 0.5 off 0 pos (0.0 0.0  20.0 0.0 0.0 5.0)" | yarp rpc /ctpservice/head/rpc
-    echo "ctpq time 0.5 off 0 pos (0.0 0.0   0.0 0.0 0.0 5.0)" | yarp rpc /ctpservice/head/rpc
+    echo "ctpq time 0.5 off 0 pos (0.0 0.0  15.0 0.0 0.0 5.0)" | yarp rpc /ctpservice/head/rpc
+    echo "ctpq time 0.5 off 0 pos (0.0 0.0  -5.0 0.0 0.0 5.0)" | yarp rpc /ctpservice/head/rpc
+    echo "ctpq time 0.5 off 0 pos (0.0 0.0  15.0 0.0 0.0 5.0)" | yarp rpc /ctpservice/head/rpc
+    echo "ctpq time 0.5 off 0 pos (0.0 0.0  -5.0 0.0 0.0 5.0)" | yarp rpc /ctpservice/head/rpc
+    echo "ctpq time 0.5 off 0 pos (0.0 0.0   5.0 0.0 0.0 5.0)" | yarp rpc /ctpservice/head/rpc
     head "start"
     go_home
 }
@@ -277,33 +335,55 @@ fonzie() {
     breathers "start"
 }
 
+attacco_grafica() {
+    head "stop"
+    echo "ctpq time 1.0 off 0 pos (0.0 0.0 30.0 0.0 -10.0 5.0)" | yarp rpc /ctpservice/head/rpc
+    speak "$1"
+    sleep 2.0
+    go_homeH
+}
+
+cun() {
+    echo "set reb cun" | yarp rpc /icub/face/emotions/in
+    echo "set leb cun" | yarp rpc /icub/face/emotions/in
+}
+
+angry() {
+    echo "set all ang" | yarp rpc /icub/face/emotions/in
+}
+
 #######################################################################################
 # RUBRICA  1:                                                                         #
 #######################################################################################
     rubrica1_1() {
         greet_like_god
+        breathers "start"
         speak "Oggi, aicab e' andato a caccia di novita' sulle quattro ruote."
-        sleep 2.0 # && blink
+        sleep 1.0 && blink
+        sleep 2.5 && blink
+        sleep 1.0 && smile
     }
 
     rubrica1_2() {
-        speak "Capo, ci pensi?"
-        sleep 2.0 # && blink
-        smile     && sleep 1.0
-        speak "E' stata usata una stampante 3D, proprio come quelle del laboratorio degli X meikers!"
-        sleep 7.0 # && blink 
-        speak " Solo, Un po' piu' grande."
-        sleep 3.0 && smile # && blink
+        speak "Capo? ci pensi?"
+        sleep 1.0 && blink
+        sleep 1.0 && smile
+        speak "E' stata usata una stampante 3D? proprio come quelle del laboratorio degli X meikers!"
+        sleep 4.0 && blink 
+        speak " Solo? Un po' piu' grande."
+        sleep 6.0 && smile # && blink
     }
 
-    rubrica1_3() {
-        graspa_volante
+    rubrica1_3a() {
         speak "Cosi', anche chi guida potra' schiacciare un pisolino durante il viaggio."
-        sleep 4.0
-        smolla_volante
+        graspa_volante
+    }
+
+    rubrica1_3b() {
         speak "Per oggi dal dipartimento ricerca e' tutto."
         sleep 2.0 # && blink
         passa_e_chiudi
+        sleep 1.0
         greet_with_right_thumb_up
     }
 
@@ -312,30 +392,38 @@ fonzie() {
 #######################################################################################
     rubrica2_1() {
         greet_like_god
-        speak "Oggi, aicab ha fatto un corso accelerato di cucina"
-        sleep 4.0 # && blink
-        speak "per saperne di piu' su quello che voi chiamate cibo."
-        sleep 4.0 # && blink
-        speak "Preparatevi a restare a bocca aperta!"
-        sleep 2.0 # && blink
-        sleep 1.0 && surprised
-        sleep 2.0 && smile
+        breathers "start"
+        speak "Oggi, aicab ha fatto un corso accelerato di cucina? per saperne di piu' su quello che voi chiamate cibo."
+        speak "Preparatevi? Resterete? a bocca aperta!"
+        sleep 1.0 && blink
+        sleep 2.5 && blink
+        sleep 4.0 && blink
+        go_home
+        breathers "stop"
+        sleep 0.5 && surprised
+        sleep 1.5 && smile
+        breathers "start"
     }
 
     rubrica2_2() {
-        speak "aicab ha sentito dire che voi umani andate matti per questa cioccolata..."
-        sleep 4.0 # && blink
-        sleep 1.5 && smile
+        speak "aicab ha sentito dire? che voi umani andate matti per questa cioccolata..."
+        sleep 4.0 && blink
+        sleep 2.0 && smile
     }
 
     rubrica2_3() {
-        grasp_apple
         speak "Pensa capo, un giorno questa mela potrebbe avere il gusto di ba na na!"
-        sleep 2.0
+        breathers "stop"
+        echo "ctpq time 1.0 off 0 pos (-20.0 0.0 -30.0 0.0 10.0 10.0)" | yarp rpc /ctpservice/head/rpc
+        sleep 3.0
+        echo "ctpq time 1.0 off 0 pos (0.0 0.0 0.0 0.0 0.0 5.0)" | yarp rpc /ctpservice/head/rpc
+        sleep 3.0
         speak "Anche per oggi, dal reparto Ricerca e Innovazione e' tutto."
-        sleep 6.0 # && blink
+        head "stop"
+        go_home_helperH 1.5
         passa_e_chiudi
-        greet_with_right_thumb_up
+        greet_with_left_thumb_up
+        sleep 1.5 && smile
     }
 
 #######################################################################################
@@ -343,6 +431,7 @@ fonzie() {
 #######################################################################################
     rubrica3_1() {
         greet_like_god
+        breathers "start"
         speak "Oggi, aicab ha scovato delle novita' che nel giro di qualche anno renderanno voi umani"
         sleep 3.0 # && blink
         mostra_muscoli
@@ -438,17 +527,20 @@ fonzie() {
 #######################################################################################
     rubrica7_1() {
         greet_like_god
-        speak "Oggi, aicab ha preparato un fascicolo sulle innovazioni nel mondo dello sport."
-        sleep 2.0 # && blink
         breathers "start"
+        speak "Oggi, aicab ha preparato un fascicolo sulle innovazioni nel mondo dello sport."
+        sleep 1.0 && blink
+        sleep 4.0 && blink
+        sleep 1.0 && smile
     }
 
     rubrica7_2() {
-        graspa_pallina
-        speak "Lo scopo e' correggere gli errori e migliorare. partita dopo partita."
-        sleep 4.0 # && blink
+        graspa_pallina "Lo scopo e' correggere gli errori e migliorare? partita dopo partita."
+        smile && sleep 2.0 && smile
         smolla_pallina
         speak "Per finire, aicab vuole presentarvi alcuni amici."
+        sleep 2.0 && blink
+        sleep 3.0 && smile
     }
 
     rubrica7_3() {
@@ -550,31 +642,34 @@ fonzie() {
     }
 
     puntata1_2() {
+        speak "Ecco i risultati."
+        meteo_bot
         speak "Il 40 percento dei ragazzi? vorrebbe avere un monopattino speciale diverso da tutti gli altri. Quasi tutti vorrebbero che raccontasse qualcosa di loro."
         sleep 2.0 && blink
         sleep 3.0 && blink
         sleep 3.0 && blink
+        sleep 2.0 && smile
     }
     
     puntata1_3() {
-        speak "Il 70% dei ragazzi ha rilevato? nei normali monopattini, un grosso difetto: utilizzarli a lungo e' molto faticoso."
-        sleep 2.0 && blink
+        attacco_grafica "Il 70% dei ragazzi ha rilevato? nei normali monopattini, un grosso difetto: utilizzarli a lungo e' molto faticoso."
         sleep 3.0 && blink
         sleep 3.0 && blink
         speak "aicab non conosce la fatica? ma ha capito che non e' una cosa bella."
         no_testa
-        sleep 2.5 && sad
+        sleep 3.0 && sad
+        sleep 2.0 && smile
     }
 
     puntata1_4() {
-        speak "Infine? il 60% degli intervistati vorrebbe un monopattino piu' ricco di funzionalita'. Alcuni vorrebbero addirittura che fosse vivo come un animale domestico. O, un robot."
-        sleep 1.0 && blink
-        sleep 3.0 && blink
+        attacco_grafica "Infine? il 60% degli intervistati vorrebbe un monopattino piu' ricco di funzionalita'. Alcuni vorrebbero addirittura che fosse vivo come un animale domestico. O, un robot."
+        sleep 2.0 && blink
         sleep 3.0 && blink
         sleep 3.0 && blink
         smile
         fonzie
         smile
+        meteo_bot
     }
 
     puntata1_c() {
@@ -595,52 +690,57 @@ fonzie() {
     }
 
     puntata2_2() {
+        speak "Ecco i risultati."
+        meteo_bot
         speak "Il 55 percento di loro? pensa che ogni abito sara' unico e speciale. Avra' degli accessori in grado di distinguere chi lo indossa! Insomma, nel futuro tutti si vestiranno come aicab!"
-        sleep 2.0 && blink
+        sleep 4.0 && blink
         sleep 3.0 && blink
         sleep 3.0 && blink
-        sleep 2.0 && blink
         fonzie
-        smile
     }
 
     puntata2_3() {
-        speak "Il 60 percento spera, in futuro? di indossare vestiti intelligenti?"
-        speak "Capaci di cambiare e modificarsi in risposta agli stimoli dell'ambiente esterno."
+        attacco_grafica "Il 60 percento spera, in futuro? di indossare vestiti intelligenti? Capaci di cambiare e modificarsi in risposta agli stimoli dell'ambiente esterno."
         sleep 2.0 && blink
         sleep 2.0 && blink
         sleep 5.0 && blink
-        smile
     }
 
     puntata2_4() {
-        speak "Infine? il 70 percento dei ragazzi? pensa che i vestiti di oggi siano troppo noiosi."
-        speak "Gli indumenti di domani dovranno essere interattivi e divertenti!"
+        attacco_grafica "Infine? il 70 percento dei ragazzi? pensa che i vestiti di oggi siano troppo noiosi. Gli indumenti di domani dovranno essere interattivi e divertenti!"
         sleep 3.0 && blink
-        sleep 3.0 && blink
-        sleep 3.0 && blink
-        sleep 2.0 && smile
+        sleep 2.0 && blink
+        sleep 2.0 && blink
     }
     
     puntata2_5() {
+        breathers "stop"
         echo "ctpq time 1.5 off 0 pos (-42.0 36.0 -12.0 101.0 85.0 -45.0 -4.0 17.0 57.0 87.0 140.0 0.0 0.0 87.0 176.0 250.0)" | yarp rpc /ctpservice/right_arm/rpc
-        sleep 1.75
+        sleep 2.5
+        go_home_helperR 2.0
         speak "Divertimento. Operazione mediante cui un essere umano trascorre il suo tempo in modo piacevole."
         sleep 1.0 && blink
         sleep 4.0 && blink
+        echo "set leb cun" | yarp rpc /icub/face/emotions/in
+        echo "set reb cun" | yarp rpc /icub/face/emotions/in
+        sleep 0.5 && smile
+        sleep 0.5 && smile
+        echo "set leb cun" | yarp rpc /icub/face/emotions/in
+        echo "set reb cun" | yarp rpc /icub/face/emotions/in
         smile
-        echo "set leb cun" | yarp rpc /icub/face/emotions/in
-        echo "set reb cun" | yarp rpc /icub/face/emotions/in
-        sleep 0.5 && smile
-        sleep 0.5 && smile
-        echo "set leb cun" | yarp rpc /icub/face/emotions/in
-        echo "set reb cun" | yarp rpc /icub/face/emotions/in
-        sleep 1.5 && smile
         go_home
     }
 
     puntata2_c() {
         closing_remarks "0 3 FT2"  
+    }
+
+    puntata2_total() {
+        puntata2_2
+        puntata2_3
+        puntata2_4
+        puntata2_5
+        puntata2_c
     }
 
 #######################################################################################
@@ -657,19 +757,20 @@ fonzie() {
     }
 
     puntata3_2() {
-        speak "Il primo? Le macchinine si bloccano quando affrontano alcuni tipi di terreno, come la ghiaia, il fango? o i tappeti. Il 67% dei ragazzi lo trova insopportabile."
-        sleep 1.0 && blink
-        sleep 3.0 && blink 
-        sleep 3.0 && blink
+        speak "Ecco i risultati."
+        meteo_bot
+        speak "Le macchinine si bloccano quando affrontano alcuni tipi di terreno, come la ghiaia, il fango? o i tappeti. Il 67% dei ragazzi lo trova insopportabile."
+        sleep 4.0 && blink
+        sleep 2.0 && blink 
+        sleep 6.0 && blink
     }
 
     puntata3_3() {
-        speak "Secondo l'82% dei ragazzi? pero'? il problema piu' grande sono le scale."
-        speak "Davanti a una scala, anche i modelli piu' avanzati devono fermarsi."
+        attacco_grafica "Secondo l'82% dei ragazzi? pero'? il problema piu' grande sono le scale. Davanti a una scala, anche i modelli piu' avanzati devono fermarsi."
         sleep 2.0 && blink
         sleep 3.0 && blink
         sleep 1.0 && blink
-        sleep 5.0 && blink
+        sleep 3.0 && blink
         speak "Forse dovrebbero avere un sistema motorio avanzato come aicab!"
         sleep 3.0
         fonzie
@@ -683,15 +784,22 @@ fonzie() {
     }
 
     puntata3_4() {
-        speak "Infine? secondo le analisi di aicab! il 60 percento dei ragazzi vorrebbe giocare con la macchina telecomandata anche di sera, E pilotarla senza perderla mai di vista."
+        attacco_grafica "Infine? secondo le analisi di aicab! il 60 percento dei ragazzi vorrebbe giocare con la macchina telecomandata anche di sera, E pilotarla senza perderla mai di vista."
         sleep 1.0 && blink
         sleep 1.0 && blink
-        sleep 5.0 && blink
-        smile
+        sleep 3.0 && blink
     }    
 
     puntata3_c() {
-        closing_remarks "3 6 Tielle 2 4"
+        closing_remarks "3 6 TL 2 4"
+    }
+
+    puntata3_total() {
+        puntata3_2
+        puntata3_3
+        puntata3_4
+        puntata3_5
+        puntata3_c
     }
 
 #######################################################################################
@@ -707,30 +815,33 @@ fonzie() {
     }
 
     puntata4_2() {
-        
+        meteo_bot
         speak "Il 50 percento dei ragazzi vorrebbe un televisore meno anonimo, piu' colorato? piu' giocoso? piu' adatto allo stile delle loro camerette."
         sleep 4.0 && blink
         sleep 4.0 && blink 
     }
 
     puntata4_3() {
-        
-        speak "Il 60 percento invece ha confessato di aver sempre paura che la mamma li sorprenda a guardare la tv di nascosto. A quanto pare, la specie mamma? e' ostile ai guardatori di tv."
-        sleep 8.0 && blink
+        attacco_grafica "Il 60 percento invece ha confessato di aver sempre paura che la mamma li sorprenda a guardare la tv di nascosto."
         sleep 3.0 && blink
+        breathers "stop"
+        echo "ctpq time 1.5 off 0 pos (-42.0 36.0 -12.0 101.0 85.0 -45.0 -4.0 17.0 57.0 87.0 140.0 0.0 0.0 87.0 176.0 250.0)" | yarp rpc /ctpservice/right_arm/rpc
+        sleep 2.5
+        speak "A quanto pare, la specie mamma? e' ostile ai guardatori di tv."
+        go_home_helperR 2.0
+        go_home_helperH 2.0
+        sleep 2.0
+        breathers "start"
     }
 
     puntata4_4() {
-        
-        speak "Infine, il 60 percento dei ragazzi perde il telecomando almeno una volta al giorno. La percentuale sale al 90 percento tra i ragazzi particolarmente disordinati che lasciano vestiti e giocattoli in giro."
-        
+        attacco_grafica "Infine, il 60 percento dei ragazzi perde il telecomando almeno una volta al giorno. La percentuale sale al 90 percento tra i ragazzi particolarmente disordinati che lasciano vestiti e giocattoli in giro."
         sleep 3.0 && blink
-        sleep 8.0 && alza_sopracciglio
         sleep 6.0 && blink
     }  
 
     puntata4_c() {
-        closing_remarks "0 5 ics 1 2"  
+        closing_remarks "0 5 ics, 1 2"  
     }
 
 #######################################################################################
@@ -745,32 +856,27 @@ fonzie() {
         meteo_bot
     }
 
-
     puntata5_2() {
-        
-        speak "Il 70 percento degli umani vorrebbe un tablet in grado di distinguersi dalla massa. Dovrebbe farsi notare anche quando non lo si usa."
+        meteo_bot
+        speak "Il 70 percento degli umani vorrebbe un taabl-et in grado di distinguersi dalla massa. Dovrebbe farsi notare anche quando non lo si usa."
         sleep 3.0 && blink
         sleep 7.0 && blink 
     }
 
     puntata5_3() {
-        
-        speak "Il dato piu' sorprendente e' che il 90 percento degli intervistati sogna un tablet capace di comunicare con il mondo esterno. I ragazzi vorrebbero che il gioco uscisse dello schermo. Digitale e analogico allo stesso tempo. Vorrebbero che il tablet fosse come aicab"
-
-        sleep 3.0 && blink
-        sleep 9.0 && blink
-        sleep 4.0 && smile
-        
+        attacco_grafica "Il dato piu' sorprendente, e' che il 90 percento degli intervistati sogna un taabl-et capace di comunicare con il mondo esterno. I ragazzi vorrebbero che il gioco uscisse dallo schermo. Digitale e analogico allo stesso tempo. Vorrebbero che il tabl-et fosse come aicab"
+        echo "set leb cun" | yarp rpc /icub/face/emotions/in
+        echo "set reb cun" | yarp rpc /icub/face/emotions/in
+        sleep 2.0 && smile
+        sleep 10.0
+        fonzie
     }
 
     puntata5_4() {
-        
-        speak "Infine il 79 percento vorrebbe poter condividere quello che c'e' sullo schermo con i propri amici, anche quando gli amici sono tanti e sono tutti nello stesso posto."
-        
-        sleep 8.0 && blink
-        sleep 5.0 && smile && sleep 0.5 && blink
+        attacco_grafica "Infine? il 79% vorrebbe poter condividere quello che c'e' sullo schermo con i propri amici, anche quando gli amici sono tanti e sono tutti nello stesso posto."
+        sleep 1.0 && blink
+        sleep 3.0 && blink
     }    
-
 
     puntata5_c() {
         closing_remarks "1 9 t 6 2"
@@ -789,29 +895,26 @@ fonzie() {
     }
 
     puntata6_2() {
-        
+        speak "Ecco i risultati."
+        meteo_bot
         speak "Il 70 percento dei ragazzi vorrebbe una bicicletta aggressiva, simile a una moto. I ragazzi la definiscono tosta? anche se aicab non capisce il significato di questa parola."
         sleep 5.0 && blink
-        # (I CUB FA CENNO DI NO CON IL CAPO)
-        sleep 9.0 && no_testa 
+        sleep 4.0 && no_testa 
+        echo "set reb cun" | yarp rpc /icub/face/emotions/in
+        echo "set leb cun" | yarp rpc /icub/face/emotions/in
+        sleep 3.0 && smile
     }
 
     puntata6_3() {
-        
-        speak "Secondo la meta' degli intervistati la bici perfetta dovrebbe essere imbattibile e super accessoriata. Piu' o meno come la macchina di zero zero sette, ma in versione bici."
-
-        # (I CUB INCLINA LA TESTA DA UN LATO E TORNA IN POSIZIONE)
-        sleep 9.0 && blink
-        sleep 8.0 && blink
+        attacco_grafica "Secondo la meta' degli intervistati? la bici perfetta dovrebbe essere imbattibile e super accessoriata. Piu' o meno come la macchina di zero zero sette, ma in versione bici."
+        sleep 2.0 && blink
+        sleep 3.0 && blink
     }
 
     puntata6_4() {
-        
-        speak "L'ultimo dato. il 60 percento dei ragazzi vorrebbe una bicicletta che riconosca il suo padrone. Una bici intelligente. Un po' come aicab."
-
-        # (I CUB INCLINA LA TESTA DA UN LATO E TORNA IN POSIZIONE)
-        sleep 9.0 && blink
-        sleep 5.0 && smile && sleep 0.5 && blink
+        attacco_grafica "L'ultimo dato? il 60 percento dei ragazzi vorrebbe una bicicletta che riconosca il suo padrone. Una bici intelligente. Un po' come aicab."
+        sleep 2.0 && blink
+        sleep 2.0 && smile && sleep 0.5 && blink
     }
 
     puntata6_c() {
@@ -831,34 +934,28 @@ fonzie() {
     }
 
     puntata7_2() {
-        
-        speak "Il 90 percento di loro vorrebbe che lo zaino fosse un oggetto divertente e pieno di sorprese, come quello di Babbo Natale."
-        sleep 7.0 && blink
-        sleep 4.0
+        meteo_bot
+        speak "Il 90 percento di loro vorrebbe che lo zaino fosse un oggetto divertente? e pieno di sorprese, come quello di Babbo Natale."
+        sleep 2.0 && blink
     }
 
     puntata7_3() {
-        
         speak "aicab non conosce questo Babbo Natale. Ma dev'essere un ciccione molto simpatico."
-
-        sleep 3.0 && blink && sleep 6.0 && smile
+        sleep 0.5 && cun
+        sleep 3.0 && smile
     }
 
     puntata7_4() {
-        
-        speak "L'85 percento dei ragazzi dice che gli zaini di scuola sono troppo pesanti da portare in spalla e da trascinare. Il tragitto da casa a scuola e' troppo faticoso."
-
-        sleep 14.0 && blink
+        attacco_grafica "L'85 percento dei ragazzi dice che gli zaini di scuola sono troppo pesanti da portare in spalla e da trascinare. Il tragitto da casa a scuola? e' troppo faticoso."
+        sleep 2.0 && blink
     }
 
     puntata7_5() {
-        
-        speak "Per finire? il 65 percento sogna uno zaino da supereroe in grado di proteggerli dagli scherzi dei compagni, e soprattutto, dai bulli della scuola."
-
-        sleep 8.0 && blink
-        
-        #  (I CUB SBATTE LE PALPEBRE CON ESPRESSIONE ARRABBIATA)
-        sleep 9.0 && angry && sleep 1.0 && blink
+        attacco_grafica "Per finire? il 65 percento sogna uno zaino da supereroe in grado di proteggerli dagli scherzi dei compagni, e soprattutto, dai bulli della scuola."
+        sleep 2.0  && blink
+        sleep 3.0  && angry 
+        sleep 2.25 && angry
+        sleep 2.0  && smile
     }
 
     puntata7_c() {
@@ -879,27 +976,28 @@ fonzie() {
 
 
     puntata8_2() {
-        
-        speak "Il sogno del 65 percento dei ragazzi e' possedere un giocattolo che assomigli a ciascuno di loro. E'  per questo che quando giocano, spesso fanno finta di essere uno dei personaggi."
+        meteo_bot
+        speak "Il sogno del 65 percento dei ragazzi e' possedere un giocattolo che assomigli a ciascuno di loro. E' per questo che, quando giocano, spesso fanno finta di essere un personaggio."
         sleep 3.0 && blink
-        sleep 5.0 && blink
-        sleep 6.0 && blink
+        sleep 3.0 && blink
+        sleep 3.0 && blink
     }
 
     puntata8_3() {
-        
-        speak "Secondo i miei dati, tra i giocattoli piu' diffusi al mondo ci sono le macchinine. I ragazzi si sfidano in continuazione, e l'80 percento di loro vorrebbe avere tra le mani delle auto super veloci!"
-
-        sleep 9.0 && blink && sleep 7.0 && blink
+        attacco_grafica "Secondo i miei dati, tra i giocattoli piu' diffusi al mondo ci sono le macchinine. I ragazzi si sfidano in continuazione, e l'80 percento di loro vorrebbe avere tra le mani delle auto super veloci."
+        sleep 3.0 && blink && sleep 3.0 && blink
     }
 
     puntata8_4() {
-        
-        speak "Infine vi segnalo un problema. Il 90 percento dei ragazzi ha avuto esperienze di giocattoli rotti o rubati da fratellini e amici dispettosi. Qui c'e' un problema di sicurezza."
-
-        sleep 3.5 && blink
-        sleep 9.0 && alza_sopracciglio
-        sleep 4.0 && blink
+        attacco_grafica "Infine, vi segnalo un problema. Il 90 percento dei ragazzi ha avuto esperienze di giocattoli rotti o rubati da fratellini e amici dispettosi."
+        sleep 7.0
+        speak "Qui, c'e' un problema di sicurezza."
+        breathersR "stop"
+        echo "ctpq time 1.5 off 0 pos (-42.0 36.0 -12.0 101.0 85.0 -45.0 -4.0 17.0 57.0 87.0 140.0 0.0 0.0 87.0 176.0 250.0)" | yarp rpc /ctpservice/right_arm/rpc
+        sleep 3.0 && cun
+        go_home_helperR 1.5
+        sleep 2.0 && smile
+        breathersR "start"
     }
 
     puntata8_c() {
@@ -919,35 +1017,28 @@ fonzie() {
         meteo_bot
     }
 
-
     puntata9_2() {
-        
+        speak "Ecco i risultati."
+        meteo_bot
         speak "Il 55 percento vorrebbe che fosse bella, divertente, funzionale, simile a un robot. Ma attenzione, aicab non e' una sveglia!"
-        
-        #(I CUB FA CENNO DI NO CON L'INDICE E ASSUME ESPRESSIONE ARRABBIATA) 
-        sleep 10.0 && no_indice && angry
-        sleep 5.0
+        sleep 10.0 && angry
+        sleep 3.0 && smile
     }
 
     puntata9_3() {
-        
-        speak "Il 70 percento dei ragazzi invece ha detto che la sveglia dovrebbe letteralmente buttarli giu' dal letto! Altrimenti e' troppo facile riaddormentarsi. E non va bene."
-
-        sleep 10.0 && blink
-        # (I CUB FA CENNO DI NO CON IL CAPO)
-        sleep 7.0 && cenno_no
+        attacco_grafica "Il 70 percento dei ragazzi invece ha detto che la sveglia dovrebbe letteralmente buttarli giu' dal letto! Altrimenti e' troppo facile riaddormentarsi. E non va bene."
+        sleep 6.0 && blink
+        no_testa
     }
 
     puntata9_4() {
-        
-        speak "Per finire, il 60 percento dei ragazzi vorrebbe una sveglia intelligente. La mattina sono mezzi addormentati e hanno bisogno di un aiuto per pianificare la giornata."
-
-        sleep 8.0 && blink
-        sleep 9.0 && blink
+        attacco_grafica "Per finire, il 60 percento dei ragazzi vorrebbe una sveglia? intelligente. La mattina sono mezzi addormentati? e hanno bisogno di un aiuto per pianificare la giornata."
+        sleep 3.0 && blink
+        sleep 3.0 && blink
     }
 
     puntata9_c() {
-        closing_remarks "0 5 xp2 3"
+        closing_remarks "0 5 ics p2 3"
     }
 
 #######################################################################################
@@ -962,33 +1053,161 @@ fonzie() {
         meteo_bot
     }
 
+    no_campeggio() {
+        breathers "stop"
+        echo "ctpq time 1.5 off 0 pos (-40.0 38.0 -11.0 84.0 -46.0 -56.0 -20.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0)" | yarp rpc /ctpservice/right_arm/rpc
+        echo "ctpq time 1.5 off 0 pos (-40.0 38.0 -11.0 84.0 -46.0 -56.0 -20.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0)" | yarp rpc /ctpservice/left_arm/rpc
+        cun
+        sleep 1.5
+        go_home
+        smile
+    }
+
     puntata10_2() {
-        
-        speak "Il 70 percento dei ragazzi dice che la cosa piu' bella del campeggio e' stare a contatto con la natura e che le tende troppo vistose rovinano l’atmosfera. (I CUB SBATTE LE PALPEBRE)"
-        
-        sleep 9.0 && blink
-        sleep 5.0 && blink
+        meteo_bot
+        speak "Il 70 percento dei ragazzi dice che la cosa piu' bella del campeggio e' stare a contatto con la natura? e che le tende troppo vistose rovinano l'atmosfera."
+        sleep 4.0 && blink
+        sleep 6.0 && blink
     }
 
     puntata10_3() {
-        
-        speak "Il 90 percento invece e' stufo di portare con se' batterie e lampadine di ricambio per la luce. Una tenda dovrebbe avere l'elettricita'. Altrimenti aicab come fa ad andare in campeggio? Nessuno pensa a aicab? "
-
-        sleep 13.0 && blink
-        # (I CUB CON ESPRESSIONE TRISTE)
-        sleep 8.5 && sad
+        attacco_grafica "Il 90 percento? invece, e' stufo di portare con se' batterie e lampadine di ricambio per la luce. Una tenda dovrebbe avere l'elettricita'."
+        sleep 6.5
+        speak "Altrimenti aicab come fa ad andare in campeggio?"
+        no_campeggio
+        speak "Nessuno pensa a aicab?"
+        head "stop"
+        echo "ctpq time 1.5 off 0 pos (-15.0 0.0 5.0 15.0 0.0 5.0)" | yarp rpc /ctpservice/head/rpc
+        sad && sleep 2.5 && sad
+        sleep 3.0 && smile
+        go_homeH
     }
 
     puntata10_4() {
-        
-        speak "Infine, aicab ha scoperto che gli umani amano le sorprese. Ma non in campeggio. Il 65 percento infatti ha paura che ragni, insetti e altri animali entrino di nascosto nella tenda."
-
-        sleep 6.0 && blink
-        sleep 11.0 && blink
+        attacco_grafica "Infine, aicab ha scoperto che gli umani amano le sorprese. Ma non in campeggio. Il 65 percento infatti ha paura che ragni, insetti? e altri animali entrino di nascosto nella tenda."
+        sleep 1.0 && blink
+        sleep 3.0 && blink
     }
 
     puntata10_c() {
         closing_remarks "r 3 t 9"
+    }
+
+#######################################################################################
+# SIGLA:                                                                              #
+#######################################################################################
+    sigla_1() {
+        breathers "stop"
+        echo "ctpq time 2.0 off 0 pos (-20.0 0.0 -30.0 0.0 0.0 5.0)" | yarp rpc /ctpservice/head/rpc
+        sleep 4.0
+        echo "ctpq time 2.0 off 0 pos (  0.0 0.0  25.0 0.0 0.0 5.0)" | yarp rpc /ctpservice/head/rpc
+        sleep 1.0 && blink
+        sleep 1.0 && blink
+    }
+
+    sigla_2() {
+        breathers "stop"
+        echo "ctpq time 2.0 off 0 pos (-20.0 0.0 -30.0 0.0 0.0 5.0)" | yarp rpc /ctpservice/head/rpc
+        sleep 4.0
+        echo "ctpq time 1.0 off 0 pos (  0.0 0.0  25.0 0.0 0.0 5.0)" | yarp rpc /ctpservice/head/rpc
+        sleep 0.5 && blink
+        sleep 0.5 && blink
+    }
+
+    sigla_3() {
+        breathers "stop"
+        echo "ctpq time 2.0 off 0 pos (-20.0 0.0 -30.0 0.0 0.0 5.0)" | yarp rpc /ctpservice/head/rpc
+        sleep 4.0
+        echo "ctpq time 4.0 off 0 pos (  0.0 0.0  25.0 0.0 0.0 5.0)" | yarp rpc /ctpservice/head/rpc
+        sleep 2.0 && blink
+        sleep 2.0 && blink
+    }
+
+    sigla_4() {
+        echo "set mou neu" | yarp rpc /icub/face/emotions/in
+        echo "set leb neu" | yarp rpc /icub/face/emotions/in
+        echo "set reb neu" | yarp rpc /icub/face/emotions/in
+        go_home_helperL 4.0
+        go_home_helperR 4.0
+        echo "ctpq time 2.5 off 0 pos (20.0 0.0 0.0)" | yarp rpc /ctpservice/torso/rpc
+        sleep 10.0
+        echo "ctpq time 2.0 off 0 pos (-20.0 0.0 0.0)" | yarp rpc /ctpservice/torso/rpc
+        echo "ctpq time 2.0 off 0 pos (-44.0 36.0 44.0 81.0 -75.0 0.0 12.0 21.0 14.0 0.0 0.0 59.0 140.0 80.0 125.0 210.0)" | yarp rpc /ctpservice/left_arm/rpc
+        echo "ctpq time 2.0 off 0 pos (10.0 67.0 75.0 106.0 -18.0 -20.0 5.0 20.0 26.0 7.0 28.0 28.0 38.0 48.0 42.0 150.0)" | yarp rpc /ctpservice/right_arm/rpc
+        sleep 1.0 && blink
+        smile
+        sleep 1.0 && blink
+        sleep 1.0 && blink
+    }
+
+#######################################################################################
+# CHIUSURA:                                                                           #
+#######################################################################################
+    chiusura() {
+        head "stop"
+        echo "ctpq time 3.0 off 0 pos (-47.0 0.0 0.0)" | yarp rpc /ctpservice/torso/rpc
+        echo "ctpq time 3.0 off 0 pos (0.0 0.0 30.0 0.0 0.0 5.0)" | yarp rpc /ctpservice/head/rpc
+        sleep 5.0
+        echo "ctpq time 2.5 off 0 pos (-10.0 0.0 0.0)" | yarp rpc /ctpservice/torso/rpc
+        echo "ctpq time 1.0 off 0 pos (0.0 0.0 -10.0 0.0 0.0 5.0)" | yarp rpc /ctpservice/head/rpc
+        echo "ctpq time 1.0 off 0 pos (0.0 0.0   0.0 0.0 0.0 5.0)" | yarp rpc /ctpservice/head/rpc
+
+        sleep 2.0
+        speak "Un altro oggetto ordinario e' diventato qualcosa di straordinario."
+        speak "$1"
+        sleep 0.5
+        # speak "Rimarra' a disposizione di tutti gli aspiranti meikers? nella galleria dei prototipi? sul sito vuvuvu punto dea kidz punto it"
+        speak "Rimarra' a disposizione di tutti gli aspiranti meikers? nella galleria dei prototipi sul nostro sito."
+        
+        head "start"
+        sleep 16.0
+        breathers "stop"
+        echo "ctpq time 1.2 off 0 pos (-62.0 20.0 11.0 86.0 89.0 -41.0 -4.0 17.0 90.0 0.0 163.0 0.0 0.0 0.0 0.0 250.0)" | yarp rpc /ctpservice/right_arm/rpc
+        speak "aicab passa e chiude."
+        sleep 2.0
+        go_home_helperR 1.2
+        sleep 1.5
+        breathers "start"
+    }
+    
+    chiusura_1() {
+        chiusura "Il protocollo? Super Monopattino e' chiuso e archiviato."
+    }
+
+    chiusura_2() {
+        chiusura "Il protocollo? Vestiti del Futuro e' chiuso e archiviato."
+    }
+
+    chiusura_3() {
+        chiusura "Il protocollo? Ultra Macchina e' chiuso e archiviato."
+    }
+
+    chiusura_4() {
+        chiusura "Il protocollo? Super TV e' chiuso e archiviato."
+    }
+
+    chiusura_5() {
+        chiusura "Il protocollo? Social? Taabl-et? e' chiuso e archiviato."
+    }
+
+    chiusura_6() {
+        chiusura "Il protocollo? ics Baaicc? e' chiuso e archiviato."
+    }
+
+    chiusura_7() {
+        chiusura "Il protocollo? X Pacc? e' chiuso e archiviato."
+    }
+
+    chiusura_8() {
+        chiusura "Il protocollo? X Tois? e' chiuso e archiviato."
+    }
+
+    chiusura_9() {
+        chiusura "Il protocollo? Robot Sveglia? e' chiuso e archiviato."
+    }
+
+    chiusura_10() {
+        chiusura "Il protocollo? Tenda Perfetta e' chiuso e archiviato."
     }
 
 #######################################################################################
@@ -1006,7 +1225,7 @@ fonzie() {
     }
 
 #######################################################################################
-# "MAIN" FUNCTION:                                                                #
+# "MAIN" FUNCTION:                                                                    #
 #######################################################################################
 echo "********************************************************************************"
 echo ""
