@@ -70,9 +70,10 @@ public:
         min_dt=rf.check("min_dt",Value(3.0)).asDouble();
         max_dt=rf.check("max_dt",Value(10.0)).asDouble();
         blinking=rf.check("autoStart");
+        string robot=rf.check("robot",Value("icub")).asString().c_str();
 
         emotionsPort.open(("/"+name+"/emotions/raw").c_str());
-        Network::connect(emotionsPort.getName().c_str(),"/icub/face/raw/in");
+        Network::connect(emotionsPort.getName().c_str(),"/"+robot+"/face/raw/in");
 
         rpcPort.open(("/"+name+"/rpc").c_str());
         attach(rpcPort);
@@ -147,7 +148,14 @@ public:
             reply.addString(blinking?"on":"off");
         }
         else if (cmd=="blink")
+        {
             reply.addVocab(blink()?ack:nack);
+        }
+        else if (cmd=="dblink")
+        {
+            bool res = blink() && blink();
+            reply.addVocab(res?ack:nack);
+        }
         else
             return RFModule::respond(command,reply);
 
@@ -162,7 +170,7 @@ int main(int argc, char *argv[])
     Network yarp;
     if (!yarp.checkNetwork())
     {
-        cout<<"YARP server not available!"<<endl;
+        yError("YARP server not available!");
         return -1;
     }
 
