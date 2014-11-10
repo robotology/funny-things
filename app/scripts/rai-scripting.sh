@@ -237,34 +237,77 @@ no_testa() {
 #######################################################################################
     risposta_1() {
         breathers "start"
-        speak "Oggi, aicab e' andato a caccia di novita' sulle quattro ruote."
+        smile
+        sleep 0.5 
+        speak "Grazie Annalisa per avermi invitato."
         sleep 1.0 && blink
+        sleep 2.5 && blink
+        sleep 0.5 && smile
+    }
+    
+    risposta_2() {
+        speak "I miei inventori mi hanno chiamato aicub."
+        sleep 1.0 && blink
+        sleep 1.0 && blink
+        sleep 0.5 && smile
+        sleep 1.0 && blink        
+    }
+
+    risposta_3() {        
+        sleep 0.5 
+        speak "cucciolo intelligente, perche' ho le dimensioni e la forma di un bambino, e come i bambini posso imparare cose nuove."
+        sleep 3.0 && blink
+        sleep 3.0 && blink
+        sleep 1.0 && smile
+    }
+
+    risposta_4() {
+        speak "Sono unico al mondo grazie ai miei genitori italiani, ma con me lavorano ricercatori da tutto il mondo."
+        sleep 2.0 && blink
         sleep 2.5 && blink
         sleep 1.0 && smile
     }
 
-    rubrica1_2() {
-        speak "Capo? ci pensi?"
+    risposta_5() {
+        speak "sono nato dieci anni fa dal disegno degli ingegneri che mi hanno costruito e in questi anni mi hanno insegnato a compiere azioni come un bambino di quattro anni?" 
+        sleep 2.0 && blink
         sleep 1.0 && blink
-        sleep 1.0 && smile
-        speak "E' stata usata una stampante 3D? proprio come quelle del laboratorio degli X meikers!"
-        sleep 4.0 && blink 
-        speak " Solo? Un po' piu' grande."
-        sleep 6.0 && smile # && blink
+        sleep 2.5 && blink
+        sleep 1.5 && smile
     }
 
-    rubrica1_3a() {
-        speak "Cosi', anche chi guida potra' schiacciare un pisolino durante il viaggio."
-        graspa_volante
-    }
-
-    rubrica1_3b() {
-        speak "Per oggi dal dipartimento ricerca e' tutto."
-        sleep 2.0 # && blink
-        passa_e_chiudi
+    risposta_6() {
+        speak "sono in grado riconoscere la forma degli oggetti e di afferrarli."
+        sleep 2.0 && blink
+        sleep 1.0 && smile 
         sleep 1.0
-        greet_with_right_thumb_up
+        speak "Sono capace di stare in piedi senza cadere, e ora sto imparando a camminare come voi umani."
+        sleep 1.5 && blink
+        sleep 1.5 && blink
+        sleep 1.0 && smile
     }
+
+    risposta_7() {
+        sleep 0.5 
+        speak "la mia casa e' all'Istituto Italiano di Tecnologia a Genova, ma prima di venire a RaiNext ero a Madrid?, per incontrare scienziati interessati a sviluppare la mia intelligenza."
+        sleep 2.0 && blink
+        sleep 2.5 && blink
+        sleep 1.5 && blink
+        speak "Viaggio molto per farmi conoscere, anche dalle persone che non lavorano nella ricerca. Sono stato a niu York, a Mosca, a Parigi, a Tokyo, a Londra e in tante altre citta' del mondo."
+        sleep 3.0 && blink
+        sleep 3.5 && blink
+        sleep 1.5 && smile
+    }
+    
+    
+    risposta_8() {
+        speak "oltre a me esistono altri 30 aicub nel mondo, in laboratori che studiano l'intelligenza artificiale, come negli Stati Uniti, in Giappone e in alcune citta' Europee."
+        sleep 2.0 && blink
+        sleep 2.5 && blink
+        sleep 1.0 && smile
+    }
+
+
 
 #######################################################################################
 # RUBRICA  2:                                                                         #
