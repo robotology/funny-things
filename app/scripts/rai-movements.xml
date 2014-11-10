@@ -1,0 +1,76 @@
+<application>
+    <name>Dea Movements</name>
+
+    <module>
+        <name>iCubBreather</name>
+        <parameters>--name iCubBreatherRA --part right_arm --autoStart</parameters>
+        <node>localhost</node>
+        <stdio></stdio>
+    </module>
+    <module>
+        <name>iCubBreather</name>
+        <parameters>--name iCubBreatherLA --part left_arm --autoStart</parameters>
+        <node>localhost</node>
+        <stdio></stdio>
+    </module>
+    <module>
+        <name>iCubBreather</name>
+        <parameters>--name iCubBreatherT --part torso --autoStart</parameters>
+        <node>localhost</node>
+        <stdio></stdio>
+    </module>
+    <module>
+        <name>iCubBreather</name>
+        <parameters>--name iCubBreatherH --part head --autoStart --rate 1500</parameters>
+        <node>localhost</node>
+        <stdio></stdio>
+    </module>
+    <module>
+        <name>ctpService</name>
+        <parameters>--robot icub --part head</parameters>
+        <node>localhost</node>
+        <stdio></stdio>
+    </module>
+    <module>
+        <name>ctpService</name>
+        <parameters>--robot icub --part left_arm</parameters>
+        <node>localhost</node>
+        <stdio></stdio>
+    </module>
+    <module>
+        <name>ctpService</name>
+        <parameters>--robot icub --part right_arm</parameters>
+        <node>localhost</node>
+        <stdio></stdio>
+    </module>
+    <module>
+        <name>ctpService</name>
+        <parameters>--robot icub --part torso</parameters>
+        <node>localhost</node>
+        <stdio></stdio>
+    </module>
+    <module>
+        <name>iCubBlinker</name>
+        <parameters>--autoStart</parameters>
+        <node>localhost</node>
+        <stdio></stdio>
+    </module>
+    <module>
+        <name>iSpeak</name>
+        <parameters>--package acapelacmd --package_options icub_ita</parameters>
+        <node>icub-win1</node>
+        <stdio></stdio>
+    </module>
+    
+    <connection>
+        <from>/iCubBlinker/emotions/raw</from>
+        <to>/icub/face/raw/in</to>
+        <protocol>tcp</protocol>
+    </connection>  
+    <connection>
+        <from>/iSpeak/emotions:o</from>
+        <to>/icub/face/emotions/in</to>
+        <protocol>tcp</protocol>
+    </connection>    
+
+</application>
