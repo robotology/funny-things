@@ -56,19 +56,19 @@ blink() {
 
 breathers() {
     # echo "$1"  | yarp rpc /iCubBlinker/rpc
-    echo "$1" | yarp rpc /iCubBreatherH/rpc:i
-    #echo "$1" | yarp rpc /iCubBreatherRA/rpc:i
-    #sleep 0.4
-    #echo "$1" | yarp rpc /iCubBreatherLA/rpc:i
+    # echo "$1" | yarp rpc /iCubBreatherH/rpc:i
+    echo "$1" | yarp rpc /iCubBreatherRA/rpc:i
+    sleep 0.4
+    echo "$1" | yarp rpc /iCubBreatherLA/rpc:i
 }
 
-#breathersL() {
-#    echo "$1" | yarp rpc /iCubBreatherLA/rpc:i
-#}
+breathersL() {
+   echo "$1" | yarp rpc /iCubBreatherLA/rpc:i
+}
 
-#breathersR() {
-#    echo "$1" | yarp rpc /iCubBreatherRA/rpc:i
-#}
+breathersR() {
+   echo "$1" | yarp rpc /iCubBreatherRA/rpc:i
+}
 
 head() {
     echo "$1" | yarp rpc /iCubBreatherH/rpc:i
@@ -83,31 +83,30 @@ start_breathers() {
 }
 
 go_home_helper() {
-    # This is with the arms close to the legs
-    # echo "ctpq time $1 off 0 pos (-6.0 23.0 25.0 29.0 -24.0 -3.0 -3.0 19.0 29.0 8.0 30.0 32.0 42.0 50.0 50.0 114.0)" | yarp rpc /ctpservice/right_arm/rpc
-    # echo "ctpq time $1 off 0 pos (-6.0 23.0 25.0 29.0 -24.0 -3.0 -3.0 19.0 29.0 8.0 30.0 32.0 42.0 50.0 50.0 114.0)" | yarp rpc /ctpservice/left_arm/rpc
-    # This is with the arms over the table
-    # go_home_helperR $1
-    # go_home_helperL $1
-    # echo "ctpq time 1.0 off 0 pos (0.0 0.0 10.0 0.0 0.0 5.0)" | yarp rpc /ctpservice/head/rpc
+    go_home_helperR $1
+    go_home_helperL $1
     go_home_helperH $1
 }
 
 go_home_helperL()
 {
+    # This is with the arms over the table
     # echo "ctpq time $1 off 0 pos (-30.0 36.0 0.0 60.0 0.0 0.0 0.0 19.0 29.0 8.0 30.0 32.0 42.0 50.0 50.0 114.0)" | yarp rpc /ctpservice/left_arm/rpc
+    # This is with the arms close to the legs
     echo "ctpq time $1 off 0 pos (-6.0 23.0 25.0 29.0 -24.0 -3.0 -3.0 19.0 29.0 8.0 30.0 32.0 42.0 50.0 50.0 114.0)" | yarp rpc /ctpservice/left_arm/rpc
 }
 
 go_home_helperR()
 {
+    # This is with the arms over the table
     # echo "ctpq time $1 off 0 pos (-30.0 36.0 0.0 60.0 0.0 0.0 0.0 19.0 29.0 8.0 30.0 32.0 42.0 50.0 50.0 114.0)" | yarp rpc /ctpservice/right_arm/rpc
+    # This is with the arms close to the legs
     echo "ctpq time $1 off 0 pos (-6.0 23.0 25.0 29.0 -24.0 -3.0 -3.0 19.0 29.0 8.0 30.0 32.0 42.0 50.0 50.0 114.0)" | yarp rpc /ctpservice/right_arm/rpc
 }
 
 go_home_helperH()
 {
-    echo "ctpq time $1 off 0 pos (0.0 0.0 5.0 0.0 0.0 5.0)" | yarp rpc /ctpservice/head/rpc
+    echo "ctpq time $1 off 0 pos (0.0 0.0 0.0 0.0 0.0 5.0)" | yarp rpc /ctpservice/head/rpc
 }
 
 go_homeH() {
@@ -127,46 +126,20 @@ go_home() {
 greet_with_right_thumb_up() {
     # Copy and modify to V sign
     breathers "stop"
-    echo "ctpq time 1.0 off 0 pos (-44.0 36.0 54.0 91.0 -45.0 0.0 12.0 21.0 14.0 0.0 0.0 59.0 140.0 80.0 125.0 210.0)" | yarp rpc /ctpservice/right_arm/rpc
+    echo "ctpq time 1.5 off 0 pos (-44.0 36.0 54.0 91.0 -45.0 0.0 12.0 21.0 14.0 0.0 0.0 59.0 140.0 80.0 125.0 210.0)" | yarp rpc /ctpservice/right_arm/rpc
     sleep 1.5 && smile && sleep 1.5
-    go_home_helper 1.5
-    sleep 2.0
+    go_home
     breathers "start"
 }
 
 greet_with_left_thumb_up() {
     # Copy and modify to V sign
     breathers "stop"
-    echo "ctpq time 2.0 off 0 pos (-44.0 36.0 54.0 91.0 -45.0 0.0 12.0 21.0 14.0 0.0 0.0 59.0 140.0 80.0 125.0 210.0)" | yarp rpc /ctpservice/left_arm/rpc
+    echo "ctpq time 1.5 off 0 pos (-44.0 36.0 54.0 91.0 -45.0 0.0 12.0 21.0 14.0 0.0 0.0 59.0 140.0 80.0 125.0 210.0)" | yarp rpc /ctpservice/left_arm/rpc
     sleep 1.5 && smile && sleep 1.5
-    go_home_helperL 1.5
-    breathersL "start"
-    head "start"
+    go_home
+    breathers "start"
 }
-
-#greet_like_god() {
-#    breathers "stop"
-#    echo "ctpq time 1.5 off 0 pos (-70.0 40.0 -7.0 100.0 60.0 -20.0 2.0 20.0 29.0 3.0 11.0 3.0 0.0 0.0 0.0 0.0)" | yarp rpc /ctpservice/right_arm/rpc
-#    echo "ctpq time 1.5 off 0 pos (-70.0 40.0 -7.0 100.0 60.0 -20.0 2.0 20.0 29.0 3.0 11.0 3.0 0.0 0.0 0.0 0.0)" | yarp rpc /ctpservice/left_arm/rpc
-#    sleep 1.0
-#    echo "ctpq time 0.7 off 0 pos (-70.0 50.0 -30.0 80.0 40.0 -5.0 10.0)" | yarp rpc /ctpservice/right_arm/rpc
-#    echo "ctpq time 0.7 off 0 pos (-70.0 50.0 -30.0 80.0 40.0 -5.0 10.0)" | yarp rpc /ctpservice/left_arm/rpc
-#    # speak "Buongiorno capo!"
-#    speak "Bentornato. capo!"
-#    echo "ctpq time 0.7 off 0 pos (-70.0 40.0 -7.0 100.0 60.0 -20.0 2.0)" | yarp rpc /ctpservice/right_arm/rpc
-#    echo "ctpq time 0.7 off 0 pos (-70.0 40.0 -7.0 100.0 60.0 -20.0 2.0)" | yarp rpc /ctpservice/left_arm/rpc
-#
-#    # echo "ctpq time 0.7 off 0 pos (-70.0 50.0 -30.0 80.0 40.0 -5.0 10.0)" | yarp rpc /ctpservice/right_arm/rpc
-#    # echo "ctpq time 0.7 off 0 pos (-70.0 50.0 -30.0 80.0 40.0 -5.0 10.0)" | yarp rpc /ctpservice/left_arm/rpc
-#
-#    # echo "ctpq time 0.7 off 0 pos (-70.0 40.0 -7.0 100.0 60.0 -20.0 2.0)" | yarp rpc /ctpservice/right_arm/rpc
-#    # echo "ctpq time 0.7 off 0 pos (-70.0 40.0 -7.0 100.0 60.0 -20.0 2.0)" | yarp rpc /ctpservice/left_arm/rpc
-#    # sleep 1.5 && smile
-#    sleep 1.0 && smile
-#
-#    go_home_helper 2.0
-#}
-
 
 smile() {
     echo "set all hap" | yarp rpc /icub/face/emotions/in
@@ -194,52 +167,15 @@ angry() {
     echo "set all ang" | yarp rpc /icub/face/emotions/in
 }
 
-
-saluta() {
-    breathers "stop"
-    echo "ctpq time 1.5 off 0 pos (-60.0 44.0 -2.0 96.0 53.0 -17.0 -11.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0)" | yarp rpc /ctpservice/left_arm/rpc
-    sleep 2.0 && speak "Salve colleghi."
-    echo "ctpq time 0.5 off 0 pos (-60.0 44.0 -2.0 96.0 53.0 -17.0  25.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0)" | yarp rpc /ctpservice/left_arm/rpc
-    echo "ctpq time 0.5 off 0 pos (-60.0 44.0 -2.0 96.0 53.0 -17.0 -11.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0)" | yarp rpc /ctpservice/left_arm/rpc
-    echo "ctpq time 0.5 off 0 pos (-60.0 44.0 -2.0 96.0 53.0 -17.0  25.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0)" | yarp rpc /ctpservice/left_arm/rpc
-    echo "ctpq time 0.5 off 0 pos (-60.0 44.0 -2.0 96.0 53.0 -17.0 -11.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0)" | yarp rpc /ctpservice/left_arm/rpc
-    smile
-    go_home
-    smile
-}
-
-closing_remarks() {
-    meteo_bot
-    speak "Da aicab e' tutto. Fascicolo $1 terminato."
-    sleep 1.5 && blink
-    sleep 3.0 && blink && smile
-    speak "In bocca al lupo meikers"
-    smile
-    greet_with_right_thumb_up   
-    smile
-}
-
-no_testa() {
-    head "stop"
-    echo "ctpq time 0.5 off 0 pos (0.0 0.0  15.0 0.0 0.0 5.0)" | yarp rpc /ctpservice/head/rpc
-    echo "ctpq time 0.5 off 0 pos (0.0 0.0  -5.0 0.0 0.0 5.0)" | yarp rpc /ctpservice/head/rpc
-    echo "ctpq time 0.5 off 0 pos (0.0 0.0  15.0 0.0 0.0 5.0)" | yarp rpc /ctpservice/head/rpc
-    echo "ctpq time 0.5 off 0 pos (0.0 0.0  -5.0 0.0 0.0 5.0)" | yarp rpc /ctpservice/head/rpc
-    echo "ctpq time 0.5 off 0 pos (0.0 0.0   5.0 0.0 0.0 5.0)" | yarp rpc /ctpservice/head/rpc
-    head "start"
-    go_home
-}
-
 wait_till_quiet() {
-
     sleep 0.3
     isSpeaking=$(echo "stat" | yarp rpc /iSpeak/rpc)
     while [ "$isSpeaking" == "Response: speaking" ]; do
         isSpeaking=$(echo "stat" | yarp rpc /iSpeak/rpc)
         sleep 0.1        
-        echo $isSpeaking
+        # echo $isSpeaking
     done
-    echo "Sono uscito!"
+    echo "I'm not speaking any more :)"
     echo $isSpeaking
 }
 
@@ -247,43 +183,18 @@ wait_till_quiet() {
 # FUNZIONI LANCIO
 #######################################################################################
 
-vittoria_braccio_destro() {
-
-    breathers "stop"
-    #echo "ctpq time 1.0 off 0 pos (-44.0 36.0 54.0 91.0 -45.0 0.0 12.0 21.0 14.0 0.0 0.0 59.0 140.0 80.0 125.0 210.0)" | yarp rpc /ctpservice/right_arm/rpc
-    
-    # TODO: Add right arm joint coordinates here
-    echo "ctpq time 2.0 off 0 pos (-57 32 -1 88 56 -30 -11 18 40 50 167 10 0 0 0 222)" | yarp rpc /ctpservice/right_arm/rpc
-    
-    sleep 1.5 && smile && sleep 1.5
-
-    sleep 2.0
-    breathers "start"
+vittoria() {    
+    echo "ctpq time 1.0 off 7 pos                                       (18.0 40.0 50.0 167.0 0.0 0.0 0.0 0.0 222.0)" | yarp rpc /ctpservice/$1/rpc
+    echo "ctpq time 2.0 off 0 pos (-57.0 32.0 -1.0 88.0 56.0 -30.0 -11.0 18.0 40.0 50.0 167.0 0.0 0.0 0.0 0.0 222.0)" | yarp rpc /ctpservice/$1/rpc
 }
-
-vittoria_braccio_sinistro() {
-
-    breathers "stop"
-    #echo "ctpq time 1.0 off 0 pos (-44.0 36.0 54.0 91.0 -45.0 0.0 12.0 21.0 14.0 0.0 0.0 59.0 140.0 80.0 125.0 210.0)" | yarp rpc /ctpservice/right_arm/rpc
-    
-    # TODO: Add right arm joint coordinates here
-    echo "ctpq time 2.0 off 0 pos (-57 32 -1 88 56 -30 -11 18 40 50 167 10 0 0 0 222)" | yarp rpc /ctpservice/left_arm/rpc
-    
-    sleep 1.5 && smile && sleep 1.5
-
-    sleep 2.0
-    breathers "start"
-}
-
 
 lancio_destro() {
     breathers "stop"
 
-    vittoria_braccio_destro
-    sleep 3.0
+    vittoria "right_arm"
+    sleep 3.0 && smile && sleep 3.0
 
-    breathers "stop"
-    go_home_helperR 4.0
+    go_home_helperR 2.0
     breathers "start"    
 }
 
@@ -291,25 +202,21 @@ lancio_destro() {
 lancio_sinistro() {
     breathers "stop"
 
-    vittoria_braccio_sinistro
-    sleep
+    vittoria "left_arm"
+    sleep 3.0 && smile && sleep 3.0
 
-
-    breathers "stop"
-    go_home_helperL 4.0
+    go_home_helperL 2.0
     breathers "start"  
 }
 
 lancio_due_mani() {
     breathers "stop"
 
-    echo "ctpq time 2.0 off 0 pos (-57 32 -1 88 56 -30 -11 18 40 50 167 10 0 0 0 222)" | yarp rpc /ctpservice/left_arm/rpc
-    echo "ctpq time 2.0 off 0 pos (-57 32 -1 88 56 -30 -11 18 40 50 167 10 0 0 0 222)" | yarp rpc /ctpservice/right_arm/rpc
-    sleep 5.0
-    breathers "stop"
-    go_home_helperL 4.0
-    go_home_helperR 4.0
+    vittoria "right_arm"
+    vittoria "left_arm"
+    sleep 3.0 && smile && sleep 3.0
 
+    go_home
     breathers "start"  
 }
 
@@ -377,7 +284,7 @@ lancio_due_mani() {
         wait_till_quiet
         blink
         smile 
-        sleep 1.0  
+        sleep 0.4  
 
         speak "Sono capace di stare in piedi senza cadere, e ora sto imparando a camminare come voi umani."
         sleep 1.5 && blink
@@ -433,9 +340,7 @@ lancio_due_mani() {
     }
 
     risposta_11() {
-
-        
-        speak "Mi trovo molto bene all'istituto italiano di tecnologia, perche' ci sono ricercatori da tutto il mondo che lavorano per creare tecnologie che cambieranno il mondo."
+        speak "Mi trovo molto bene all'i i i t, perche' ci sono ricercatori da tutto il mondo che lavorano per creare tecnologie che cambieranno il nostro futuro."
         sleep 4.0 && blink
         wait_till_quiet
         blink
@@ -476,7 +381,7 @@ lancio_due_mani() {
 
     risposta_15() {
 
-        speak "i sentimenti di voi umani sono un fenomeno molto complesso che molti scienziati stanno studiando. Per il momento non e' stato replicato dentro di me. Ma posso riconoscere dall'espressione del vostro volto, se siete tristi o felici. Come un vero amico\!"
+        speak "i sentimenti di voi umani sono un fenomeno complesso, che molti scienziati stanno studiando. Per il momento non e' stato replicato dentro di me. Ma posso riconoscere dall'espressione del vostro volto, se siete tristi o felici. Come un vero amico\!"
         sleep 9.0 && blink
         sleep 5.0 && blink && blink
         wait_till_quiet
