@@ -71,14 +71,14 @@ bool iCubBreatherThread::threadInit()
     if (verbosity >= 1)
     {
         printMessage(1,"Noise std deviations: ");
-        for (int i = 0; i < noiseStDvtns.size(); i++)
+        for (size_t i = 0; i < noiseStDvtns.size(); i++)
         {
             printf("%g\t",noiseStDvtns[i]);
         }
         printf("\n");
 
         printMessage(1,"Ref speeds          : ");
-        for (int i = 0; i < refSpeeds.size(); i++)
+        for (size_t i = 0; i < refSpeeds.size(); i++)
         {
             printf("%g\t",refSpeeds[i]);
         }
@@ -208,14 +208,14 @@ bool iCubBreatherThread::setCtrlModes(const string &_s)
 
     if (_s=="position")
     {
-        for (size_t i = 0; i < jnts; i++)
+        for (int i = 0; i < jnts; i++)
         {
             modes.push_back(VOCAB_CM_POSITION);
         }
     }
     else if (_s=="velocity")
     {
-        for (size_t i = 0; i < jnts; i++)
+        for (int i = 0; i < jnts; i++)
         {
             modes.push_back(VOCAB_CM_VELOCITY);
         }
