@@ -17,8 +17,6 @@
 
 /**
 \defgroup icub_iCubBreather iCubBreather
-@ingroup icub_deaMovements
-
 A module for implementing the IMU IDENTIFIER on the iCub.
 
 Date first release: 07/07/2014
@@ -279,7 +277,7 @@ int main(int argc, char * argv[])
 {
     ResourceFinder rf;
     rf.setVerbose(false);
-    rf.setDefaultContext("deaMovements");
+    rf.setDefaultContext("funny-things");
     rf.setDefaultConfigFile("iCubBreather.ini");
     rf.configure(argc,argv);
 

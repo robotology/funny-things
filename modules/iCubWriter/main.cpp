@@ -620,7 +620,7 @@ int main(int argc, char *argv[])
 
     ResourceFinder rf;
     rf.setVerbose(true);
-    rf.setDefaultContext("iCubWriter");
+    rf.setDefaultContext("funny-things");
     rf.setDefaultConfigFile("iCubWriter.ini");
     rf.setDefault("part","right_arm");
     rf.setDefault("hand_sequences_file","hand_sequences.ini");

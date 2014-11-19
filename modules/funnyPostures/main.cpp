@@ -842,7 +842,7 @@ int main(int argc, char *argv[])
     YARP_REGISTER_DEVICES(icubmod)
 
     ResourceFinder rf;
-    rf.setDefaultContext("funnyPostures");
+    rf.setDefaultContext("funny-things");
     rf.setDefaultConfigFile("emotions.ini");
     rf.configure(argc,argv);
     
