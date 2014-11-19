@@ -3,7 +3,8 @@
 # CopyPolicy: Released under the terms of the GNU GPL v2.0.
 
 cmake_minimum_required(VERSION 2.8)
-project(funny-things)
+set(PROJECTNAME funny-things)
+project(${PROJECTNAME})
 
 find_package(YARP REQUIRED)
 find_package(ICUB REQUIRED)

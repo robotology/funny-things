@@ -13,6 +13,7 @@ iCubBreatherThread::iCubBreatherThread(int _rate, string _name, string _robot, s
 
     ResourceFinder &rf = const_cast<ResourceFinder&>(_rf);
     groupPartBottle = rf.findGroup(part.c_str());
+    rate=getRate();
 }
 
 bool iCubBreatherThread::threadInit()
@@ -126,6 +127,11 @@ void iCubBreatherThread::run()
         printMessage(0,"New target: %s\n",newTarget.toString(3,3).c_str());
         goToTarget(newTarget);
     }
+
+    // modulate period
+    double curRate=getRate();
+    double nextRate=rate+yarp::os::Random::normal(0,500.0);
+    setRate((int)nextRate);
 }
 
 Vector iCubBreatherThread::computeNewTarget()

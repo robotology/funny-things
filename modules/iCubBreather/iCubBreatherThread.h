@@ -51,6 +51,7 @@ protected:
     string part;        // Arm to control (either "right_arm" or "left_arm")
     double noiseStd;
     double refSpeed;
+    double rate;
 
     // Classical interfaces
     PolyDriver          dd;   // head device driver
