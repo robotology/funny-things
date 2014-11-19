@@ -5,4 +5,8 @@
 add_subdirectory(iCubBlinker)
 add_subdirectory(iCubBreather)
 add_subdirectory(funnyPostures)
-add_subdirectory(iCubWriter)
+
+option(include_iCubWriter "include iCubWriter module" OFF)
+if (include_iCubWriter)
+    add_subdirectory(iCubWriter)
+endif()
