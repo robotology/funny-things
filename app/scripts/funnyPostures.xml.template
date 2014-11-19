@@ -1,0 +1,44 @@
+<application>
+	<name>Funny Postures Demo</name>
+    <dependencies>
+        <port>/skinManager/skin_events:o</port>
+    </dependencies>
+
+	<module>
+		<name>objectsPropertiesCollector</name>
+		<parameters>--name OPC --nosave --empty</parameters>
+        <node>node1</node>
+		<tag>opcMod</tag>
+	</module>
+	<module>
+		<name>awareTouch</name>
+        <node>node1</node>
+		<tag>touchMod</tag>
+	</module>
+	<module>
+		<name>funnyPostures</name>
+        <node>node1</node>
+		<tag>postureMod</tag>
+	</module>
+
+    <connection>
+        <from>/funnyPostures/emotions/raw</from>
+        <to>/icub/face/raw/in</to>
+        <protocol>tcp</protocol>
+    </connection>
+    <connection>
+        <from>/funnyPostures/iol/status:rpc</from>
+        <to>/iolStateMachineHandler/rpc</to>
+        <protocol>tcp</protocol>
+    </connection>
+    <connection>
+        <from>/funnyPostures/iol/human:rpc</from>
+        <to>/iolStateMachineHandler/human:rpc</to>
+        <protocol>tcp</protocol>
+    </connection>
+    <connection>
+        <from>/awareTouch/events:o</from>
+        <to>/funnyPostures/rpc</to>
+        <protocol>tcp</protocol>
+    </connection>
+</application>

@@ -4,8 +4,9 @@
 
 cmake_minimum_required(VERSION 2.8)
 
-file(GLOB scripts ${CMAKE_CURRENT_SOURCE_DIR}/scripts/*.xml)
-file(GLOB conf    ${CMAKE_CURRENT_SOURCE_DIR}/conf/*.ini)
+file(GLOB scripts  ${CMAKE_CURRENT_SOURCE_DIR}/scripts/*.template)
+file(GLOB conf_ini ${CMAKE_CURRENT_SOURCE_DIR}/conf/*.ini)
+file(GLOB conf_svg ${CMAKE_CURRENT_SOURCE_DIR}/conf/*.svg)
 
-yarp_install(FILES ${conf}    DESTINATION ${ICUBCONTRIB_CONTEXTS_INSTALL_DIR}/deaMovements)
-yarp_install(FILES ${scripts} DESTINATION ${ICUBCONTRIB_APPLICATIONS_TEMPLATES_INSTALL_DIR})
+yarp_install(FILES ${conf_ini} ${conf_svg} DESTINATION ${ICUBCONTRIB_CONTEXTS_INSTALL_DIR}/${PROJECTNAME})
+yarp_install(FILES ${scripts}              DESTINATION ${ICUBCONTRIB_APPLICATIONS_TEMPLATES_INSTALL_DIR})

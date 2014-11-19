@@ -4,3 +4,5 @@
 
 add_subdirectory(iCubBlinker)
 add_subdirectory(iCubBreather)
+add_subdirectory(funnyPostures)
+add_subdirectory(iCubWriter)
