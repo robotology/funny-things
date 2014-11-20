@@ -96,8 +96,9 @@ bool iCubBreatherThread::threadInit()
     }
     ipos->setRefSpeeds(tmp.data());
 
-    yarp::math::Rand::init();
-    // yarp::os::Random::seed(int(yarp::os::Time::now()));
+    double t0   = yarp::os::Time::now();
+    double seed = 1000.0 * (t0 -(long)t0);
+    yarp::os::Random::seed(int(seed));
 
     return true;
 }
@@ -129,7 +130,6 @@ void iCubBreatherThread::run()
     }
 
     // modulate period
-    double curRate=getRate();
     double nextRate=rate+yarp::os::Random::normal(0,500.0);
     setRate((int)nextRate);
 }
