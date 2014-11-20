@@ -28,7 +28,7 @@ bool iCubBreatherThread::threadInit()
 
     if (!dd.open(Opt))
     {
-        printMessage(0,"ERROR: could not open %s PolyDriver!\n",part.c_str());
+        yError(" could not open %s PolyDriver!",part.c_str());
         return false;
     }
 
@@ -41,7 +41,7 @@ bool iCubBreatherThread::threadInit()
 
     if (!ok)
     {
-        printMessage(0,"\nERROR: Problems acquiring %s interfaces!!!!\n",part.c_str());
+        yError(" Problems acquiring %s interfaces!!!!",part.c_str());
         return false;
     }
 
@@ -112,11 +112,11 @@ void iCubBreatherThread::run()
 
         if (!iencs->getEncoders(encs_0.data()))
         {
-            printMessage(0,"ERROR: Error reading encoders, check connectivity with the robot!\n");
+            yError(" Error reading encoders, check connectivity with the robot!");
         }
         else
         {
-            printMessage(0,"Home position %s\n",encs_0.toString(3,3).c_str());
+            yInfo("Home position %s",encs_0.toString(3,3).c_str());
             onStart = false;
         }
     }
@@ -125,7 +125,7 @@ void iCubBreatherThread::run()
     if (isRunning)
     {
         Vector newTarget = computeNewTarget();
-        printMessage(0,"New target: %s\n",newTarget.toString(3,3).c_str());
+        yInfo("New target: %s",newTarget.toString(3,3).c_str());
         goToTarget(newTarget);
     }
 
@@ -159,7 +159,7 @@ bool iCubBreatherThread::goToTarget(const Vector &nT)
     if (!areJointsHealthyAndSet(jointsToSet,"position"))
     {
         stopBreathing();
-        printMessage(0,"ERROR: joints are not healthy!");
+        yError(" joints are not healthy!");
         return false;
     }
     else
@@ -170,7 +170,7 @@ bool iCubBreatherThread::goToTarget(const Vector &nT)
         }
         else
         {
-            printMessage(0,"ERROR: setCtrlModes returned false!\n");
+            yError(" setCtrlModes returned false!");
             return false;
         }
     }
@@ -205,7 +205,7 @@ bool iCubBreatherThread::areJointsHealthyAndSet(VectorOf<int> &jointsToSet,const
 
 bool iCubBreatherThread::setCtrlModes(const string &_s)
 {
-    printMessage(1,"Setting %s mode for %s joints..\n",_s.c_str(),part.c_str());
+    yDebug("Setting %s mode for %s joints..",_s.c_str(),part.c_str());
 
     if (_s!="position" && _s!="velocity")
         return false;
@@ -274,10 +274,10 @@ int iCubBreatherThread::printMessage(const int l, const char *f, ...) const
 
 void iCubBreatherThread::threadRelease()
 {
-    printMessage(0,"Putting %s in home position..\n",part.c_str());
+    yInfo("Putting %s in home position..",part.c_str());
         goHome();
 
-    printMessage(0,"Closing controllers..\n");
+    yInfo("Closing controllers..");
         dd.close();
 }
 

@@ -171,65 +171,64 @@ class iCubBreather: public RFModule
                 if (rf.check("name"))
                 {
                     name = rf.find("name").asString();
-                    printf("*** Module name set to %s\n",name.c_str());  
+                    yInfo("*** Module name set to %s",name.c_str());  
                 }
-                else printf("*** Module name set to default, i.e. %s\n",name.c_str());
+                else yInfo("*** Module name set to default, i.e. %s",name.c_str());
                 setName(name.c_str());
 
             //****************** rate ******************
                 if (rf.check("rate"))
                 {
                     rate = rf.find("rate").asInt();
-                    printf(("*** "+name+": thread working at %i ms\n").c_str(), rate);
+                    yInfo(("*** "+name+": thread working at %i ms").c_str(), rate);
                 }
-                else printf(("*** "+name+": could not find rate in the config file; using %i ms as default\n").c_str(), rate);
+                else yInfo(("*** "+name+": could not find rate in the config file; using %i ms as default").c_str(), rate);
 
             //******************* VERBOSE ******************
                 if (rf.check("verbosity"))
                 {
                     verbosity = rf.find("verbosity").asInt();
-                    printf(("*** "+name+": verbosity set to %i\n").c_str(),verbosity);
+                    yInfo(("*** "+name+": verbosity set to %i").c_str(),verbosity);
                 }
-                else printf(("*** "+name+": could not find verbosity option in the config file; using %i as default\n").c_str(),verbosity);
+                else yInfo(("*** "+name+": could not find verbosity option in the config file; using %i as default").c_str(),verbosity);
 
             //******************* NOISESTD ******************
                 if (rf.check("noiseStd"))
                 {
                     noiseStd = rf.find("noiseStd").asDouble();
-                    printf(("*** "+name+": noiseStd set to %g\n").c_str(),noiseStd);
+                    yInfo(("*** "+name+": noiseStd set to %g").c_str(),noiseStd);
                 }
-                else printf(("*** "+name+": could not find noiseStd option in the config file; using %g as default\n").c_str(),noiseStd);
+                else yInfo(("*** "+name+": could not find noiseStd option in the config file; using %g as default").c_str(),noiseStd);
 
             //******************* REFPEEDS ******************
                 if (rf.check("refSpeeds"))
                 {
                     refSpeeds = rf.find("refSpeeds").asDouble();
-                    printf(("*** "+name+": refSpeeds set to %g\n").c_str(),refSpeeds);
+                    yInfo(("*** "+name+": refSpeeds set to %g").c_str(),refSpeeds);
                 }
-                else printf(("*** "+name+": could not find refSpeeds option in the config file; using %g as default\n").c_str(),refSpeeds);
+                else yInfo(("*** "+name+": could not find refSpeeds option in the config file; using %g as default").c_str(),refSpeeds);
 
             //******************* ROBOT ******************
                 if (rf.check("robot"))
                 {
                     robot = rf.find("robot").asString();
-                    printf(("*** "+name+": robot is %s\n").c_str(),robot.c_str());
+                    yInfo(("*** "+name+": robot is %s").c_str(),robot.c_str());
                 }
-                else printf(("*** "+name+": could not find robot option in the config file; using %s as default\n").c_str(),robot.c_str());
+                else yInfo(("*** "+name+": could not find robot option in the config file; using %s as default").c_str(),robot.c_str());
 
             //******************* PART *******************
                 if (rf.check("part"))
                 {
                     part = rf.find("part").asString();
-                    printf(("*** "+name+": part is %s\n").c_str(),part.c_str());
+                    yInfo(("*** "+name+": part is %s").c_str(),part.c_str());
                 }
-                else printf(("*** "+name+": could not find part option in the config file; using %s as default\n").c_str(),part.c_str());
+                else yInfo(("*** "+name+": could not find part option in the config file; using %s as default").c_str(),part.c_str());
 
             //************* AUTOSTART *******************
                 if (rf.check("autoStart"))
                 {
                     autoStart = true;
                 }
-
 
             //****************** THREAD ******************
                 iCubBreatherThrd = new iCubBreatherThread(rate, name, robot, part, autoStart,
@@ -241,10 +240,10 @@ class iCubBreather: public RFModule
                 {
                     delete iCubBreatherThrd;
                     iCubBreatherThrd = 0;
-                    cout << "\nERROR!!! iCubBreatherThread wasn't instantiated!!\n";
+                    yError(" iCubBreatherThread wasn't instantiated!!");
                     return false;
                 }
-                cout << "ICUB BREATHER: iCubBreatherThread istantiated...\n";
+                yInfo("ICUB BREATHER: iCubBreatherThread istantiated..");
 
             //************************ RPC ***********************
                 rpcSrvr.open(("/"+name+"/rpc:i").c_str());
@@ -255,7 +254,7 @@ class iCubBreather: public RFModule
 
         bool close()
         {
-            cout << "ICUB BREATHER: Stopping threads.." << endl;
+            yInfo("ICUB BREATHER: Stopping threads..");
             if (iCubBreatherThrd)
             {
                 iCubBreatherThrd->stop();
@@ -301,7 +300,7 @@ int main(int argc, char * argv[])
     Network yarp;
     if (!yarp.checkNetwork())
     {
-        printf("No Network!!!\n");
+        yInfo("No Network!!!\n");
         return -1;
     }
 
