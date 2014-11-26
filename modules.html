@@ -1,0 +1,19 @@
+---
+layout: post-index
+title: Modules
+description: "A list of all the modules that have been created for this repo, ordered by date."
+comments: false
+---
+
+{% for post in site.posts %}
+{% if post.tags contains 'module' %}
+    <article>
+        {% if post.thumbnail %}<img src="img/portfolio/{{ post.thumbnail }}" class="img-responsive" alt="">{% endif %}
+        <div class="portfolio-caption">
+            <h4 class="service-heading"><a href="{{ site.baseurl }}{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a></h4>
+            <p class="text-muted">{% for category in post.category %} {{ category }}, {% endfor %}</p>
+            <p>{% if post.description %}{{ post.description }}{% else if post.subtitle%}{{ post.subtitle }}{% else %}{{ post.content | strip_html | strip_newlines | truncate: 280 }}&hellip;{% endif %} <a href="{{ site.baseurl }}{{ post.url }}">Continue reading</a></p>
+        </div>
+    </article>
+{% endif %}
+{% endfor %}
