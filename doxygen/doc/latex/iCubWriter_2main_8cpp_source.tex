@@ -1,0 +1,604 @@
+\doxysection{main.\+cpp}
+\label{iCubWriter_2main_8cpp_source}\index{/home/runner/work/funny-\/things/funny-\/things/gh-\/pages/modules/iCubWriter/main.cpp@{/home/runner/work/funny-\/things/funny-\/things/gh-\/pages/modules/iCubWriter/main.cpp}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*\ }}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ Copyright\ (C)\ 2013\ iCub\ Facility\ -\/\ Istituto\ Italiano\ di\ Tecnologia}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *\ Author:\ Ugo\ Pattacini}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *\ email:\ \ ugo.pattacini@iit.it}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *\ Permission\ is\ granted\ to\ copy,\ distribute,\ and/or\ modify\ this\ program}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *\ under\ the\ terms\ of\ the\ GNU\ General\ Public\ License,\ version\ 2\ or\ any}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ later\ version\ published\ by\ the\ Free\ Software\ Foundation.}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00009\ \textcolor{comment}{\ *\ A\ copy\ of\ the\ license\ can\ be\ found\ at}}
+\DoxyCodeLine{00010\ \textcolor{comment}{\ *\ http://www.robotcub.org/icub/license/gpl.txt}}
+\DoxyCodeLine{00011\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00012\ \textcolor{comment}{\ *\ This\ program\ is\ distributed\ in\ the\ hope\ that\ it\ will\ be\ useful,\ but}}
+\DoxyCodeLine{00013\ \textcolor{comment}{\ *\ WITHOUT\ ANY\ WARRANTY;\ without\ even\ the\ implied\ warranty\ of}}
+\DoxyCodeLine{00014\ \textcolor{comment}{\ *\ MERCHANTABILITY\ or\ FITNESS\ FOR\ A\ PARTICULAR\ PURPOSE.\ See\ the\ GNU\ General}}
+\DoxyCodeLine{00015\ \textcolor{comment}{\ *\ Public\ License\ for\ more\ details}}
+\DoxyCodeLine{00016\ \textcolor{comment}{*/}}
+\DoxyCodeLine{00017\ }
+\DoxyCodeLine{00051\ \textcolor{preprocessor}{\#include\ <string>}}
+\DoxyCodeLine{00052\ \textcolor{preprocessor}{\#include\ <sstream>}}
+\DoxyCodeLine{00053\ \textcolor{preprocessor}{\#include\ <deque>}}
+\DoxyCodeLine{00054\ \textcolor{preprocessor}{\#include\ <algorithm>}}
+\DoxyCodeLine{00055\ }
+\DoxyCodeLine{00056\ \textcolor{preprocessor}{\#include\ <yarp/os/all.h>}}
+\DoxyCodeLine{00057\ \textcolor{preprocessor}{\#include\ <yarp/sig/all.h>}}
+\DoxyCodeLine{00058\ \textcolor{preprocessor}{\#include\ <yarp/dev/all.h>}}
+\DoxyCodeLine{00059\ \textcolor{preprocessor}{\#include\ <yarp/math/Math.h>}}
+\DoxyCodeLine{00060\ \textcolor{preprocessor}{\#include\ <iCub/action/actionPrimitives.h>}}
+\DoxyCodeLine{00061\ }
+\DoxyCodeLine{00062\ \textcolor{preprocessor}{\#include\ <tinyxml.h>}}
+\DoxyCodeLine{00063\ }
+\DoxyCodeLine{00064\ \textcolor{keyword}{using\ namespace\ }std;}
+\DoxyCodeLine{00065\ \textcolor{keyword}{using\ namespace\ }yarp::os;}
+\DoxyCodeLine{00066\ \textcolor{keyword}{using\ namespace\ }yarp::dev;}
+\DoxyCodeLine{00067\ \textcolor{keyword}{using\ namespace\ }yarp::sig;}
+\DoxyCodeLine{00068\ \textcolor{keyword}{using\ namespace\ }yarp::math;}
+\DoxyCodeLine{00069\ \textcolor{keyword}{using\ namespace\ }iCub::action;}
+\DoxyCodeLine{00070\ }
+\DoxyCodeLine{00071\ }
+\DoxyCodeLine{00072\ \textcolor{comment}{/************************************************************************/}}
+\DoxyCodeLine{00073\ \textcolor{keyword}{class\ }Gazer\ :\ \textcolor{keyword}{public}\ PeriodicThread}
+\DoxyCodeLine{00074\ \{}
+\DoxyCodeLine{00075\ \ \ \ \ IGazeControl\ \ \ \ \ *igaze;}
+\DoxyCodeLine{00076\ \ \ \ \ ActionPrimitives\ *action;}
+\DoxyCodeLine{00077\ \ \ \ \ Vector\ offset;}
+\DoxyCodeLine{00078\ }
+\DoxyCodeLine{00079\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00080\ \textcolor{comment}{\ \ \ \ /************************************************************************/}}
+\DoxyCodeLine{00081\ \ \ \ \ Gazer(PolyDriver\ \&driver,\ ActionPrimitives\ *action,\ \textcolor{keyword}{const}\ Vector\ \&offset)\ :\ }
+\DoxyCodeLine{00082\ \ \ \ \ \ \ \ \ \ \ PeriodicThread(0.05)}
+\DoxyCodeLine{00083\ \ \ \ \ \{}
+\DoxyCodeLine{00084\ \ \ \ \ \ \ \ \ driver.view(this-\/>igaze);}
+\DoxyCodeLine{00085\ \ \ \ \ \ \ \ \ this-\/>action=action;}
+\DoxyCodeLine{00086\ \ \ \ \ \ \ \ \ this-\/>offset=offset;}
+\DoxyCodeLine{00087\ \ \ \ \ \}}
+\DoxyCodeLine{00088\ }
+\DoxyCodeLine{00089\ \textcolor{comment}{\ \ \ \ /************************************************************************/}}
+\DoxyCodeLine{00090\ \ \ \ \ \textcolor{keywordtype}{void}\ run()}
+\DoxyCodeLine{00091\ \ \ \ \ \{}
+\DoxyCodeLine{00092\ \ \ \ \ \ \ \ \ Vector\ x,o;}
+\DoxyCodeLine{00093\ \ \ \ \ \ \ \ \ action-\/>getPose(x,o);}
+\DoxyCodeLine{00094\ \ \ \ \ \ \ \ \ igaze-\/>lookAtFixationPoint(x+offset);}
+\DoxyCodeLine{00095\ \ \ \ \ \}}
+\DoxyCodeLine{00096\ \};}
+\DoxyCodeLine{00097\ }
+\DoxyCodeLine{00098\ }
+\DoxyCodeLine{00099\ \textcolor{comment}{/************************************************************************/}}
+\DoxyCodeLine{00100\ \textcolor{keyword}{class\ }WriterModule:\ \textcolor{keyword}{public}\ RFModule}
+\DoxyCodeLine{00101\ \{}
+\DoxyCodeLine{00102\ \textcolor{keyword}{protected}:}
+\DoxyCodeLine{00103\ \ \ \ \ ActionPrimitives\ *action;}
+\DoxyCodeLine{00104\ \ \ \ \ PolyDriver\ \ \ \ \ \ \ \ driverArm;}
+\DoxyCodeLine{00105\ \ \ \ \ PolyDriver\ \ \ \ \ \ \ \ driverGaze;}
+\DoxyCodeLine{00106\ \ \ \ \ Gazer\ \ \ \ \ \ \ \ \ \ \ \ *gazer;}
+\DoxyCodeLine{00107\ \ \ \ \ RpcServer\ \ \ \ \ \ \ \ \ rpcPort;}
+\DoxyCodeLine{00108\ \ \ \ \ \textcolor{keywordtype}{bool}\ \ \ \ \ \ \ \ \ \ \ \ \ \ interrupting;}
+\DoxyCodeLine{00109\ \ \ \ \ \textcolor{keywordtype}{bool}\ \ \ \ \ \ \ \ \ \ \ \ \ \ impedanceOn;}
+\DoxyCodeLine{00110\ }
+\DoxyCodeLine{00111\ \ \ \ \ \textcolor{keyword}{struct\ }SegmentParameters}
+\DoxyCodeLine{00112\ \ \ \ \ \{}
+\DoxyCodeLine{00113\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{string}\ type;}
+\DoxyCodeLine{00114\ \ \ \ \ \ \ \ \ Vector\ orientation;}
+\DoxyCodeLine{00115\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ delta\_z;}
+\DoxyCodeLine{00116\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ reach\_above;}
+\DoxyCodeLine{00117\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ segment\_time;}
+\DoxyCodeLine{00118\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ cartesian\_time;}
+\DoxyCodeLine{00119\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ cartesian\_straightness;}
+\DoxyCodeLine{00120\ \ \ \ \ \};}
+\DoxyCodeLine{00121\ }
+\DoxyCodeLine{00122\ \ \ \ \ deque<SegmentParameters>\ segParams;}
+\DoxyCodeLine{00123\ \ \ \ \ deque<deque<ActionPrimitivesWayPoint>\ >\ wayPoints;\ \ \ \ }
+\DoxyCodeLine{00124\ \ \ \ \ Vector\ stiffness\_old,damping\_old,orientation;}
+\DoxyCodeLine{00125\ \ \ \ \ \textcolor{keywordtype}{double}\ scale,reach\_above,segment\_time,cartesian\_time,cartesian\_straightness;}
+\DoxyCodeLine{00126\ \ \ \ \ Matrix\ H;}
+\DoxyCodeLine{00127\ }
+\DoxyCodeLine{00128\ \textcolor{comment}{\ \ \ \ /************************************************************************/}}
+\DoxyCodeLine{00129\ \ \ \ \ \textcolor{keywordtype}{void}\ setStraightness(\textcolor{keyword}{const}\ \textcolor{keywordtype}{double}\ straightness)}
+\DoxyCodeLine{00130\ \ \ \ \ \{}
+\DoxyCodeLine{00131\ \ \ \ \ \ \ \ \ ICartesianControl\ *icart;}
+\DoxyCodeLine{00132\ \ \ \ \ \ \ \ \ action-\/>getCartesianIF(icart);}
+\DoxyCodeLine{00133\ }
+\DoxyCodeLine{00134\ \ \ \ \ \ \ \ \ Bottle\ options;}
+\DoxyCodeLine{00135\ \ \ \ \ \ \ \ \ Bottle\ \&straightOpt=options.addList();}
+\DoxyCodeLine{00136\ \ \ \ \ \ \ \ \ straightOpt.addString(\textcolor{stringliteral}{"{}straightness"{}});}
+\DoxyCodeLine{00137\ \ \ \ \ \ \ \ \ straightOpt.addFloat64(straightness);}
+\DoxyCodeLine{00138\ \ \ \ \ \ \ \ \ icart-\/>tweakSet(options);}
+\DoxyCodeLine{00139\ \ \ \ \ \}}
+\DoxyCodeLine{00140\ }
+\DoxyCodeLine{00141\ \textcolor{comment}{\ \ \ \ /************************************************************************/}}
+\DoxyCodeLine{00142\ \ \ \ \ Vector\ parseDrawing(TiXmlDocument\&\ drawing)}
+\DoxyCodeLine{00143\ \ \ \ \ \{}
+\DoxyCodeLine{00144\ \ \ \ \ \ \ \ \ SegmentParameters\ params;}
+\DoxyCodeLine{00145\ \ \ \ \ \ \ \ \ params.orientation=orientation;}
+\DoxyCodeLine{00146\ \ \ \ \ \ \ \ \ params.delta\_z=0.0;}
+\DoxyCodeLine{00147\ \ \ \ \ \ \ \ \ params.reach\_above=reach\_above;}
+\DoxyCodeLine{00148\ \ \ \ \ \ \ \ \ params.segment\_time=segment\_time;}
+\DoxyCodeLine{00149\ \ \ \ \ \ \ \ \ params.cartesian\_time=cartesian\_time;}
+\DoxyCodeLine{00150\ \ \ \ \ \ \ \ \ params.cartesian\_straightness=cartesian\_straightness;}
+\DoxyCodeLine{00151\ }
+\DoxyCodeLine{00152\ \ \ \ \ \ \ \ \ ActionPrimitivesWayPoint\ wp;}
+\DoxyCodeLine{00153\ \ \ \ \ \ \ \ \ wp.granularity=0.05;}
+\DoxyCodeLine{00154\ \ \ \ \ \ \ \ \ wp.trajTime=cartesian\_time;}
+\DoxyCodeLine{00155\ \ \ \ \ \ \ \ \ wp.duration=segment\_time;}
+\DoxyCodeLine{00156\ \ \ \ \ \ \ \ \ wp.x=0.0;}
+\DoxyCodeLine{00157\ \ \ \ \ \ \ \ \ wp.o=orientation;}
+\DoxyCodeLine{00158\ \ \ \ \ \ \ \ \ wp.oEnabled=\textcolor{keyword}{true};}
+\DoxyCodeLine{00159\ }
+\DoxyCodeLine{00160\ \ \ \ \ \ \ \ \ Vector\ top\_left\_corner(2,0.0);}
+\DoxyCodeLine{00161\ }
+\DoxyCodeLine{00162\ \ \ \ \ \ \ \ \ TiXmlHandle\ hText(\&drawing);}
+\DoxyCodeLine{00163\ \ \ \ \ \ \ \ \ TiXmlElement\ *pElem;}
+\DoxyCodeLine{00164\ }
+\DoxyCodeLine{00165\ \ \ \ \ \ \ \ \ pElem=hText.FirstChildElement().Element();}
+\DoxyCodeLine{00166\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (pElem==NULL)}
+\DoxyCodeLine{00167\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ top\_left\_corner;}
+\DoxyCodeLine{00168\ }
+\DoxyCodeLine{00169\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{string}\ type=pElem-\/>Value();}
+\DoxyCodeLine{00170\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (type!=\textcolor{stringliteral}{"{}svg"{}})}
+\DoxyCodeLine{00171\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ top\_left\_corner;}
+\DoxyCodeLine{00172\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00173\ \ \ \ \ \ \ \ \ pElem=TiXmlHandle(pElem).FirstChildElement().Element();}
+\DoxyCodeLine{00174\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{while}\ (pElem!=NULL)}
+\DoxyCodeLine{00175\ \ \ \ \ \ \ \ \ \{\ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00176\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{string}\ type=pElem-\/>Value();}
+\DoxyCodeLine{00177\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (type==\textcolor{stringliteral}{"{}line"{}})}
+\DoxyCodeLine{00178\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00179\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ deque<ActionPrimitivesWayPoint>\ path;}
+\DoxyCodeLine{00180\ }
+\DoxyCodeLine{00181\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ pElem-\/>QueryDoubleAttribute(\textcolor{stringliteral}{"{}x1"{}},\&wp.x[0]);}
+\DoxyCodeLine{00182\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ pElem-\/>QueryDoubleAttribute(\textcolor{stringliteral}{"{}y1"{}},\&wp.x[1]);}
+\DoxyCodeLine{00183\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ wp.x*=scale;}
+\DoxyCodeLine{00184\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ path.push\_back(wp);}
+\DoxyCodeLine{00185\ }
+\DoxyCodeLine{00186\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ top\_left\_corner[0]=std::min(top\_left\_corner[0],wp.x[0]);}
+\DoxyCodeLine{00187\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ top\_left\_corner[1]=std::min(top\_left\_corner[1],wp.x[1]);}
+\DoxyCodeLine{00188\ }
+\DoxyCodeLine{00189\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ pElem-\/>QueryDoubleAttribute(\textcolor{stringliteral}{"{}x2"{}},\&wp.x[0]);}
+\DoxyCodeLine{00190\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ pElem-\/>QueryDoubleAttribute(\textcolor{stringliteral}{"{}y2"{}},\&wp.x[1]);}
+\DoxyCodeLine{00191\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ wp.x*=scale;}
+\DoxyCodeLine{00192\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ path.push\_back(wp);}
+\DoxyCodeLine{00193\ }
+\DoxyCodeLine{00194\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ top\_left\_corner[0]=std::min(top\_left\_corner[0],wp.x[0]);}
+\DoxyCodeLine{00195\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ top\_left\_corner[1]=std::min(top\_left\_corner[1],wp.x[1]);}
+\DoxyCodeLine{00196\ }
+\DoxyCodeLine{00197\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ params.type=\textcolor{stringliteral}{"{}line"{}};}
+\DoxyCodeLine{00198\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ segParams.push\_back(params);}
+\DoxyCodeLine{00199\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ wayPoints.push\_back(path);}
+\DoxyCodeLine{00200\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00201\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}\ \textcolor{keywordflow}{if}\ (type==\textcolor{stringliteral}{"{}polyline"{}})}
+\DoxyCodeLine{00202\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00203\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ deque<ActionPrimitivesWayPoint>\ path;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00204\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ Bottle\ points(pElem-\/>Attribute(\textcolor{stringliteral}{"{}points"{}}));}
+\DoxyCodeLine{00205\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ wp.duration/=points.size();}
+\DoxyCodeLine{00206\ }
+\DoxyCodeLine{00207\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i=0;\ i<points.size();\ i+=2)}
+\DoxyCodeLine{00208\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00209\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ wp.x[0]=scale*points.get(i).asFloat64();}
+\DoxyCodeLine{00210\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ wp.x[1]=scale*points.get(i+1).asFloat64();}
+\DoxyCodeLine{00211\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ path.push\_back(wp);}
+\DoxyCodeLine{00212\ }
+\DoxyCodeLine{00213\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ top\_left\_corner[0]=std::min(top\_left\_corner[0],wp.x[0]);}
+\DoxyCodeLine{00214\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ top\_left\_corner[1]=std::min(top\_left\_corner[1],wp.x[1]);}
+\DoxyCodeLine{00215\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00216\ }
+\DoxyCodeLine{00217\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ params.type=\textcolor{stringliteral}{"{}polyline"{}};}
+\DoxyCodeLine{00218\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ segParams.push\_back(params);}
+\DoxyCodeLine{00219\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ wayPoints.push\_back(path);}
+\DoxyCodeLine{00220\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00221\ }
+\DoxyCodeLine{00222\ \ \ \ \ \ \ \ \ \ \ \ \ pElem=pElem-\/>NextSiblingElement();}
+\DoxyCodeLine{00223\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00224\ }
+\DoxyCodeLine{00225\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ top\_left\_corner;}
+\DoxyCodeLine{00226\ \ \ \ \ \}}
+\DoxyCodeLine{00227\ }
+\DoxyCodeLine{00228\ \textcolor{comment}{\ \ \ \ /************************************************************************/}}
+\DoxyCodeLine{00229\ \ \ \ \ \textcolor{keywordtype}{void}\ tranformPoints(\textcolor{keyword}{const}\ Vector\ \&data\_top\_left\_corner)}
+\DoxyCodeLine{00230\ \ \ \ \ \{}
+\DoxyCodeLine{00231\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{size\_t}\ i=0;\ i<wayPoints.size();\ i++)}
+\DoxyCodeLine{00232\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00233\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{size\_t}\ j=0;\ j<wayPoints[i].size();\ j++)}
+\DoxyCodeLine{00234\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00235\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ Vector\ p=wayPoints[i][j].x;}
+\DoxyCodeLine{00236\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ p.push\_back(1.0);}
+\DoxyCodeLine{00237\ }
+\DoxyCodeLine{00238\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ p[0]-\/=data\_top\_left\_corner[0];}
+\DoxyCodeLine{00239\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ p[1]-\/=data\_top\_left\_corner[1];}
+\DoxyCodeLine{00240\ }
+\DoxyCodeLine{00241\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ wayPoints[i][j].x=(H*p).subVector(0,2);}
+\DoxyCodeLine{00242\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ wayPoints[i][j].x[2]+=segParams[i].delta\_z;}
+\DoxyCodeLine{00243\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00244\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00245\ \ \ \ \ \}}
+\DoxyCodeLine{00246\ }
+\DoxyCodeLine{00247\ \textcolor{comment}{\ \ \ \ /************************************************************************/}}
+\DoxyCodeLine{00248\ \ \ \ \ \textcolor{keywordtype}{void}\ printPoints()}
+\DoxyCodeLine{00249\ \ \ \ \ \{}
+\DoxyCodeLine{00250\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{size\_t}\ i=0;\ i<wayPoints.size();\ i++)}
+\DoxyCodeLine{00251\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00252\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{size\_t}\ j=0;\ j<wayPoints[i].size();\ j++)}
+\DoxyCodeLine{00253\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00254\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ yInfo()<<\textcolor{stringliteral}{"{}point["{}}<<i<<\textcolor{stringliteral}{"{}]["{}}<<j<<\textcolor{stringliteral}{"{}]=("{}}}
+\DoxyCodeLine{00255\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ <<wayPoints[i][j].x.toString(3,3).c\_str()<<\textcolor{stringliteral}{"{})"{}};}
+\DoxyCodeLine{00256\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00257\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00258\ \ \ \ \ \}}
+\DoxyCodeLine{00259\ }
+\DoxyCodeLine{00260\ \textcolor{comment}{\ \ \ \ /************************************************************************/}}
+\DoxyCodeLine{00261\ \ \ \ \ \textcolor{keywordtype}{bool}\ doWriting()}
+\DoxyCodeLine{00262\ \ \ \ \ \{}
+\DoxyCodeLine{00263\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (gazer!=NULL)}
+\DoxyCodeLine{00264\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00265\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (gazer-\/>isSuspended())}
+\DoxyCodeLine{00266\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ gazer-\/>resume();}
+\DoxyCodeLine{00267\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00268\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ gazer-\/>start();}
+\DoxyCodeLine{00269\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00270\ }
+\DoxyCodeLine{00271\ \ \ \ \ \ \ \ \ Vector\ torsoEnabled,torsoDisabled(3,0.0);}
+\DoxyCodeLine{00272\ \ \ \ \ \ \ \ \ action-\/>getTorsoJoints(torsoEnabled);}
+\DoxyCodeLine{00273\ }
+\DoxyCodeLine{00274\ \ \ \ \ \ \ \ \ Vector\ x,o,x\_offset(3,0.0);}
+\DoxyCodeLine{00275\ }
+\DoxyCodeLine{00276\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ done;}
+\DoxyCodeLine{00277\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ i;}
+\DoxyCodeLine{00278\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (i=0;\ i<wayPoints.size();\ i++)}
+\DoxyCodeLine{00279\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00280\ \ \ \ \ \ \ \ \ \ \ \ \ setStraightness(segParams[i].cartesian\_straightness);}
+\DoxyCodeLine{00281\ }
+\DoxyCodeLine{00282\ \ \ \ \ \ \ \ \ \ \ \ \ action-\/>getPose(x,o);}
+\DoxyCodeLine{00283\ \ \ \ \ \ \ \ \ \ \ \ \ x\_offset[2]=segParams[i].reach\_above;}
+\DoxyCodeLine{00284\ \ \ \ \ \ \ \ \ \ \ \ \ action-\/>pushAction(x+x\_offset,segParams[i].orientation);}
+\DoxyCodeLine{00285\ \ \ \ \ \ \ \ \ \ \ \ \ action-\/>pushAction(wayPoints[i][0].x+x\_offset,segParams[i].orientation);}
+\DoxyCodeLine{00286\ \ \ \ \ \ \ \ \ \ \ \ \ action-\/>pushAction(wayPoints[i][0].x,segParams[i].orientation);}
+\DoxyCodeLine{00287\ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00288\ \ \ \ \ \ \ \ \ \ \ \ \ action-\/>checkActionsDone(done,\textcolor{keyword}{true});}
+\DoxyCodeLine{00289\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (interrupting)}
+\DoxyCodeLine{00290\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00291\ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00292\ \ \ \ \ \ \ \ \ \ \ \ \ action-\/>setTorsoJoints(torsoDisabled);}
+\DoxyCodeLine{00293\ \ \ \ \ \ \ \ \ \ \ \ \ action-\/>pushAction(wayPoints[i]);}
+\DoxyCodeLine{00294\ }
+\DoxyCodeLine{00295\ \ \ \ \ \ \ \ \ \ \ \ \ action-\/>checkActionsDone(done,\textcolor{keyword}{true});}
+\DoxyCodeLine{00296\ \ \ \ \ \ \ \ \ \ \ \ \ action-\/>setTorsoJoints(torsoEnabled);}
+\DoxyCodeLine{00297\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (interrupting)}
+\DoxyCodeLine{00298\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00299\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00300\ }
+\DoxyCodeLine{00301\ \ \ \ \ \ \ \ \ i-\/-\/;}
+\DoxyCodeLine{00302\ \ \ \ \ \ \ \ \ action-\/>getPose(x,o);}
+\DoxyCodeLine{00303\ \ \ \ \ \ \ \ \ x\_offset[2]=segParams[i].reach\_above;}
+\DoxyCodeLine{00304\ \ \ \ \ \ \ \ \ action-\/>pushAction(x+x\_offset,segParams[i].orientation);}
+\DoxyCodeLine{00305\ }
+\DoxyCodeLine{00306\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (gazer!=NULL)}
+\DoxyCodeLine{00307\ \ \ \ \ \ \ \ \ \ \ \ \ gazer-\/>suspend();}
+\DoxyCodeLine{00308\ }
+\DoxyCodeLine{00309\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00310\ \ \ \ \ \}}
+\DoxyCodeLine{00311\ }
+\DoxyCodeLine{00312\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00313\ \textcolor{comment}{\ \ \ \ /************************************************************************/}}
+\DoxyCodeLine{00314\ \ \ \ \ WriterModule()\ :\ action(NULL),\ gazer(NULL),\ interrupting(false)\ \{\ \}}
+\DoxyCodeLine{00315\ }
+\DoxyCodeLine{00316\ \textcolor{comment}{\ \ \ \ /************************************************************************/}}
+\DoxyCodeLine{00317\ \ \ \ \ \textcolor{keywordtype}{bool}\ configure(ResourceFinder\ \&rf)}
+\DoxyCodeLine{00318\ \ \ \ \ \{}
+\DoxyCodeLine{00319\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{string}\ name=rf.find(\textcolor{stringliteral}{"{}name"{}}).asString().c\_str();}
+\DoxyCodeLine{00320\ \ \ \ \ \ \ \ \ setName(name.c\_str());}
+\DoxyCodeLine{00321\ }
+\DoxyCodeLine{00322\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{string}\ partUsed=rf.find(\textcolor{stringliteral}{"{}part"{}}).asString().c\_str();}
+\DoxyCodeLine{00323\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ ((partUsed!=\textcolor{stringliteral}{"{}left\_arm"{}})\ \&\&\ (partUsed!=\textcolor{stringliteral}{"{}right\_arm"{}}))}
+\DoxyCodeLine{00324\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00325\ \ \ \ \ \ \ \ \ \ \ \ \ yError()<<\textcolor{stringliteral}{"{}invalid\ part\ requested!"{}};}
+\DoxyCodeLine{00326\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00327\ \ \ \ \ \ \ \ \ \}\ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00328\ }
+\DoxyCodeLine{00329\ \ \ \ \ \ \ \ \ Property\ config;\ config.fromConfigFile(rf.findFile(\textcolor{stringliteral}{"{}from"{}}).c\_str());}
+\DoxyCodeLine{00330\ \ \ \ \ \ \ \ \ Bottle\ \&bGeneral=config.findGroup(\textcolor{stringliteral}{"{}general"{}});}
+\DoxyCodeLine{00331\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (bGeneral.isNull())}
+\DoxyCodeLine{00332\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00333\ \ \ \ \ \ \ \ \ \ \ \ \ yError()<<\textcolor{stringliteral}{"{}group\ \(\backslash\)"{}general\(\backslash\)"{}\ is\ missing!"{}};}
+\DoxyCodeLine{00334\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00335\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00336\ }
+\DoxyCodeLine{00337\ \ \ \ \ \ \ \ \ Property\ option(bGeneral.toString().c\_str());}
+\DoxyCodeLine{00338\ \ \ \ \ \ \ \ \ option.put(\textcolor{stringliteral}{"{}local"{}},name.c\_str());}
+\DoxyCodeLine{00339\ \ \ \ \ \ \ \ \ option.put(\textcolor{stringliteral}{"{}part"{}},partUsed.c\_str());}
+\DoxyCodeLine{00340\ \ \ \ \ \ \ \ \ option.put(\textcolor{stringliteral}{"{}grasp\_model\_type"{}},rf.find(\textcolor{stringliteral}{"{}grasp\_model\_type"{}}).asString().c\_str());}
+\DoxyCodeLine{00341\ \ \ \ \ \ \ \ \ option.put(\textcolor{stringliteral}{"{}grasp\_model\_file"{}},rf.findFile(\textcolor{stringliteral}{"{}grasp\_model\_file"{}}).c\_str());}
+\DoxyCodeLine{00342\ \ \ \ \ \ \ \ \ option.put(\textcolor{stringliteral}{"{}hand\_sequences\_file"{}},rf.findFile(\textcolor{stringliteral}{"{}hand\_sequences\_file"{}}).c\_str());}
+\DoxyCodeLine{00343\ }
+\DoxyCodeLine{00344\ \ \ \ \ \ \ \ \ Bottle\ \&bWriting=config.findGroup(\textcolor{stringliteral}{"{}writing\_general"{}});}
+\DoxyCodeLine{00345\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (bWriting.isNull())}
+\DoxyCodeLine{00346\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00347\ \ \ \ \ \ \ \ \ \ \ \ \ yError()<<\textcolor{stringliteral}{"{}group\ \(\backslash\)"{}writing\_general\(\backslash\)"{}\ is\ missing!"{}};}
+\DoxyCodeLine{00348\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00349\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00350\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00351\ \ \ \ \ \ \ \ \ scale=bWriting.check(\textcolor{stringliteral}{"{}scale"{}},Value(1.0)).asFloat64();}
+\DoxyCodeLine{00352\ \ \ \ \ \ \ \ \ scale*=bWriting.check(\textcolor{stringliteral}{"{}conversion"{}},Value(1.0)).asFloat64();}
+\DoxyCodeLine{00353\ \ \ \ \ \ \ \ \ reach\_above=bWriting.check(\textcolor{stringliteral}{"{}reach\_above"{}},Value(0.05)).asFloat64();}
+\DoxyCodeLine{00354\ \ \ \ \ \ \ \ \ segment\_time=bWriting.check(\textcolor{stringliteral}{"{}segment\_time"{}},Value(1.0)).asFloat64();}
+\DoxyCodeLine{00355\ \ \ \ \ \ \ \ \ cartesian\_time=bWriting.check(\textcolor{stringliteral}{"{}cartesian\_time"{}},Value(1.0)).asFloat64();}
+\DoxyCodeLine{00356\ \ \ \ \ \ \ \ \ cartesian\_straightness=bWriting.check(\textcolor{stringliteral}{"{}cartesian\_straightness"{}},Value(1.0)).asFloat64();}
+\DoxyCodeLine{00357\ }
+\DoxyCodeLine{00358\ \ \ \ \ \ \ \ \ orientation.resize(4,0.0);}
+\DoxyCodeLine{00359\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (Bottle\ *pB=bWriting.find(\textcolor{stringliteral}{"{}orientation"{}}).asList())}
+\DoxyCodeLine{00360\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00361\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ len=std::min(orientation.length(),pB-\/>size());}
+\DoxyCodeLine{00362\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i=0;\ i<len;\ i++)}
+\DoxyCodeLine{00363\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ orientation[i]=pB-\/>get(i).asFloat64();}
+\DoxyCodeLine{00364\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00365\ }
+\DoxyCodeLine{00366\ \ \ \ \ \ \ \ \ Vector\ top\_left\_corner(3,0.0);}
+\DoxyCodeLine{00367\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (Bottle\ *pB=bWriting.find(\textcolor{stringliteral}{"{}top\_left\_corner"{}}).asList())}
+\DoxyCodeLine{00368\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00369\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ len=std::min(top\_left\_corner.length(),pB-\/>size());}
+\DoxyCodeLine{00370\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i=0;\ i<len;\ i++)}
+\DoxyCodeLine{00371\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ top\_left\_corner[i]=pB-\/>get(i).asFloat64();}
+\DoxyCodeLine{00372\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00373\ \ \ \ \ \ \ \ \ top\_left\_corner.push\_back(1.0);}
+\DoxyCodeLine{00374\ }
+\DoxyCodeLine{00375\ \ \ \ \ \ \ \ \ H.resize(4,4);}
+\DoxyCodeLine{00376\ \ \ \ \ \ \ \ \ H(0,1)=1.0;\ H(1,0)=1.0;\ H(2,2)=-\/1.0;}
+\DoxyCodeLine{00377\ \ \ \ \ \ \ \ \ H.setCol(3,top\_left\_corner);}
+\DoxyCodeLine{00378\ }
+\DoxyCodeLine{00379\ \ \ \ \ \ \ \ \ TiXmlDocument\ drawing(rf.findFile(\textcolor{stringliteral}{"{}drawing"{}}).c\_str());}
+\DoxyCodeLine{00380\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!drawing.LoadFile())}
+\DoxyCodeLine{00381\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00382\ \ \ \ \ \ \ \ \ \ \ \ \ close();}
+\DoxyCodeLine{00383\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00384\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00385\ }
+\DoxyCodeLine{00386\ \ \ \ \ \ \ \ \ Vector\ data\_top\_left\_corner=parseDrawing(drawing);}
+\DoxyCodeLine{00387\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{size\_t}\ i=0;\ i<wayPoints.size();\ i++)}
+\DoxyCodeLine{00388\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00389\ \ \ \ \ \ \ \ \ \ \ \ \ ostringstream\ segment\_tag;}
+\DoxyCodeLine{00390\ \ \ \ \ \ \ \ \ \ \ \ \ segment\_tag<<\textcolor{stringliteral}{"{}writing\_segment\_"{}}<<i;}
+\DoxyCodeLine{00391\ \ \ \ \ \ \ \ \ \ \ \ \ Bottle\ \&bSegment=config.findGroup(segment\_tag.str().c\_str());}
+\DoxyCodeLine{00392\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!bSegment.isNull())}
+\DoxyCodeLine{00393\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00394\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (Bottle\ *pB=bSegment.find(\textcolor{stringliteral}{"{}orientation"{}}).asList())}
+\DoxyCodeLine{00395\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00396\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ len=std::min(orientation.length(),pB-\/>size());}
+\DoxyCodeLine{00397\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ j=0;\ j<len;\ j++)}
+\DoxyCodeLine{00398\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ segParams[i].orientation[j]=pB-\/>get(j).asFloat64();}
+\DoxyCodeLine{00399\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00400\ }
+\DoxyCodeLine{00401\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ segParams[i].delta\_z=bSegment.check(\textcolor{stringliteral}{"{}delta\_z"{}},Value(segParams[i].delta\_z)).asFloat64();}
+\DoxyCodeLine{00402\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ segParams[i].reach\_above=bSegment.check(\textcolor{stringliteral}{"{}reach\_above"{}},Value(segParams[i].reach\_above)).asFloat64();}
+\DoxyCodeLine{00403\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ segParams[i].segment\_time=bSegment.check(\textcolor{stringliteral}{"{}segment\_time"{}},Value(segParams[i].segment\_time)).asFloat64();}
+\DoxyCodeLine{00404\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ segParams[i].cartesian\_time=bSegment.check(\textcolor{stringliteral}{"{}cartesian\_time"{}},Value(segParams[i].cartesian\_time)).asFloat64();}
+\DoxyCodeLine{00405\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ segParams[i].cartesian\_straightness=bSegment.check(\textcolor{stringliteral}{"{}cartesian\_straightness"{}},Value(segParams[i].cartesian\_straightness)).asFloat64();}
+\DoxyCodeLine{00406\ }
+\DoxyCodeLine{00407\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{size\_t}\ j=0;\ j<wayPoints[i].size();\ j++)}
+\DoxyCodeLine{00408\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00409\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ wayPoints[i][j].o=segParams[i].orientation;}
+\DoxyCodeLine{00410\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ wayPoints[i][j].trajTime=segParams[i].cartesian\_time;}
+\DoxyCodeLine{00411\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ wayPoints[i][j].duration=segParams[i].segment\_time;}
+\DoxyCodeLine{00412\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (segParams[i].type!=\textcolor{stringliteral}{"{}line"{}})}
+\DoxyCodeLine{00413\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ wayPoints[i][j].duration/=wayPoints[i].size();}
+\DoxyCodeLine{00414\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00415\ \ \ \ \ \ \ \ \ \ \ \ \ \}\ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00416\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00417\ }
+\DoxyCodeLine{00418\ \ \ \ \ \ \ \ \ tranformPoints(data\_top\_left\_corner);}
+\DoxyCodeLine{00419\ \ \ \ \ \ \ \ \ printPoints();}
+\DoxyCodeLine{00420\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00421\ \ \ \ \ \ \ \ \ yInfo()<<\textcolor{stringliteral}{"{}*****\ Instantiating\ primitives\ for\ "{}}<<partUsed;}
+\DoxyCodeLine{00422\ \ \ \ \ \ \ \ \ action=\textcolor{keyword}{new}\ ActionPrimitives(option);}
+\DoxyCodeLine{00423\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!action-\/>isValid())}
+\DoxyCodeLine{00424\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00425\ \ \ \ \ \ \ \ \ \ \ \ \ close();}
+\DoxyCodeLine{00426\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00427\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00428\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00429\ \ \ \ \ \ \ \ \ setStraightness(cartesian\_straightness);}
+\DoxyCodeLine{00430\ }
+\DoxyCodeLine{00431\ \ \ \ \ \ \ \ \ impedanceOn=\textcolor{keyword}{false};}
+\DoxyCodeLine{00432\ \ \ \ \ \ \ \ \ Bottle\ \&bImpedance=config.findGroup(\textcolor{stringliteral}{"{}impedance"{}});}
+\DoxyCodeLine{00433\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!bImpedance.isNull())}
+\DoxyCodeLine{00434\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00435\ \ \ \ \ \ \ \ \ \ \ \ \ impedanceOn=bImpedance.check(\textcolor{stringliteral}{"{}enable"{}},Value(\textcolor{stringliteral}{"{}off"{}})).asString()==\textcolor{stringliteral}{"{}on"{}};}
+\DoxyCodeLine{00436\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (impedanceOn)}
+\DoxyCodeLine{00437\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00438\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ Vector\ stiffness(5,0.0);}
+\DoxyCodeLine{00439\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (Bottle\ *pB=bImpedance.find(\textcolor{stringliteral}{"{}stiffness"{}}).asList())}
+\DoxyCodeLine{00440\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00441\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ len=std::min(stiffness.length(),pB-\/>size());}
+\DoxyCodeLine{00442\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i=0;\ i<len;\ i++)}
+\DoxyCodeLine{00443\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ stiffness[i]=pB-\/>get(i).asFloat64();}
+\DoxyCodeLine{00444\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00445\ }
+\DoxyCodeLine{00446\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ Vector\ damping(stiffness.length(),0.0);}
+\DoxyCodeLine{00447\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (Bottle\ *pB=bImpedance.find(\textcolor{stringliteral}{"{}damping"{}}).asList())}
+\DoxyCodeLine{00448\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00449\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ len=std::min(damping.length(),pB-\/>size());}
+\DoxyCodeLine{00450\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i=0;\ i<len;\ i++)}
+\DoxyCodeLine{00451\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ damping[i]=pB-\/>get(i).asFloat64();}
+\DoxyCodeLine{00452\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00453\ }
+\DoxyCodeLine{00454\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{string}\ robot=bGeneral.check(\textcolor{stringliteral}{"{}robot"{}},Value(\textcolor{stringliteral}{"{}icub"{}})).asString().c\_str();}
+\DoxyCodeLine{00455\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ Property\ driverOption(\textcolor{stringliteral}{"{}(device\ remote\_controlboard)"{}});}
+\DoxyCodeLine{00456\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ driverOption.put(\textcolor{stringliteral}{"{}remote"{}},(\textcolor{stringliteral}{"{}/"{}}+robot+\textcolor{stringliteral}{"{}/"{}}+partUsed).c\_str());}
+\DoxyCodeLine{00457\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ driverOption.put(\textcolor{stringliteral}{"{}local"{}},(\textcolor{stringliteral}{"{}/"{}}+name+\textcolor{stringliteral}{"{}/impedance"{}}).c\_str());}
+\DoxyCodeLine{00458\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (driverArm.open(driverOption))}
+\DoxyCodeLine{00459\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00460\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ IInteractionMode\ \ *imod;}
+\DoxyCodeLine{00461\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ IImpedanceControl\ *iimp;}
+\DoxyCodeLine{00462\ }
+\DoxyCodeLine{00463\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ driverArm.view(imod);}
+\DoxyCodeLine{00464\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ driverArm.view(iimp);}
+\DoxyCodeLine{00465\ }
+\DoxyCodeLine{00466\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ len=std::min(stiffness.length(),damping.length());}
+\DoxyCodeLine{00467\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ stiffness\_old.resize(len);\ damping\_old.resize(len);}
+\DoxyCodeLine{00468\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{size\_t}\ i=0;\ i<len;\ i++)}
+\DoxyCodeLine{00469\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00470\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ iimp-\/>getImpedance(i,\&stiffness\_old[i],\&damping\_old[i]);}
+\DoxyCodeLine{00471\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ iimp-\/>setImpedance(i,stiffness[i],damping[i]);}
+\DoxyCodeLine{00472\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ imod-\/>setInteractionMode(i,VOCAB\_IM\_COMPLIANT);}
+\DoxyCodeLine{00473\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00474\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00475\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00476\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00477\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ close();}
+\DoxyCodeLine{00478\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00479\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00480\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00481\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00482\ }
+\DoxyCodeLine{00483\ \ \ \ \ \ \ \ \ Bottle\ \&bGaze=config.findGroup(\textcolor{stringliteral}{"{}gaze"{}});}
+\DoxyCodeLine{00484\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!bGaze.isNull())}
+\DoxyCodeLine{00485\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00486\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (bGaze.check(\textcolor{stringliteral}{"{}enable"{}},Value(\textcolor{stringliteral}{"{}off"{}})).asString()==\textcolor{stringliteral}{"{}on"{}})}
+\DoxyCodeLine{00487\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00488\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ Vector\ offset(3,0.0);}
+\DoxyCodeLine{00489\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (Bottle\ *pB=bGaze.find(\textcolor{stringliteral}{"{}offset"{}}).asList())}
+\DoxyCodeLine{00490\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00491\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ len=std::min(offset.length(),pB-\/>size());}
+\DoxyCodeLine{00492\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i=0;\ i<len;\ i++)}
+\DoxyCodeLine{00493\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ offset[i]=pB-\/>get(i).asFloat64();}
+\DoxyCodeLine{00494\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00495\ }
+\DoxyCodeLine{00496\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ Property\ driverOption(\textcolor{stringliteral}{"{}(device\ gazecontrollerclient)"{}});}
+\DoxyCodeLine{00497\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ driverOption.put(\textcolor{stringliteral}{"{}remote"{}},\textcolor{stringliteral}{"{}/iKinGazeCtrl"{}});}
+\DoxyCodeLine{00498\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ driverOption.put(\textcolor{stringliteral}{"{}local"{}},(\textcolor{stringliteral}{"{}/"{}}+name+\textcolor{stringliteral}{"{}/gaze"{}}).c\_str());}
+\DoxyCodeLine{00499\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (driverGaze.open(driverOption))}
+\DoxyCodeLine{00500\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ gazer=\textcolor{keyword}{new}\ Gazer(driverGaze,action,offset);}
+\DoxyCodeLine{00501\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00502\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00503\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ close();}
+\DoxyCodeLine{00504\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00505\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00506\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00507\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00508\ }
+\DoxyCodeLine{00509\ \ \ \ \ \ \ \ \ rpcPort.open((\textcolor{stringliteral}{"{}/"{}}+name+\textcolor{stringliteral}{"{}/rpc"{}}).c\_str());}
+\DoxyCodeLine{00510\ \ \ \ \ \ \ \ \ attach(rpcPort);}
+\DoxyCodeLine{00511\ }
+\DoxyCodeLine{00512\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00513\ \ \ \ \ \}}
+\DoxyCodeLine{00514\ }
+\DoxyCodeLine{00515\ \textcolor{comment}{\ \ \ \ /************************************************************************/}}
+\DoxyCodeLine{00516\ \ \ \ \ \textcolor{keywordtype}{bool}\ respond(\textcolor{keyword}{const}\ Bottle\ \&command,\ Bottle\ \&reply)}
+\DoxyCodeLine{00517\ \ \ \ \ \{}
+\DoxyCodeLine{00518\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ ack=Vocab32::encode(\textcolor{stringliteral}{"{}ack"{}});}
+\DoxyCodeLine{00519\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ nack=Vocab32::encode(\textcolor{stringliteral}{"{}nack"{}});}
+\DoxyCodeLine{00520\ }
+\DoxyCodeLine{00521\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (command.size()>0)}
+\DoxyCodeLine{00522\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00523\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{switch}\ (command.get(0).asVocab32())}
+\DoxyCodeLine{00524\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00525\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}}
+\DoxyCodeLine{00526\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ createVocab32(\textcolor{charliteral}{'g'},\textcolor{charliteral}{'o'}):}
+\DoxyCodeLine{00527\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00528\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (doWriting())}
+\DoxyCodeLine{00529\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ reply.addVocab32(ack);}
+\DoxyCodeLine{00530\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00531\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ reply.addVocab32(nack);}
+\DoxyCodeLine{00532\ }
+\DoxyCodeLine{00533\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00534\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00535\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00536\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}}
+\DoxyCodeLine{00537\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{default}:}
+\DoxyCodeLine{00538\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ RFModule::respond(command,reply);}
+\DoxyCodeLine{00539\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00540\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00541\ }
+\DoxyCodeLine{00542\ \ \ \ \ \ \ \ \ reply.addVocab32(nack);}
+\DoxyCodeLine{00543\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00544\ \ \ \ \ \}}
+\DoxyCodeLine{00545\ }
+\DoxyCodeLine{00546\ \textcolor{comment}{\ \ \ \ /************************************************************************/}}
+\DoxyCodeLine{00547\ \ \ \ \ \textcolor{keywordtype}{double}\ getPeriod()}
+\DoxyCodeLine{00548\ \ \ \ \ \{}
+\DoxyCodeLine{00549\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 0.1;}
+\DoxyCodeLine{00550\ \ \ \ \ \}}
+\DoxyCodeLine{00551\ }
+\DoxyCodeLine{00552\ \textcolor{comment}{\ \ \ \ /************************************************************************/}}
+\DoxyCodeLine{00553\ \ \ \ \ \textcolor{keywordtype}{bool}\ updateModule()}
+\DoxyCodeLine{00554\ \ \ \ \ \{}
+\DoxyCodeLine{00555\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00556\ \ \ \ \ \}}
+\DoxyCodeLine{00557\ }
+\DoxyCodeLine{00558\ \textcolor{comment}{\ \ \ \ /************************************************************************/}}
+\DoxyCodeLine{00559\ \ \ \ \ \textcolor{keywordtype}{bool}\ interruptModule()}
+\DoxyCodeLine{00560\ \ \ \ \ \{}
+\DoxyCodeLine{00561\ \ \ \ \ \ \ \ \ interrupting=\textcolor{keyword}{true};}
+\DoxyCodeLine{00562\ \ \ \ \ \ \ \ \ action-\/>syncCheckInterrupt(\textcolor{keyword}{true});}
+\DoxyCodeLine{00563\ }
+\DoxyCodeLine{00564\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00565\ \ \ \ \ \}}
+\DoxyCodeLine{00566\ }
+\DoxyCodeLine{00567\ \textcolor{comment}{\ \ \ \ /************************************************************************/}}
+\DoxyCodeLine{00568\ \ \ \ \ \textcolor{keywordtype}{bool}\ close()}
+\DoxyCodeLine{00569\ \ \ \ \ \{}
+\DoxyCodeLine{00570\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (action!=NULL)}
+\DoxyCodeLine{00571\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{delete}\ action;}
+\DoxyCodeLine{00572\ }
+\DoxyCodeLine{00573\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (driverArm.isValid())}
+\DoxyCodeLine{00574\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00575\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (impedanceOn)}
+\DoxyCodeLine{00576\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00577\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ IInteractionMode\ \ *imod;\ }
+\DoxyCodeLine{00578\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ IImpedanceControl\ *iimp;}
+\DoxyCodeLine{00579\ }
+\DoxyCodeLine{00580\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ driverArm.view(imod);}
+\DoxyCodeLine{00581\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ driverArm.view(iimp);}
+\DoxyCodeLine{00582\ }
+\DoxyCodeLine{00583\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{size\_t}\ i=0;\ i<stiffness\_old.length();\ i++)}
+\DoxyCodeLine{00584\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00585\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ imod-\/>setInteractionMode(i,VOCAB\_IM\_STIFF);}
+\DoxyCodeLine{00586\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ iimp-\/>setImpedance(i,stiffness\_old[i],damping\_old[i]);\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00587\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00588\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00589\ }
+\DoxyCodeLine{00590\ \ \ \ \ \ \ \ \ \ \ \ \ driverArm.close();}
+\DoxyCodeLine{00591\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00592\ }
+\DoxyCodeLine{00593\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (driverGaze.isValid())}
+\DoxyCodeLine{00594\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00595\ \ \ \ \ \ \ \ \ \ \ \ \ gazer-\/>stop();}
+\DoxyCodeLine{00596\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{delete}\ gazer;}
+\DoxyCodeLine{00597\ \ \ \ \ \ \ \ \ \ \ \ \ driverGaze.close();}
+\DoxyCodeLine{00598\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00599\ }
+\DoxyCodeLine{00600\ \ \ \ \ \ \ \ \ rpcPort.close();}
+\DoxyCodeLine{00601\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00602\ \ \ \ \ \}}
+\DoxyCodeLine{00603\ \};}
+\DoxyCodeLine{00604\ }
+\DoxyCodeLine{00605\ }
+\DoxyCodeLine{00606\ \textcolor{comment}{/************************************************************************/}}
+\DoxyCodeLine{00607\ \textcolor{keywordtype}{int}\ main(\textcolor{keywordtype}{int}\ argc,\ \textcolor{keywordtype}{char}\ *argv[])}
+\DoxyCodeLine{00608\ \{}
+\DoxyCodeLine{00609\ \ \ \ \ Network\ yarp;}
+\DoxyCodeLine{00610\ \ \ \ \ \textcolor{keywordflow}{if}\ (!yarp.checkNetwork())}
+\DoxyCodeLine{00611\ \ \ \ \ \{}
+\DoxyCodeLine{00612\ \ \ \ \ \ \ \ \ yError()<<\textcolor{stringliteral}{"{}YARP\ server\ not\ available!"{}};}
+\DoxyCodeLine{00613\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 1;}
+\DoxyCodeLine{00614\ \ \ \ \ \}}
+\DoxyCodeLine{00615\ }
+\DoxyCodeLine{00616\ \ \ \ \ ResourceFinder\ rf;}
+\DoxyCodeLine{00617\ \ \ \ \ rf.setDefaultContext(\textcolor{stringliteral}{"{}funny-\/things"{}});}
+\DoxyCodeLine{00618\ \ \ \ \ rf.setDefaultConfigFile(\textcolor{stringliteral}{"{}iCubWriter.ini"{}});}
+\DoxyCodeLine{00619\ \ \ \ \ rf.setDefault(\textcolor{stringliteral}{"{}part"{}},\textcolor{stringliteral}{"{}right\_arm"{}});}
+\DoxyCodeLine{00620\ \ \ \ \ rf.setDefault(\textcolor{stringliteral}{"{}grasp\_model\_type"{}},\textcolor{stringliteral}{"{}springy"{}});}
+\DoxyCodeLine{00621\ \ \ \ \ rf.setDefault(\textcolor{stringliteral}{"{}grasp\_model\_file"{}},\textcolor{stringliteral}{"{}grasp\_model.ini"{}});}
+\DoxyCodeLine{00622\ \ \ \ \ rf.setDefault(\textcolor{stringliteral}{"{}hand\_sequences\_file"{}},\textcolor{stringliteral}{"{}hand\_sequences.ini"{}});}
+\DoxyCodeLine{00623\ \ \ \ \ rf.setDefault(\textcolor{stringliteral}{"{}drawing"{}},\textcolor{stringliteral}{"{}drawings/icub.svg"{}});}
+\DoxyCodeLine{00624\ \ \ \ \ rf.setDefault(\textcolor{stringliteral}{"{}name"{}},\textcolor{stringliteral}{"{}iCubWriter"{}});}
+\DoxyCodeLine{00625\ \ \ \ \ rf.configure(argc,argv);}
+\DoxyCodeLine{00626\ }
+\DoxyCodeLine{00627\ \ \ \ \ WriterModule\ mod;}
+\DoxyCodeLine{00628\ \ \ \ \ \textcolor{keywordflow}{return}\ mod.runModule(rf);}
+\DoxyCodeLine{00629\ \}}
+\DoxyCodeLine{00630\ }
+\DoxyCodeLine{00631\ }
+
+\end{DoxyCode}

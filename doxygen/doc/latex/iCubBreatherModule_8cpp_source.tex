@@ -1,0 +1,251 @@
+\doxysection{i\+Cub\+Breather\+Module.\+cpp}
+\label{iCubBreatherModule_8cpp_source}\index{/home/runner/work/funny-\/things/funny-\/things/gh-\/pages/modules/iCubBreather/iCubBreatherModule.cpp@{/home/runner/work/funny-\/things/funny-\/things/gh-\/pages/modules/iCubBreather/iCubBreatherModule.cpp}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*\ }}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ Copyright\ (C)\ 2014\ iCub\ Facility\ -\/\ Istituto\ Italiano\ di\ Tecnologia}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *\ Author:\ Alessandro\ Roncone\ \&\ Ugo\ Pattacini}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *\ email:\ \ alessandro.roncone@iit.it}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *\ Permission\ is\ granted\ to\ copy,\ distribute,\ and/or\ modify\ this\ program}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *\ under\ the\ terms\ of\ the\ GNU\ General\ Public\ License,\ version\ 2\ or\ any}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ later\ version\ published\ by\ the\ Free\ Software\ Foundation.}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00009\ \textcolor{comment}{\ *\ A\ copy\ of\ the\ license\ can\ be\ found\ at}}
+\DoxyCodeLine{00010\ \textcolor{comment}{\ *\ http://www.robotcub.org/icub/license/gpl.txt}}
+\DoxyCodeLine{00011\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00012\ \textcolor{comment}{\ *\ This\ program\ is\ distributed\ in\ the\ hope\ that\ it\ will\ be\ useful,\ but}}
+\DoxyCodeLine{00013\ \textcolor{comment}{\ *\ WITHOUT\ ANY\ WARRANTY;\ without\ even\ the\ implied\ warranty\ of}}
+\DoxyCodeLine{00014\ \textcolor{comment}{\ *\ MERCHANTABILITY\ or\ FITNESS\ FOR\ A\ PARTICULAR\ PURPOSE.\ See\ the\ GNU\ General}}
+\DoxyCodeLine{00015\ \textcolor{comment}{\ *\ Public\ License\ for\ more\ details}}
+\DoxyCodeLine{00016\ \textcolor{comment}{*/}}
+\DoxyCodeLine{00017\ }
+\DoxyCodeLine{00073\ \textcolor{preprocessor}{\#include\ <yarp/os/RFModule.h>}}
+\DoxyCodeLine{00074\ \textcolor{preprocessor}{\#include\ <yarp/os/Network.h>}}
+\DoxyCodeLine{00075\ \textcolor{preprocessor}{\#include\ <yarp/os/PeriodicThread.h>}}
+\DoxyCodeLine{00076\ \textcolor{preprocessor}{\#include\ <yarp/os/RpcClient.h>}}
+\DoxyCodeLine{00077\ }
+\DoxyCodeLine{00078\ \textcolor{preprocessor}{\#include\ <yarp/sig/Vector.h>}}
+\DoxyCodeLine{00079\ \textcolor{preprocessor}{\#include\ <yarp/sig/Matrix.h>}}
+\DoxyCodeLine{00080\ }
+\DoxyCodeLine{00081\ \textcolor{preprocessor}{\#include\ <yarp/math/Math.h>}}
+\DoxyCodeLine{00082\ }
+\DoxyCodeLine{00083\ \textcolor{preprocessor}{\#include\ <iostream>}}
+\DoxyCodeLine{00084\ \textcolor{preprocessor}{\#include\ <string.h>}\ }
+\DoxyCodeLine{00085\ }
+\DoxyCodeLine{00086\ \textcolor{preprocessor}{\#include\ "{}iCubBreatherThread.h"{}}}
+\DoxyCodeLine{00087\ }
+\DoxyCodeLine{00088\ \textcolor{keyword}{using\ namespace\ }yarp;}
+\DoxyCodeLine{00089\ \textcolor{keyword}{using\ namespace\ }yarp::os;}
+\DoxyCodeLine{00090\ \textcolor{keyword}{using\ namespace\ }yarp::sig;}
+\DoxyCodeLine{00091\ \textcolor{keyword}{using\ namespace\ }yarp::math;}
+\DoxyCodeLine{00092\ }
+\DoxyCodeLine{00093\ \textcolor{keyword}{using\ namespace\ }std;}
+\DoxyCodeLine{00094\ }
+\DoxyCodeLine{00101\ \textcolor{keyword}{class\ }iCubBreather:\ \textcolor{keyword}{public}\ RFModule}
+\DoxyCodeLine{00102\ \{}
+\DoxyCodeLine{00103\ \ \ \ \ \textcolor{keyword}{private}:}
+\DoxyCodeLine{00104\ \ \ \ \ \ \ \ \ iCubBreatherThread\ *iCubBreatherThrd;}
+\DoxyCodeLine{00105\ \ \ \ \ \ \ \ \ RpcServer\ \ \ \ \ \ \ \ \ \ \ rpcSrvr;}
+\DoxyCodeLine{00106\ }
+\DoxyCodeLine{00107\ \ \ \ \ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00108\ \ \ \ \ \ \ \ \ iCubBreather()}
+\DoxyCodeLine{00109\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00110\ \ \ \ \ \ \ \ \ \ \ \ \ iCubBreatherThrd=0;}
+\DoxyCodeLine{00111\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00112\ }
+\DoxyCodeLine{00113\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ respond(\textcolor{keyword}{const}\ Bottle\ \&command,\ Bottle\ \&reply)}
+\DoxyCodeLine{00114\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00115\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ ack\ =Vocab32::encode(\textcolor{stringliteral}{"{}ack"{}});}
+\DoxyCodeLine{00116\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ nack=Vocab32::encode(\textcolor{stringliteral}{"{}nack"{}});}
+\DoxyCodeLine{00117\ }
+\DoxyCodeLine{00118\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (command.size()>0)}
+\DoxyCodeLine{00119\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00120\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{switch}\ (command.get(0).asVocab32())}
+\DoxyCodeLine{00121\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00122\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ createVocab32(\textcolor{charliteral}{'s'},\textcolor{charliteral}{'t'},\textcolor{charliteral}{'a'},\textcolor{charliteral}{'r'}):}
+\DoxyCodeLine{00123\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00124\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ res=Vocab32::encode(\textcolor{stringliteral}{"{}started"{}});}
+\DoxyCodeLine{00125\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (iCubBreatherThrd\ -\/>\ startBreathing())}
+\DoxyCodeLine{00126\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00127\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ reply.addVocab32(ack);}
+\DoxyCodeLine{00128\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00129\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00130\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ reply.addVocab32(nack);}
+\DoxyCodeLine{00131\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00132\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ reply.addVocab32(res);}
+\DoxyCodeLine{00133\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00134\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00135\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ createVocab32(\textcolor{charliteral}{'s'},\textcolor{charliteral}{'t'},\textcolor{charliteral}{'o'},\textcolor{charliteral}{'p'}):}
+\DoxyCodeLine{00136\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00137\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ res=Vocab32::encode(\textcolor{stringliteral}{"{}stopped"{}});}
+\DoxyCodeLine{00138\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (iCubBreatherThrd\ -\/>\ stopBreathing())}
+\DoxyCodeLine{00139\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00140\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ reply.addVocab32(ack);}
+\DoxyCodeLine{00141\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00142\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00143\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ reply.addVocab32(nack);}
+\DoxyCodeLine{00144\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00145\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ reply.addVocab32(res);}
+\DoxyCodeLine{00146\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00147\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00148\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}}
+\DoxyCodeLine{00149\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{default}:}
+\DoxyCodeLine{00150\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ RFModule::respond(command,reply);}
+\DoxyCodeLine{00151\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00152\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00153\ }
+\DoxyCodeLine{00154\ \ \ \ \ \ \ \ \ \ \ \ \ reply.addVocab32(nack);}
+\DoxyCodeLine{00155\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00156\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00157\ }
+\DoxyCodeLine{00158\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ configure(ResourceFinder\ \&rf)}
+\DoxyCodeLine{00159\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00160\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{string}\ name\ \ \ \ \ \ \ \ \ =\ \textcolor{stringliteral}{"{}iCubBreather"{}};}
+\DoxyCodeLine{00161\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{string}\ robot\ \ \ \ \ \ \ \ =\ \textcolor{stringliteral}{"{}icub"{}};}
+\DoxyCodeLine{00162\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{string}\ part\ \ \ \ \ \ \ \ \ =\ \textcolor{stringliteral}{"{}left\_arm"{}};}
+\DoxyCodeLine{00163\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ \ \ \ verbosity\ \ \ \ =\ \ \ \ \ \ 0;\ \ \ \ \textcolor{comment}{//\ verbosity}}
+\DoxyCodeLine{00164\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ \ \ \ rate\ \ \ \ \ \ \ \ \ =\ \ \ 2000;\ \ \ \ \textcolor{comment}{//\ rate\ of\ the\ iCubBreatherThread}}
+\DoxyCodeLine{00165\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ \ \ \ numWaypoints\ =\ \ \ \ \ \ 1;}
+\DoxyCodeLine{00166\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ \ \ autoStart\ \ \ \ =\ \ \textcolor{keyword}{false};}
+\DoxyCodeLine{00167\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ noiseStd\ \ \ \ \ =\ \ \ \ 0.5;}
+\DoxyCodeLine{00168\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ refSpeeds\ \ \ \ =\ \ \ 10.0;}
+\DoxyCodeLine{00169\ }
+\DoxyCodeLine{00170\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//*******************\ NAME\ ******************}}
+\DoxyCodeLine{00171\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (rf.check(\textcolor{stringliteral}{"{}name"{}}))}
+\DoxyCodeLine{00172\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00173\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ name\ =\ rf.find(\textcolor{stringliteral}{"{}name"{}}).asString();}
+\DoxyCodeLine{00174\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ yInfo(\textcolor{stringliteral}{"{}***\ Module\ name\ set\ to\ \%s"{}},name.c\_str());\ \ }
+\DoxyCodeLine{00175\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00176\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}\ yInfo(\textcolor{stringliteral}{"{}***\ Module\ name\ set\ to\ default,\ i.e.\ \%s"{}},name.c\_str());}
+\DoxyCodeLine{00177\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ setName(name.c\_str());}
+\DoxyCodeLine{00178\ }
+\DoxyCodeLine{00179\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//******************\ rate\ ******************}}
+\DoxyCodeLine{00180\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (rf.check(\textcolor{stringliteral}{"{}rate"{}}))}
+\DoxyCodeLine{00181\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00182\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ rate\ =\ rf.find(\textcolor{stringliteral}{"{}rate"{}}).asInt32();}
+\DoxyCodeLine{00183\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ yInfo((\textcolor{stringliteral}{"{}***\ "{}}+name+\textcolor{stringliteral}{"{}:\ thread\ working\ at\ \%i\ ms"{}}).c\_str(),\ rate);}
+\DoxyCodeLine{00184\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00185\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}\ yInfo((\textcolor{stringliteral}{"{}***\ "{}}+name+\textcolor{stringliteral}{"{}:\ could\ not\ find\ rate\ in\ the\ config\ file;\ using\ \%i\ ms\ as\ default"{}}).c\_str(),\ rate);}
+\DoxyCodeLine{00186\ }
+\DoxyCodeLine{00187\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//*******************\ VERBOSE\ ******************}}
+\DoxyCodeLine{00188\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (rf.check(\textcolor{stringliteral}{"{}verbosity"{}}))}
+\DoxyCodeLine{00189\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00190\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ verbosity\ =\ rf.find(\textcolor{stringliteral}{"{}verbosity"{}}).asInt32();}
+\DoxyCodeLine{00191\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ yInfo((\textcolor{stringliteral}{"{}***\ "{}}+name+\textcolor{stringliteral}{"{}:\ verbosity\ set\ to\ \%i"{}}).c\_str(),verbosity);}
+\DoxyCodeLine{00192\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00193\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}\ yInfo((\textcolor{stringliteral}{"{}***\ "{}}+name+\textcolor{stringliteral}{"{}:\ could\ not\ find\ verbosity\ option\ in\ the\ config\ file;\ using\ \%i\ as\ default"{}}).c\_str(),verbosity);}
+\DoxyCodeLine{00194\ }
+\DoxyCodeLine{00195\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//*******************\ NOISESTD\ ******************}}
+\DoxyCodeLine{00196\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (rf.check(\textcolor{stringliteral}{"{}noiseStd"{}}))}
+\DoxyCodeLine{00197\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00198\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ noiseStd\ =\ rf.find(\textcolor{stringliteral}{"{}noiseStd"{}}).asFloat64();}
+\DoxyCodeLine{00199\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ yInfo((\textcolor{stringliteral}{"{}***\ "{}}+name+\textcolor{stringliteral}{"{}:\ noiseStd\ set\ to\ \%g"{}}).c\_str(),noiseStd);}
+\DoxyCodeLine{00200\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00201\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}\ yInfo((\textcolor{stringliteral}{"{}***\ "{}}+name+\textcolor{stringliteral}{"{}:\ could\ not\ find\ noiseStd\ option\ in\ the\ config\ file;\ using\ \%g\ as\ default"{}}).c\_str(),noiseStd);}
+\DoxyCodeLine{00202\ }
+\DoxyCodeLine{00203\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//*******************\ REFPEEDS\ ******************}}
+\DoxyCodeLine{00204\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (rf.check(\textcolor{stringliteral}{"{}refSpeeds"{}}))}
+\DoxyCodeLine{00205\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00206\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ refSpeeds\ =\ rf.find(\textcolor{stringliteral}{"{}refSpeeds"{}}).asFloat64();}
+\DoxyCodeLine{00207\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ yInfo((\textcolor{stringliteral}{"{}***\ "{}}+name+\textcolor{stringliteral}{"{}:\ refSpeeds\ set\ to\ \%g"{}}).c\_str(),refSpeeds);}
+\DoxyCodeLine{00208\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00209\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}\ yInfo((\textcolor{stringliteral}{"{}***\ "{}}+name+\textcolor{stringliteral}{"{}:\ could\ not\ find\ refSpeeds\ option\ in\ the\ config\ file;\ using\ \%g\ as\ default"{}}).c\_str(),refSpeeds);}
+\DoxyCodeLine{00210\ }
+\DoxyCodeLine{00211\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//*******************\ ROBOT\ ******************}}
+\DoxyCodeLine{00212\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (rf.check(\textcolor{stringliteral}{"{}robot"{}}))}
+\DoxyCodeLine{00213\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00214\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ robot\ =\ rf.find(\textcolor{stringliteral}{"{}robot"{}}).asString();}
+\DoxyCodeLine{00215\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ yInfo((\textcolor{stringliteral}{"{}***\ "{}}+name+\textcolor{stringliteral}{"{}:\ robot\ is\ \%s"{}}).c\_str(),robot.c\_str());}
+\DoxyCodeLine{00216\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00217\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}\ yInfo((\textcolor{stringliteral}{"{}***\ "{}}+name+\textcolor{stringliteral}{"{}:\ could\ not\ find\ robot\ option\ in\ the\ config\ file;\ using\ \%s\ as\ default"{}}).c\_str(),robot.c\_str());}
+\DoxyCodeLine{00218\ }
+\DoxyCodeLine{00219\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//*******************\ PART\ *******************}}
+\DoxyCodeLine{00220\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (rf.check(\textcolor{stringliteral}{"{}part"{}}))}
+\DoxyCodeLine{00221\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00222\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ part\ =\ rf.find(\textcolor{stringliteral}{"{}part"{}}).asString();}
+\DoxyCodeLine{00223\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ yInfo((\textcolor{stringliteral}{"{}***\ "{}}+name+\textcolor{stringliteral}{"{}:\ part\ is\ \%s"{}}).c\_str(),part.c\_str());}
+\DoxyCodeLine{00224\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00225\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}\ yInfo((\textcolor{stringliteral}{"{}***\ "{}}+name+\textcolor{stringliteral}{"{}:\ could\ not\ find\ part\ option\ in\ the\ config\ file;\ using\ \%s\ as\ default"{}}).c\_str(),part.c\_str());}
+\DoxyCodeLine{00226\ }
+\DoxyCodeLine{00227\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//*************\ AUTOSTART\ *******************}}
+\DoxyCodeLine{00228\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (rf.check(\textcolor{stringliteral}{"{}autoStart"{}}))}
+\DoxyCodeLine{00229\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00230\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ autoStart\ =\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00231\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00232\ }
+\DoxyCodeLine{00233\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//******************\ THREAD\ ******************}}
+\DoxyCodeLine{00234\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ iCubBreatherThrd\ =\ \textcolor{keyword}{new}\ iCubBreatherThread(rate,\ name,\ robot,\ part,\ autoStart,}
+\DoxyCodeLine{00235\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ noiseStd,\ refSpeeds,\ verbosity,\ rf);}
+\DoxyCodeLine{00236\ }
+\DoxyCodeLine{00237\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ iCubBreatherThrd\ -\/>\ start();}
+\DoxyCodeLine{00238\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ strt\ =\ 1;}
+\DoxyCodeLine{00239\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!strt)}
+\DoxyCodeLine{00240\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00241\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{delete}\ iCubBreatherThrd;}
+\DoxyCodeLine{00242\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ iCubBreatherThrd\ =\ 0;}
+\DoxyCodeLine{00243\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ yError(\textcolor{stringliteral}{"{}\ iCubBreatherThread\ wasn't\ instantiated!!"{}});}
+\DoxyCodeLine{00244\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00245\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00246\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ yInfo(\textcolor{stringliteral}{"{}ICUB\ BREATHER:\ iCubBreatherThread\ istantiated.."{}});}
+\DoxyCodeLine{00247\ }
+\DoxyCodeLine{00248\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//************************\ RPC\ ***********************}}
+\DoxyCodeLine{00249\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ rpcSrvr.open((\textcolor{stringliteral}{"{}/"{}}+name+\textcolor{stringliteral}{"{}/rpc:i"{}}).c\_str());}
+\DoxyCodeLine{00250\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ attach(rpcSrvr);}
+\DoxyCodeLine{00251\ }
+\DoxyCodeLine{00252\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00253\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00254\ }
+\DoxyCodeLine{00255\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ close()}
+\DoxyCodeLine{00256\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00257\ \ \ \ \ \ \ \ \ \ \ \ \ yInfo(\textcolor{stringliteral}{"{}ICUB\ BREATHER:\ Stopping\ threads.."{}});}
+\DoxyCodeLine{00258\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (iCubBreatherThrd)}
+\DoxyCodeLine{00259\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00260\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ iCubBreatherThrd-\/>stop();}
+\DoxyCodeLine{00261\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{delete}\ iCubBreatherThrd;}
+\DoxyCodeLine{00262\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ iCubBreatherThrd=0;}
+\DoxyCodeLine{00263\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00264\ }
+\DoxyCodeLine{00265\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00266\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00267\ }
+\DoxyCodeLine{00268\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ getPeriod()\ \ \{\ \textcolor{keywordflow}{return}\ 1.0;\ \}}
+\DoxyCodeLine{00269\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ updateModule()\ \{\ \textcolor{keywordflow}{return}\ \textcolor{keyword}{true};\ \}}
+\DoxyCodeLine{00270\ \};}
+\DoxyCodeLine{00271\ }
+\DoxyCodeLine{00275\ \textcolor{keywordtype}{int}\ main(\textcolor{keywordtype}{int}\ argc,\ \textcolor{keywordtype}{char}\ *\ argv[])}
+\DoxyCodeLine{00276\ \{}
+\DoxyCodeLine{00277\ \ \ \ \ ResourceFinder\ rf;}
+\DoxyCodeLine{00278\ \ \ \ \ rf.setDefaultContext(\textcolor{stringliteral}{"{}funny-\/things"{}});}
+\DoxyCodeLine{00279\ \ \ \ \ rf.setDefaultConfigFile(\textcolor{stringliteral}{"{}iCubBreather.ini"{}});}
+\DoxyCodeLine{00280\ \ \ \ \ rf.configure(argc,argv);}
+\DoxyCodeLine{00281\ }
+\DoxyCodeLine{00282\ \ \ \ \ \textcolor{keywordflow}{if}\ (rf.check(\textcolor{stringliteral}{"{}help"{}}))}
+\DoxyCodeLine{00283\ \ \ \ \ \{\ \ \ \ }
+\DoxyCodeLine{00284\ \ \ \ \ \ \ \ \ cout\ <<\ endl\ <<\ \textcolor{stringliteral}{"{}IMU\ IDENTIFIER\ module"{}}\ <<\ endl;}
+\DoxyCodeLine{00285\ \ \ \ \ \ \ \ \ cout\ <<\ endl\ <<\ \textcolor{stringliteral}{"{}Options:"{}}\ <<\ endl;}
+\DoxyCodeLine{00286\ \ \ \ \ \ \ \ \ cout\ <<\ \textcolor{stringliteral}{"{}\ \ \ -\/-\/context\ \ \ \ \ \ path:\ \ \ where\ to\ find\ the\ called\ resource.\ Default\ gazeStabilization."{}}\ <<\ endl;}
+\DoxyCodeLine{00287\ \ \ \ \ \ \ \ \ cout\ <<\ \textcolor{stringliteral}{"{}\ \ \ -\/-\/from\ \ \ \ \ \ \ \ \ from:\ \ \ the\ name\ of\ the\ .ini\ file.\ Default\ iCubBreather.ini."{}}\ <<\ endl;}
+\DoxyCodeLine{00288\ \ \ \ \ \ \ \ \ cout\ <<\ \textcolor{stringliteral}{"{}\ \ \ -\/-\/name\ \ \ \ \ \ \ \ \ name:\ \ \ the\ name\ of\ the\ module.\ Default\ iCubBreather."{}}\ <<\ endl;}
+\DoxyCodeLine{00289\ \ \ \ \ \ \ \ \ cout\ <<\ \textcolor{stringliteral}{"{}\ \ \ -\/-\/robot\ \ \ \ \ \ \ \ robot:\ \ the\ name\ of\ the\ robot.\ Default\ icub."{}}\ <<\ endl;}
+\DoxyCodeLine{00290\ \ \ \ \ \ \ \ \ cout\ <<\ \textcolor{stringliteral}{"{}\ \ \ -\/-\/rate\ \ \ \ \ \ \ \ \ rate:\ \ \ the\ period\ used\ by\ the\ thread.\ Default\ 500ms."{}}\ <<\ endl;}
+\DoxyCodeLine{00291\ \ \ \ \ \ \ \ \ cout\ <<\ \textcolor{stringliteral}{"{}\ \ \ -\/-\/noiseStd\ \ \ \ \ double:\ standard\ deviation\ of\ the\ noise.\ Default\ 1.0."{}}\ <<\ endl;}
+\DoxyCodeLine{00292\ \ \ \ \ \ \ \ \ cout\ <<\ \textcolor{stringliteral}{"{}\ \ \ -\/-\/refSpeeds\ \ \ \ double:\ The\ reference\ speeds\ at\ the\ joints.\ Default\ 5.0."{}}\ <<\ endl;}
+\DoxyCodeLine{00293\ \ \ \ \ \ \ \ \ cout\ <<\ \textcolor{stringliteral}{"{}\ \ \ -\/-\/verbosity\ \ \ \ int:\ \ \ \ verbosity\ level.\ Default\ 0."{}}\ <<\ endl;}
+\DoxyCodeLine{00294\ \ \ \ \ \ \ \ \ cout\ <<\ \textcolor{stringliteral}{"{}\ \ \ -\/-\/autoStart\ \ \ \ flag:\ \ \ if\ to\ autostart\ the\ module\ or\ not.\ Default\ no."{}}\ <<\ endl;}
+\DoxyCodeLine{00295\ \ \ \ \ \ \ \ \ cout\ <<\ endl;}
+\DoxyCodeLine{00296\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 0;}
+\DoxyCodeLine{00297\ \ \ \ \ \}}
+\DoxyCodeLine{00298\ }
+\DoxyCodeLine{00299\ \ \ \ \ Network\ yarp;}
+\DoxyCodeLine{00300\ \ \ \ \ \textcolor{keywordflow}{if}\ (!yarp.checkNetwork())}
+\DoxyCodeLine{00301\ \ \ \ \ \{}
+\DoxyCodeLine{00302\ \ \ \ \ \ \ \ \ yInfo(\textcolor{stringliteral}{"{}No\ Network!!!\(\backslash\)n"{}});}
+\DoxyCodeLine{00303\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 1;}
+\DoxyCodeLine{00304\ \ \ \ \ \}}
+\DoxyCodeLine{00305\ }
+\DoxyCodeLine{00306\ \ \ \ \ iCubBreather\ icubBrthr;}
+\DoxyCodeLine{00307\ \ \ \ \ \textcolor{keywordflow}{return}\ icubBrthr.runModule(rf);}
+\DoxyCodeLine{00308\ \}}
+\DoxyCodeLine{00309\ \textcolor{comment}{//\ empty\ line\ to\ make\ gcc\ happy}}
+
+\end{DoxyCode}

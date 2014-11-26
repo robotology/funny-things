@@ -1,0 +1,12 @@
+<div id="article-img">
+    {% if include.description%}
+        <a href="/img/posts/{{ include.url }}" target="_blank">
+            <img src="/img/posts/{{ include.url }}" class="img-responsive img-centered" alt="{{ include.description }}" style="margin-bottom: 0px; {% if include.style%}{{ include.style }}{%endif%}" />
+        </a>
+        <pre style="margin-bottom: 20px;{% if include.style%}{{ include.style }}{%endif%}">{{ include.description }}</pre>
+    {% else%}
+        <a href="/img/posts/{{ include.url }}" target="_blank">
+            <img src="/img/posts/{{ include.url }}" class="img-responsive img-centered" alt="{{ include.url }}" style="margin-bottom: 20px;{% if include.style%}{{ include.style }}{%endif%}" />
+        </a>
+    {% endif%}
+</div>

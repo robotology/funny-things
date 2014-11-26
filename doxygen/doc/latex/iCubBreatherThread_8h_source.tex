@@ -1,0 +1,108 @@
+\doxysection{i\+Cub\+Breather\+Thread.\+h}
+\label{iCubBreatherThread_8h_source}\index{/home/runner/work/funny-\/things/funny-\/things/gh-\/pages/modules/iCubBreather/iCubBreatherThread.h@{/home/runner/work/funny-\/things/funny-\/things/gh-\/pages/modules/iCubBreather/iCubBreatherThread.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*\ }}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ Copyright\ (C)\ 2010\ RobotCub\ Consortium,\ European\ Commission\ FP6\ Project\ IST-\/004370}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *\ Author:\ Alessandro\ Roncone}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *\ email:\ \ alessandro.roncone@iit.it}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *\ website:\ www.robotcub.org}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *\ Permission\ is\ granted\ to\ copy,\ distribute,\ and/or\ modify\ this\ program}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ under\ the\ terms\ of\ the\ GNU\ General\ Public\ License,\ version\ 2\ or\ any}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ *\ later\ version\ published\ by\ the\ Free\ Software\ Foundation.}}
+\DoxyCodeLine{00009\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00010\ \textcolor{comment}{\ *\ A\ copy\ of\ the\ license\ can\ be\ found\ at}}
+\DoxyCodeLine{00011\ \textcolor{comment}{\ *\ http://www.robotcub.org/icub/license/gpl.txt}}
+\DoxyCodeLine{00012\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00013\ \textcolor{comment}{\ *\ This\ program\ is\ distributed\ in\ the\ hope\ that\ it\ will\ be\ useful,\ but}}
+\DoxyCodeLine{00014\ \textcolor{comment}{\ *\ WITHOUT\ ANY\ WARRANTY;\ without\ even\ the\ implied\ warranty\ of}}
+\DoxyCodeLine{00015\ \textcolor{comment}{\ *\ MERCHANTABILITY\ or\ FITNESS\ FOR\ A\ PARTICULAR\ PURPOSE.\ See\ the\ GNU\ General}}
+\DoxyCodeLine{00016\ \textcolor{comment}{\ *\ Public\ License\ for\ more\ details}}
+\DoxyCodeLine{00017\ \textcolor{comment}{\ *\ This\ thread\ detects\ a\ touched\ taxel\ on\ the\ skin\ (through\ readings\ from\ the}}
+\DoxyCodeLine{00018\ \textcolor{comment}{\ *\ skinContactList\ port),\ and\ it\ moves\ the\ "{}controlateral"{}\ limb\ toward}}
+\DoxyCodeLine{00019\ \textcolor{comment}{\ *\ the\ affected\ taxel.}}
+\DoxyCodeLine{00020\ \textcolor{comment}{*/}}
+\DoxyCodeLine{00021\ }
+\DoxyCodeLine{00022\ \textcolor{preprocessor}{\#include\ <yarp/os/all.h>}}
+\DoxyCodeLine{00023\ }
+\DoxyCodeLine{00024\ \textcolor{preprocessor}{\#include\ <yarp/sig/Vector.h>}}
+\DoxyCodeLine{00025\ }
+\DoxyCodeLine{00026\ \textcolor{preprocessor}{\#include\ <yarp/dev/PolyDriver.h>}}
+\DoxyCodeLine{00027\ \textcolor{preprocessor}{\#include\ <yarp/dev/Drivers.h>}}
+\DoxyCodeLine{00028\ \textcolor{preprocessor}{\#include\ <yarp/dev/all.h>}}
+\DoxyCodeLine{00029\ }
+\DoxyCodeLine{00030\ \textcolor{preprocessor}{\#include\ <yarp/math/RandnScalar.h>}\ }
+\DoxyCodeLine{00031\ }
+\DoxyCodeLine{00032\ \textcolor{preprocessor}{\#include\ <mutex>}}
+\DoxyCodeLine{00033\ \textcolor{preprocessor}{\#include\ <iostream>}}
+\DoxyCodeLine{00034\ \textcolor{preprocessor}{\#include\ <string>}}
+\DoxyCodeLine{00035\ \textcolor{preprocessor}{\#include\ <cstdarg>}}
+\DoxyCodeLine{00036\ \textcolor{preprocessor}{\#include\ <vector>}}
+\DoxyCodeLine{00037\ }
+\DoxyCodeLine{00038\ \textcolor{keyword}{using\ namespace\ }yarp::os;}
+\DoxyCodeLine{00039\ \textcolor{keyword}{using\ namespace\ }yarp::sig;}
+\DoxyCodeLine{00040\ \textcolor{keyword}{using\ namespace\ }yarp::dev;}
+\DoxyCodeLine{00041\ }
+\DoxyCodeLine{00042\ \textcolor{keyword}{using\ namespace\ }std;}
+\DoxyCodeLine{00043\ }
+\DoxyCodeLine{00044\ \textcolor{keyword}{class\ }iCubBreatherThread:\ \textcolor{keyword}{public}\ PeriodicThread}
+\DoxyCodeLine{00045\ \{}
+\DoxyCodeLine{00046\ \textcolor{keyword}{protected}:}
+\DoxyCodeLine{00047\ \textcolor{comment}{\ \ \ \ /***************************************************************************/}}
+\DoxyCodeLine{00048\ \ \ \ \ \textcolor{comment}{//\ EXTERNAL\ VARIABLES:\ change\ them\ from\ command\ line\ or\ through\ .ini\ file}}
+\DoxyCodeLine{00049\ \ \ \ \ \textcolor{keywordtype}{int}\ verbosity;\ \ \ \ \ \ \textcolor{comment}{//\ Flag\ that\ manages\ verbosity}}
+\DoxyCodeLine{00050\ \ \ \ \ \textcolor{keywordtype}{string}\ name;\ \ \ \ \ \ \ \ \textcolor{comment}{//\ Name\ of\ the\ module\ (to\ change\ port\ names\ accordingly)\ \ }}
+\DoxyCodeLine{00051\ \ \ \ \ \textcolor{keywordtype}{string}\ robot;\ \ \ \ \ \ \ \textcolor{comment}{//\ Name\ of\ the\ robot\ (to\ address\ both\ icub\ and\ icubSim)}}
+\DoxyCodeLine{00052\ \ \ \ \ \textcolor{keywordtype}{string}\ part;\ \ \ \ \ \ \ \ \textcolor{comment}{//\ Arm\ to\ control\ (either\ "{}right\_arm"{}\ or\ "{}left\_arm"{})}}
+\DoxyCodeLine{00053\ \ \ \ \ \textcolor{keywordtype}{double}\ noiseStd;}
+\DoxyCodeLine{00054\ \ \ \ \ \textcolor{keywordtype}{double}\ refSpeed;}
+\DoxyCodeLine{00055\ \ \ \ \ \textcolor{keywordtype}{double}\ rate;}
+\DoxyCodeLine{00056\ }
+\DoxyCodeLine{00057\ \ \ \ \ \textcolor{comment}{//\ Classical\ interfaces}}
+\DoxyCodeLine{00058\ \ \ \ \ PolyDriver\ \ \ \ \ \ \ \ dd;\ \ \ \textcolor{comment}{//\ head\ device\ driver}}
+\DoxyCodeLine{00059\ \ \ \ \ IPositionControl\ *ipos;}
+\DoxyCodeLine{00060\ \ \ \ \ IEncoders\ \ \ \ \ \ \ \ *iencs;}
+\DoxyCodeLine{00061\ \ \ \ \ IControlMode\ \ \ \ \ *imod;}
+\DoxyCodeLine{00062\ \ \ \ \ Vector\ \ \ \ \ \ \ \ \ \ \ *encs;}
+\DoxyCodeLine{00063\ \ \ \ \ Vector\ \ \ \ \ \ \ \ \ \ \ \ encs\_0;}
+\DoxyCodeLine{00064\ \ \ \ \ \textcolor{keywordtype}{int}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ jnts;}
+\DoxyCodeLine{00065\ }
+\DoxyCodeLine{00066\ \ \ \ \ \textcolor{keywordtype}{bool}\ isRunning;}
+\DoxyCodeLine{00067\ \ \ \ \ \textcolor{keywordtype}{bool}\ onStart;}
+\DoxyCodeLine{00068\ }
+\DoxyCodeLine{00069\ \ \ \ \ yarp::os::Bottle\ groupPartBottle;}
+\DoxyCodeLine{00070\ \ \ \ \ std::vector\ <double>\ noiseStDvtns;}
+\DoxyCodeLine{00071\ \ \ \ \ std::vector\ <double>\ refSpeeds;}
+\DoxyCodeLine{00072\ }
+\DoxyCodeLine{00073\ \ \ \ \ mutex\ mtx;}
+\DoxyCodeLine{00074\ \ \ \ \ yarp::math::RandnScalar\ randngen;}
+\DoxyCodeLine{00075\ }
+\DoxyCodeLine{00081\ \ \ \ \ \textcolor{keywordtype}{bool}\ setCtrlModes(\textcolor{keyword}{const}\ \textcolor{keywordtype}{string}\ \&\_s);}
+\DoxyCodeLine{00082\ }
+\DoxyCodeLine{00089\ \ \ \ \ \textcolor{keywordtype}{bool}\ areJointsHealthyAndSet(vector<int>\ \&jointsToSet,\textcolor{keyword}{const}\ \textcolor{keywordtype}{string}\ \&\_s);}
+\DoxyCodeLine{00090\ }
+\DoxyCodeLine{00095\ \ \ \ \ \textcolor{keywordtype}{bool}\ goHome();}
+\DoxyCodeLine{00096\ }
+\DoxyCodeLine{00097\ \ \ \ \ \textcolor{keywordtype}{bool}\ goToTarget(\textcolor{keyword}{const}\ Vector\ \&nT);}
+\DoxyCodeLine{00098\ }
+\DoxyCodeLine{00099\ \ \ \ \ Vector\ computeNewTarget();}
+\DoxyCodeLine{00100\ }
+\DoxyCodeLine{00106\ \ \ \ \ \textcolor{keywordtype}{int}\ printMessage(\textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ l,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *f,\ ...)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00107\ }
+\DoxyCodeLine{00108\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00109\ \ \ \ \ \textcolor{comment}{//\ CONSTRUCTOR}}
+\DoxyCodeLine{00110\ \ \ \ \ iCubBreatherThread(\textcolor{keywordtype}{int}\ \_rate,\ \textcolor{keywordtype}{string}\ \_name,\ \textcolor{keywordtype}{string}\ \_robot,}
+\DoxyCodeLine{00111\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{string}\ \_part,\ \textcolor{keywordtype}{bool}\ \_autoStart,\ \textcolor{keywordtype}{double}\ \_noiseStd,}
+\DoxyCodeLine{00112\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ \_refSpeed,\ \textcolor{keywordtype}{int}\ \_v,\ \textcolor{keyword}{const}\ ResourceFinder\ \&\_rf);}
+\DoxyCodeLine{00113\ \ \ \ \ \textcolor{comment}{//\ INIT}}
+\DoxyCodeLine{00114\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{bool}\ threadInit();}
+\DoxyCodeLine{00115\ \ \ \ \ \textcolor{comment}{//\ RUN}}
+\DoxyCodeLine{00116\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ run();}
+\DoxyCodeLine{00117\ \ \ \ \ \textcolor{comment}{//\ RELEASE}}
+\DoxyCodeLine{00118\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ threadRelease();}
+\DoxyCodeLine{00119\ \ \ \ \ \textcolor{comment}{//\ RESTART\ THE\ CYCLE}}
+\DoxyCodeLine{00120\ \ \ \ \ \textcolor{keywordtype}{bool}\ startBreathing();}
+\DoxyCodeLine{00121\ \ \ \ \ \textcolor{keywordtype}{bool}\ stopBreathing();}
+\DoxyCodeLine{00122\ \};}
+
+\end{DoxyCode}
