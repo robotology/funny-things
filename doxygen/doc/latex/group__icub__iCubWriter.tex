@@ -1,0 +1,33 @@
+\doxysection{i\+Cub\+Writer}
+\label{group__icub__iCubWriter}\index{iCubWriter@{iCubWriter}}
+
+
+A very simple module that lets the i\+Cub reproduce on a sheet of paper a drawing given in svg format.  
+
+
+A very simple module that lets the i\+Cub reproduce on a sheet of paper a drawing given in svg format. 
+
+\hypertarget{group__icub__iCubWriter_intro_sec}{}\doxysubsection{\texorpdfstring{Description}{Description}}\label{group__icub__iCubWriter_intro_sec}
+By using the action\+Primitives library the i\+Cub can reproduce a drawing given in vectorial form. ~\newline
+ Note that only the {\itshape line} and {\itshape polyline} svg commands are recognized. ~\newline
+\hypertarget{group__icub__iCubWriter_lib_sec}{}\doxysubsection{\texorpdfstring{Libraries}{Libraries}}\label{group__icub__iCubWriter_lib_sec}
+
+\begin{DoxyItemize}
+\item YARP.
+\item action\+Primitives.
+\end{DoxyItemize}\hypertarget{group__icub__iCubWriter_parameters_sec}{}\doxysubsection{\texorpdfstring{Parameters}{Parameters}}\label{group__icub__iCubWriter_parameters_sec}
+--part {\itshape part} 
+\begin{DoxyItemize}
+\item select the arm to control.
+\end{DoxyItemize}
+
+--drawing {\itshape drawing} 
+\begin{DoxyItemize}
+\item select the svg file containing the drawing to write.
+\end{DoxyItemize}\hypertarget{group__icub__iCubWriter_portsc_sec}{}\doxysubsection{\texorpdfstring{Ports Created}{Ports Created}}\label{group__icub__iCubWriter_portsc_sec}
+{\itshape /i\+Cub\+Writer/rpc} receives the \mbox{[}go\mbox{]} command to start writing.\hypertarget{group__icub__iCubWriter_tested_os_sec}{}\doxysubsection{\texorpdfstring{Tested OS}{Tested OS}}\label{group__icub__iCubWriter_tested_os_sec}
+Windows, Linux
+
+\begin{DoxyAuthor}{Author}
+Ugo Pattacini 
+\end{DoxyAuthor}

@@ -1,0 +1,846 @@
+\doxysection{main.\+cpp}
+\label{iCubBlinker_2main_8cpp_source}\index{/home/runner/work/funny-\/things/funny-\/things/gh-\/pages/modules/iCubBlinker/main.cpp@{/home/runner/work/funny-\/things/funny-\/things/gh-\/pages/modules/iCubBlinker/main.cpp}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*\ }}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ Copyright\ (C)\ 2014\ iCub\ Facility\ -\/\ Istituto\ Italiano\ di\ Tecnologia}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *\ Author:\ Ugo\ Pattacini\ \&\ Alessandro\ Roncone}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *\ email:\ \ ugo.pattacini@iit.it}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *\ website:\ www.robotcub.org}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *\ Permission\ is\ granted\ to\ copy,\ distribute,\ and/or\ modify\ this\ program}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ under\ the\ terms\ of\ the\ GNU\ General\ Public\ License,\ version\ 2\ or\ any}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ *\ later\ version\ published\ by\ the\ Free\ Software\ Foundation.}}
+\DoxyCodeLine{00009\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00010\ \textcolor{comment}{\ *\ This\ program\ is\ distributed\ in\ the\ hope\ that\ it\ will\ be\ useful,\ but}}
+\DoxyCodeLine{00011\ \textcolor{comment}{\ *\ WITHOUT\ ANY\ WARRANTY;\ without\ even\ the\ implied\ warranty\ of}}
+\DoxyCodeLine{00012\ \textcolor{comment}{\ *\ MERCHANTABILITY\ or\ FITNESS\ FOR\ A\ PARTICULAR\ PURPOSE.\ See\ the\ GNU\ General}}
+\DoxyCodeLine{00013\ \textcolor{comment}{\ *\ Public\ License\ for\ more\ details}}
+\DoxyCodeLine{00014\ \textcolor{comment}{*/}}
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#include\ <mutex>}}
+\DoxyCodeLine{00017\ \textcolor{preprocessor}{\#include\ <iostream>}}
+\DoxyCodeLine{00018\ \textcolor{preprocessor}{\#include\ <fstream>}}
+\DoxyCodeLine{00019\ \textcolor{preprocessor}{\#include\ <iomanip>}}
+\DoxyCodeLine{00020\ \textcolor{preprocessor}{\#include\ <string>}}
+\DoxyCodeLine{00021\ }
+\DoxyCodeLine{00022\ \textcolor{preprocessor}{\#include\ <yarp/os/all.h>}}
+\DoxyCodeLine{00023\ \textcolor{preprocessor}{\#include\ <yarp/dev/PolyDriver.h>}}
+\DoxyCodeLine{00024\ \textcolor{preprocessor}{\#include\ <yarp/dev/IPositionControl.h>}}
+\DoxyCodeLine{00025\ \textcolor{preprocessor}{\#include\ <yarp/dev/IControlMode.h>}}
+\DoxyCodeLine{00026\ \textcolor{preprocessor}{\#include\ <yarp/dev/IControlLimits.h>}}
+\DoxyCodeLine{00027\ \textcolor{preprocessor}{\#include\ <yarp/math/Rand.h>}}
+\DoxyCodeLine{00028\ \textcolor{preprocessor}{\#include\ <yarp/math/NormRand.h>}}
+\DoxyCodeLine{00029\ }
+\DoxyCodeLine{00030\ \textcolor{preprocessor}{\#include\ "{}iCubBlinker\_IDL.h"{}}}
+\DoxyCodeLine{00031\ }
+\DoxyCodeLine{00032\ \textcolor{keyword}{using\ namespace\ }std;}
+\DoxyCodeLine{00033\ \textcolor{keyword}{using\ namespace\ }yarp::os;}
+\DoxyCodeLine{00034\ \textcolor{keyword}{using\ namespace\ }yarp::math;}
+\DoxyCodeLine{00035\ }
+\DoxyCodeLine{00036\ \textcolor{keyword}{enum}\ InteractionMode}
+\DoxyCodeLine{00037\ \{\ }
+\DoxyCodeLine{00038\ \ \ \ \ INTERACTION\_MODE\_UNKNOWN=0,\ }
+\DoxyCodeLine{00039\ \ \ \ \ INTERACTION\_MODE\_IDLE,\ INTERACTION\_MODE\_CONVERSATION,}
+\DoxyCodeLine{00040\ \ \ \ \ INTERACTION\_MODE\_CALIBRATION\_CLOSURE,INTERACTION\_MODE\_CALIBRATION\_OPENING}
+\DoxyCodeLine{00041\ \};}
+\DoxyCodeLine{00042\ }
+\DoxyCodeLine{00043\ \textcolor{keywordtype}{string}\ int2hex(\textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ \_i)}
+\DoxyCodeLine{00044\ \{}
+\DoxyCodeLine{00045\ \ \ \ \ std::ostringstream\ hex;}
+\DoxyCodeLine{00046\ \ \ \ \ hex\ <<\ std::hex\ <<\ \_i;}
+\DoxyCodeLine{00047\ \ \ \ \ \textcolor{keywordflow}{return}\ hex.str();}
+\DoxyCodeLine{00048\ \}}
+\DoxyCodeLine{00049\ }
+\DoxyCodeLine{00050\ \textcolor{keywordtype}{string}\ int2string(\textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ \_a)}
+\DoxyCodeLine{00051\ \{}
+\DoxyCodeLine{00052\ \ \ \ \ std::ostringstream\ ss;}
+\DoxyCodeLine{00053\ \ \ \ \ ss\ <<\ \_a;}
+\DoxyCodeLine{00054\ \ \ \ \ \textcolor{keywordflow}{return}\ ss.str();}
+\DoxyCodeLine{00055\ \}}
+\DoxyCodeLine{00056\ }
+\DoxyCodeLine{00057\ \textcolor{keywordtype}{string}\ double2string(\textcolor{keyword}{const}\ \textcolor{keywordtype}{double}\ \_a)}
+\DoxyCodeLine{00058\ \{}
+\DoxyCodeLine{00059\ \ \ \ \ std::ostringstream\ ss;}
+\DoxyCodeLine{00060\ \ \ \ \ ss\ <<\ \_a;}
+\DoxyCodeLine{00061\ \ \ \ \ \textcolor{keywordflow}{return}\ ss.str();}
+\DoxyCodeLine{00062\ \}}
+\DoxyCodeLine{00063\ }
+\DoxyCodeLine{00064\ \textcolor{comment}{/***************************************************************/}}
+\DoxyCodeLine{00065\ \textcolor{keyword}{class\ }Blinker:\ \textcolor{keyword}{public}\ RFModule,\ \textcolor{keyword}{public}\ iCubBlinker\_IDL}
+\DoxyCodeLine{00066\ \{}
+\DoxyCodeLine{00067\ \textcolor{keyword}{private}:}
+\DoxyCodeLine{00068\ \ \ \ \ \textcolor{comment}{//\ Resource\ finder\ used\ to\ find\ for\ files\ and\ configurations:}}
+\DoxyCodeLine{00069\ \ \ \ \ ResourceFinder*\ rf;}
+\DoxyCodeLine{00070\ \ \ \ \ \textcolor{comment}{//\ PolyDriver\ and\ interface\ to\ command\ the\ eyelids\ in\ the\ rfe\ robots}}
+\DoxyCodeLine{00071\ \ \ \ \ yarp::dev::PolyDriver\ \_poly;}
+\DoxyCodeLine{00072\ \ \ \ \ yarp::dev::IPositionControl*\ \_iPos\{\ \textcolor{keyword}{nullptr}\ \};}
+\DoxyCodeLine{00073\ \ \ \ \ \textcolor{keywordtype}{double}\ \_minPoly\{\ 0.0\ \},\ \_maxPoly\{\ 0.0\ \};}
+\DoxyCodeLine{00074\ \ \ \ \ \textcolor{comment}{//\ TODO\ check\ if\ it\ is\ correct}}
+\DoxyCodeLine{00075\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ \_joint\_eylids\{\ 0\ \};}
+\DoxyCodeLine{00076\ }
+\DoxyCodeLine{00077\ \ \ \ \ \textcolor{keywordtype}{string}\ name;}
+\DoxyCodeLine{00078\ \ \ \ \ \textcolor{keywordtype}{string}\ robot;}
+\DoxyCodeLine{00079\ }
+\DoxyCodeLine{00080\ \ \ \ \ \textcolor{keywordtype}{bool}\ doubleBlink;}
+\DoxyCodeLine{00081\ \ \ \ \ \textcolor{keywordtype}{string}\ blinkingBehavior;}
+\DoxyCodeLine{00082\ \ \ \ \ \textcolor{keywordtype}{string}\ blinkingPeriod;}
+\DoxyCodeLine{00083\ }
+\DoxyCodeLine{00084\ \ \ \ \ Port\ emotionsPort;}
+\DoxyCodeLine{00085\ \ \ \ \ RpcServer\ rpcPort;}
+\DoxyCodeLine{00086\ }
+\DoxyCodeLine{00087\ \ \ \ \ mutex\ mtx;}
+\DoxyCodeLine{00088\ \ \ \ \ \textcolor{keywordtype}{bool}\ isBlinking;}
+\DoxyCodeLine{00089\ }
+\DoxyCodeLine{00090\ \ \ \ \ \textcolor{keywordtype}{double}\ dt;}
+\DoxyCodeLine{00091\ \ \ \ \ \textcolor{keywordtype}{double}\ t0;}
+\DoxyCodeLine{00092\ \ \ \ \ \textcolor{keywordtype}{int}\ doubleBlinkCnt;}
+\DoxyCodeLine{00093\ }
+\DoxyCodeLine{00094\ \ \ \ \ \textcolor{keywordtype}{int}\ sMin;}
+\DoxyCodeLine{00095\ \ \ \ \ \textcolor{keywordtype}{int}\ sMax;}
+\DoxyCodeLine{00096\ }
+\DoxyCodeLine{00097\ \ \ \ \ InteractionMode\ int\_mode;}
+\DoxyCodeLine{00098\ \ \ \ \ \textcolor{keywordtype}{double}\ fixed\_blinkper;}
+\DoxyCodeLine{00099\ }
+\DoxyCodeLine{00100\ \ \ \ \ \textcolor{keywordtype}{double}\ blinkper\_nrm,\ blinkper\_sgm;\ \ \textcolor{comment}{//\ period\ of\ the\ blinking}}
+\DoxyCodeLine{00101\ \ \ \ \ \textcolor{keywordtype}{double}\ closure\_nrm,\ \ \ closure\_sgm;\ \ \textcolor{comment}{//\ closure\ statistics}}
+\DoxyCodeLine{00102\ \ \ \ \ \textcolor{keywordtype}{double}\ sustain\_nrm,\ \ \ sustain\_sgm;\ \ \textcolor{comment}{//\ sustain\ statistics}}
+\DoxyCodeLine{00103\ \ \ \ \ \textcolor{keywordtype}{double}\ opening\_nrm,\ \ \ opening\_sgm;\ \ \textcolor{comment}{//\ opening\ statistics}}
+\DoxyCodeLine{00104\ }
+\DoxyCodeLine{00105\ \textcolor{comment}{\ \ \ \ /***************************************************************/}}
+\DoxyCodeLine{00106\ \ \ \ \ \textcolor{keywordtype}{bool}\ sendRawValue(\textcolor{keyword}{const}\ \textcolor{keywordtype}{string}\ \&\_value)}
+\DoxyCodeLine{00107\ \ \ \ \ \{}
+\DoxyCodeLine{00108\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (emotionsPort.getOutputCount()>0)}
+\DoxyCodeLine{00109\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00110\ \ \ \ \ \ \ \ \ \ \ \ \ Bottle\ cmd;}
+\DoxyCodeLine{00111\ \ \ \ \ \ \ \ \ \ \ \ \ cmd.addString(\_value);}
+\DoxyCodeLine{00112\ \ \ \ \ \ \ \ \ \ \ \ \ emotionsPort.write(cmd);}
+\DoxyCodeLine{00113\ }
+\DoxyCodeLine{00114\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00115\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00116\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00117\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00118\ \ \ \ \ \}}
+\DoxyCodeLine{00119\ }
+\DoxyCodeLine{00120\ \textcolor{comment}{\ \ \ \ /***************************************************************/}}
+\DoxyCodeLine{00121\ \ \ \ \ \textcolor{keywordtype}{bool}\ doBlink()}
+\DoxyCodeLine{00122\ \ \ \ \ \{}
+\DoxyCodeLine{00123\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (blinkingBehavior==\textcolor{stringliteral}{"{}naturalistic"{}})}
+\DoxyCodeLine{00124\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00125\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ doBlinkNaturalistic();}
+\DoxyCodeLine{00126\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00127\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}\ \textcolor{keywordflow}{if}\ (blinkingBehavior==\textcolor{stringliteral}{"{}fast"{}})}
+\DoxyCodeLine{00128\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00129\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ doBlinkFast();}
+\DoxyCodeLine{00130\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00131\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00132\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00133\ \ \ \ \ \ \ \ \ \ \ \ \ yError(\textcolor{stringliteral}{"{}Blinking\ behavior\ is\ neither\ naturalistic\ or\ fast!"{}});}
+\DoxyCodeLine{00134\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00135\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00136\ \ \ \ \ \}}
+\DoxyCodeLine{00137\ }
+\DoxyCodeLine{00138\ \textcolor{comment}{\ \ \ \ /***************************************************************/}}
+\DoxyCodeLine{00139\ \ \ \ \ \textcolor{keywordtype}{bool}\ doBlinkFast()}
+\DoxyCodeLine{00140\ \ \ \ \ \{}
+\DoxyCodeLine{00141\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ res\ =\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00142\ }
+\DoxyCodeLine{00143\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (\_iPos)\ \{}
+\DoxyCodeLine{00144\ \ \ \ \ \ \ \ \ \ \ \ \ yDebug()<<\textcolor{stringliteral}{"{}Sending\ position"{}}<<\_maxPoly;}
+\DoxyCodeLine{00145\ \ \ \ \ \ \ \ \ \ \ \ \ res\ \&=\ \_iPos-\/>positionMove(\_joint\_eylids,\ \_maxPoly);\ \textcolor{comment}{//\ the\ max\ means\ eyes\ closed}}
+\DoxyCodeLine{00146\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ wait\ motion\ done}}
+\DoxyCodeLine{00147\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ motion\_done\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00148\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{while}\ (!motion\_done)\ \{}
+\DoxyCodeLine{00149\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ Time::delay(0.001);}
+\DoxyCodeLine{00150\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{auto}\ ok\ =\ \_iPos-\/>checkMotionDone(\_joint\_eylids,\ \&motion\_done);}
+\DoxyCodeLine{00151\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}(!ok)\ \{}
+\DoxyCodeLine{00152\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ yError()<<\textcolor{stringliteral}{"{}Unable\ to\ check\ if\ the\ motion\ of\ the\ eyelids\ is\ done"{}};}
+\DoxyCodeLine{00153\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00154\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00155\ }
+\DoxyCodeLine{00156\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00157\ \ \ \ \ \ \ \ \ \ \ \ \ yDebug()<<\textcolor{stringliteral}{"{}Sending\ position"{}}<<\_minPoly;}
+\DoxyCodeLine{00158\ \ \ \ \ \ \ \ \ \ \ \ \ res\ \&=\ \_iPos-\/>positionMove(\_joint\_eylids,\ \_minPoly);\ \textcolor{comment}{//\ the\ min\ means\ eyes\ opened}}
+\DoxyCodeLine{00159\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00160\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}\ \{}
+\DoxyCodeLine{00161\ \ \ \ \ \ \ \ \ \ \ \ \ yDebug(\textcolor{stringliteral}{"{}Sending\ raw\ value:\ \%i"{}},sMin);}
+\DoxyCodeLine{00162\ \ \ \ \ \ \ \ \ \ \ \ \ res\ =\ res\ \&\&\ sendRawValue((\textcolor{stringliteral}{"{}S"{}}\ +\ int2string(sMin)));\ \textcolor{comment}{//\ close\ eyelids}}
+\DoxyCodeLine{00163\ \ \ \ \ \ \ \ \ \ \ \ \ Time::delay(0.15);}
+\DoxyCodeLine{00164\ \ \ \ \ \ \ \ \ \ \ \ \ yDebug(\textcolor{stringliteral}{"{}Sending\ raw\ value:\ \%i"{}},sMax);}
+\DoxyCodeLine{00165\ \ \ \ \ \ \ \ \ \ \ \ \ res\ =\ res\ \&\&\ sendRawValue((\textcolor{stringliteral}{"{}S"{}}\ +\ int2string(sMax)));\ \textcolor{comment}{//\ open\ \ eyelids}}
+\DoxyCodeLine{00166\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00167\ }
+\DoxyCodeLine{00168\ \ \ \ \ \ \ \ \ Time::delay(0.05);}
+\DoxyCodeLine{00169\ }
+\DoxyCodeLine{00170\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ res;}
+\DoxyCodeLine{00171\ \ \ \ \ \}}
+\DoxyCodeLine{00172\ }
+\DoxyCodeLine{00173\ \textcolor{comment}{\ \ \ \ /***************************************************************/}}
+\DoxyCodeLine{00174\ \ \ \ \ \textcolor{keywordtype}{bool}\ doBlinkNaturalistic()}
+\DoxyCodeLine{00175\ \ \ \ \ \{}
+\DoxyCodeLine{00176\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ t\_cl\ =\ NormRand::scalar(closure\_nrm,closure\_sgm);}
+\DoxyCodeLine{00177\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Cut\ the\ normal\ distribution\ to\ its\ first\ sigma}}
+\DoxyCodeLine{00178\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{while}\ (t\_cl<closure\_nrm-\/closure\_sgm\ ||\ t\_cl>closure\_nrm+closure\_sgm)}
+\DoxyCodeLine{00179\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00180\ \ \ \ \ \ \ \ \ \ \ \ \ t\_cl\ =\ NormRand::scalar(closure\_nrm,closure\_sgm);}
+\DoxyCodeLine{00181\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00182\ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00183\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ t\_su\ =\ NormRand::scalar(sustain\_nrm,sustain\_sgm);}
+\DoxyCodeLine{00184\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Cut\ the\ normal\ distribution\ to\ its\ first\ sigma}}
+\DoxyCodeLine{00185\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{while}\ (t\_su<sustain\_nrm-\/sustain\_sgm\ ||\ t\_su>sustain\_nrm+sustain\_sgm)}
+\DoxyCodeLine{00186\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00187\ \ \ \ \ \ \ \ \ \ \ \ \ t\_su\ =\ NormRand::scalar(sustain\_nrm,sustain\_sgm);}
+\DoxyCodeLine{00188\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00189\ }
+\DoxyCodeLine{00190\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ t\_op\ =\ NormRand::scalar(opening\_nrm,opening\_sgm);}
+\DoxyCodeLine{00191\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Cut\ the\ normal\ distribution\ to\ its\ first\ sigma}}
+\DoxyCodeLine{00192\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{while}\ (t\_op<opening\_nrm-\/opening\_sgm\ ||\ t\_op>opening\_nrm+opening\_sgm)}
+\DoxyCodeLine{00193\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00194\ \ \ \ \ \ \ \ \ \ \ \ \ t\_op\ =\ NormRand::scalar(opening\_nrm,opening\_sgm);}
+\DoxyCodeLine{00195\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00196\ }
+\DoxyCodeLine{00197\ \ \ \ \ \ \ \ \ yDebug(\textcolor{stringliteral}{"{}Starting\ a\ naturalistic\ blink.\ T\_cl\ \%g\ \(\backslash\)t\ T\_su\ \%g\ \(\backslash\)t\ T\_op\ \%g\ Total\ \%g"{}},}
+\DoxyCodeLine{00198\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ t\_cl,t\_su,t\_op,t\_cl+t\_su+t\_op);}
+\DoxyCodeLine{00199\ }
+\DoxyCodeLine{00200\ }
+\DoxyCodeLine{00201\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (\_iPos)\ \{}
+\DoxyCodeLine{00202\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ the\ minimum\ means\ fully\ open,\ the\ max\ means\ fully\ closed\ in\ the\ iCub}}
+\DoxyCodeLine{00203\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ mounting\ the\ rfe\ board}}
+\DoxyCodeLine{00204\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ 0;\ i\ <\ 11;\ i++)}
+\DoxyCodeLine{00205\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00206\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{auto}\ targetPos\ =\ \_minPoly\ +\ i\ *\ (\_maxPoly\ -\/\ \_minPoly)\ /\ 10;}
+\DoxyCodeLine{00207\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{string}\ rawvalue\ =\ \textcolor{stringliteral}{"{}S"{}}\ +\ int2string(targetPos);}
+\DoxyCodeLine{00208\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ yDebug()\ <<\ \textcolor{stringliteral}{"{}Sending\ postion:\ "{}}\ <<\ targetPos\ <<\ \textcolor{stringliteral}{"{}\ "{}}\ <<\ i\ *\ 10;}
+\DoxyCodeLine{00209\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \_iPos-\/>positionMove(\_joint\_eylids,\ targetPos);}
+\DoxyCodeLine{00210\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ motion\_done\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00211\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{while}\ (!motion\_done)\ \{}
+\DoxyCodeLine{00212\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ Time::delay(0.001);}
+\DoxyCodeLine{00213\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{auto}\ ok\ =\ \_iPos-\/>checkMotionDone(\_joint\_eylids,\ \&motion\_done);}
+\DoxyCodeLine{00214\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}(!ok)\ \{}
+\DoxyCodeLine{00215\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ yError()<<\textcolor{stringliteral}{"{}Unable\ to\ check\ if\ the\ motion\ of\ the\ eyelids\ is\ done"{}};}
+\DoxyCodeLine{00216\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00217\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00218\ }
+\DoxyCodeLine{00219\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00220\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ Time::delay(t\_op\ /\ 10.0);}
+\DoxyCodeLine{00221\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00222\ }
+\DoxyCodeLine{00223\ \ \ \ \ \ \ \ \ \ \ \ \ Time::delay(t\_su);}
+\DoxyCodeLine{00224\ }
+\DoxyCodeLine{00225\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ 0;\ i\ <\ 11;\ i++)}
+\DoxyCodeLine{00226\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00227\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{auto}\ targetPos\ =\ \_maxPoly\ -\/\ i\ *\ (\_maxPoly\ -\/\ \_minPoly)\ /\ 10;}
+\DoxyCodeLine{00228\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{string}\ rawvalue\ =\ \textcolor{stringliteral}{"{}S"{}}\ +\ int2string(targetPos);}
+\DoxyCodeLine{00229\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ yDebug()\ <<\ \textcolor{stringliteral}{"{}Sending\ postion:\ "{}}\ <<\ targetPos\ <<\ \textcolor{stringliteral}{"{}\ "{}}\ <<\ 100\ -\/\ i\ *\ 10;}
+\DoxyCodeLine{00230\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \_iPos-\/>positionMove(\_joint\_eylids,\ targetPos);}
+\DoxyCodeLine{00231\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ motion\_done\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00232\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{while}\ (!motion\_done)\ \{}
+\DoxyCodeLine{00233\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ Time::delay(0.001);}
+\DoxyCodeLine{00234\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{auto}\ ok\ =\ \_iPos-\/>checkMotionDone(\_joint\_eylids,\ \&motion\_done);}
+\DoxyCodeLine{00235\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}(!ok)\ \{}
+\DoxyCodeLine{00236\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ yError()<<\textcolor{stringliteral}{"{}Unable\ to\ check\ if\ the\ motion\ of\ the\ eyelids\ is\ done"{}};}
+\DoxyCodeLine{00237\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00238\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00239\ }
+\DoxyCodeLine{00240\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00241\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ Time::delay(t\_cl\ /\ 10.0);}
+\DoxyCodeLine{00242\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00243\ }
+\DoxyCodeLine{00244\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00245\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}\ \{}
+\DoxyCodeLine{00246\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ 0;\ i\ <\ 11;\ i++)}
+\DoxyCodeLine{00247\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00248\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ valueToSend\ =\ sMax\ -\/\ i\ *\ (sMax\ -\/\ sMin)\ /\ 10;}
+\DoxyCodeLine{00249\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{string}\ rawvalue\ =\ \textcolor{stringliteral}{"{}S"{}}\ +\ int2string(valueToSend);}
+\DoxyCodeLine{00250\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ yDebug(\textcolor{stringliteral}{"{}Sending\ raw\ value:\ \%s\ \%i"{}},\ rawvalue.c\_str(),\ 100\ -\/\ i\ *\ 10);}
+\DoxyCodeLine{00251\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ sendRawValue(rawvalue);}
+\DoxyCodeLine{00252\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ Time::delay(t\_cl\ /\ 10.0);}
+\DoxyCodeLine{00253\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00254\ }
+\DoxyCodeLine{00255\ \ \ \ \ \ \ \ \ \ \ \ \ Time::delay(t\_su);}
+\DoxyCodeLine{00256\ }
+\DoxyCodeLine{00257\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ 0;\ i\ <\ 11;\ i++)}
+\DoxyCodeLine{00258\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00259\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ valueToSend\ =\ sMin\ +\ i\ *\ (sMax\ -\/\ sMin)\ /\ 10;}
+\DoxyCodeLine{00260\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{string}\ rawvalue\ =\ \textcolor{stringliteral}{"{}S"{}}\ +\ int2string(valueToSend);}
+\DoxyCodeLine{00261\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ yDebug(\textcolor{stringliteral}{"{}Sending\ raw\ value:\ \%s\ \%i"{}},\ rawvalue.c\_str(),\ i\ *\ 10);}
+\DoxyCodeLine{00262\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ sendRawValue(rawvalue);}
+\DoxyCodeLine{00263\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ Time::delay(t\_op\ /\ 10.0);}
+\DoxyCodeLine{00264\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00265\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00266\ }
+\DoxyCodeLine{00267\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00268\ \ \ \ \ \}}
+\DoxyCodeLine{00269\ }
+\DoxyCodeLine{00270\ \textcolor{comment}{\ \ \ \ /***************************************************************/}}
+\DoxyCodeLine{00271\ \ \ \ \ \textcolor{keywordtype}{bool}\ set\_calib\_values()}
+\DoxyCodeLine{00272\ \ \ \ \ \{}
+\DoxyCodeLine{00273\ \ \ \ \ \ \ \ \ yWarning(\textcolor{stringliteral}{"{}[iCubBlinker]\ Sending\ calib\ values\ does\ nothing\ currently!"{}});}
+\DoxyCodeLine{00274\ }
+\DoxyCodeLine{00275\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00276\ \ \ \ \ \}}
+\DoxyCodeLine{00277\ }
+\DoxyCodeLine{00278\ \textcolor{comment}{\ \ \ \ /***************************************************************/}}
+\DoxyCodeLine{00279\ \ \ \ \ \textcolor{keywordtype}{bool}\ setInteractionMode\_IDLE()}
+\DoxyCodeLine{00280\ \ \ \ \ \{}
+\DoxyCodeLine{00281\ \ \ \ \ \ \ \ \ Bottle\ idle\_mode=(rf-\/>findGroup(\textcolor{stringliteral}{"{}idle\_mode"{}}));}
+\DoxyCodeLine{00282\ }
+\DoxyCodeLine{00283\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (idle\_mode.size()>0)}
+\DoxyCodeLine{00284\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00285\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ res\ =\ retrieveInteractionMode\_params(idle\_mode);}
+\DoxyCodeLine{00286\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (res)}
+\DoxyCodeLine{00287\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00288\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ int\_mode\ =\ INTERACTION\_MODE\_IDLE;}
+\DoxyCodeLine{00289\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00290\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ res;}
+\DoxyCodeLine{00291\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00292\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00293\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00294\ \ \ \ \ \ \ \ \ \ \ \ \ yError(\textcolor{stringliteral}{"{}[iCubBlinker]\ no\ idle\_mode\ group\ found\ in\ .ini\ file!"{}});}
+\DoxyCodeLine{00295\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00296\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00297\ }
+\DoxyCodeLine{00298\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00299\ \ \ \ \ \}}
+\DoxyCodeLine{00300\ }
+\DoxyCodeLine{00301\ \textcolor{comment}{\ \ \ \ /***************************************************************/}}
+\DoxyCodeLine{00302\ \ \ \ \ \textcolor{keywordtype}{bool}\ setInteractionMode\_CONVERSATION()}
+\DoxyCodeLine{00303\ \ \ \ \ \{}
+\DoxyCodeLine{00304\ \ \ \ \ \ \ \ \ Bottle\ conversation\_mode=(rf-\/>findGroup(\textcolor{stringliteral}{"{}conversation\_mode"{}}));}
+\DoxyCodeLine{00305\ }
+\DoxyCodeLine{00306\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (conversation\_mode.size()>0)}
+\DoxyCodeLine{00307\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00308\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ res\ =\ retrieveInteractionMode\_params(conversation\_mode);}
+\DoxyCodeLine{00309\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (res)}
+\DoxyCodeLine{00310\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00311\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ int\_mode\ =\ INTERACTION\_MODE\_CONVERSATION;}
+\DoxyCodeLine{00312\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00313\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ res;}
+\DoxyCodeLine{00314\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00315\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00316\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00317\ \ \ \ \ \ \ \ \ \ \ \ \ yError(\textcolor{stringliteral}{"{}[iCubBlinker]\ no\ conversation\_mode\ group\ found\ in\ ini\ file!"{}});}
+\DoxyCodeLine{00318\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00319\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00320\ }
+\DoxyCodeLine{00321\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00322\ \ \ \ \ \}}
+\DoxyCodeLine{00323\ }
+\DoxyCodeLine{00324\ \textcolor{comment}{\ \ \ \ /***************************************************************/}}
+\DoxyCodeLine{00325\ \ \ \ \ \textcolor{keywordtype}{bool}\ retrieveInteractionMode\_params(Bottle\ \&int\_mode)}
+\DoxyCodeLine{00326\ \ \ \ \ \{}
+\DoxyCodeLine{00327\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ If\ the\ parameters\ are\ not\ found,\ it\ will\ default\ to\ the\ idle\ mode}}
+\DoxyCodeLine{00328\ \ \ \ \ \ \ \ \ blinkper\_nrm\ =\ int\_mode.check(\textcolor{stringliteral}{"{}blinkper\_nrm"{}},Value(5.2)).asFloat64();}
+\DoxyCodeLine{00329\ \ \ \ \ \ \ \ \ blinkper\_sgm\ =\ int\_mode.check(\textcolor{stringliteral}{"{}blinkper\_sgm"{}},Value(3.7)).asFloat64();}
+\DoxyCodeLine{00330\ }
+\DoxyCodeLine{00331\ \ \ \ \ \ \ \ \ closure\_nrm\ =\ int\_mode.check(\textcolor{stringliteral}{"{}closure\_nrm"{}},Value(0.111)).asFloat64();}
+\DoxyCodeLine{00332\ \ \ \ \ \ \ \ \ closure\_sgm\ =\ int\_mode.check(\textcolor{stringliteral}{"{}closure\_sgm"{}},Value(0.031)).asFloat64();}
+\DoxyCodeLine{00333\ }
+\DoxyCodeLine{00334\ \ \ \ \ \ \ \ \ sustain\_nrm\ =\ int\_mode.check(\textcolor{stringliteral}{"{}sustain\_nrm"{}},Value(0.020)).asFloat64();}
+\DoxyCodeLine{00335\ \ \ \ \ \ \ \ \ sustain\_sgm\ =\ int\_mode.check(\textcolor{stringliteral}{"{}sustain\_sgm"{}},Value(0.005)).asFloat64();}
+\DoxyCodeLine{00336\ }
+\DoxyCodeLine{00337\ \ \ \ \ \ \ \ \ opening\_nrm\ =\ int\_mode.check(\textcolor{stringliteral}{"{}opening\_nrm"{}},Value(0.300)).asFloat64();}
+\DoxyCodeLine{00338\ \ \ \ \ \ \ \ \ opening\_sgm\ =\ int\_mode.check(\textcolor{stringliteral}{"{}opening\_sgm"{}},Value(0.123)).asFloat64();}
+\DoxyCodeLine{00339\ }
+\DoxyCodeLine{00340\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00341\ \ \ \ \ \}}
+\DoxyCodeLine{00342\ }
+\DoxyCodeLine{00343\ \textcolor{comment}{\ \ \ \ /***************************************************************/}}
+\DoxyCodeLine{00344\ \ \ \ \ \textcolor{keywordtype}{string}\ InteractionMode\_params\_toString()}
+\DoxyCodeLine{00345\ \ \ \ \ \{}
+\DoxyCodeLine{00346\ \ \ \ \ \ \ \ \ stringstream\ res;}
+\DoxyCodeLine{00347\ }
+\DoxyCodeLine{00348\ \ \ \ \ \ \ \ \ res\ <<\ \textcolor{stringliteral}{"{}["{}}\ <<\ name\ <<\ \textcolor{stringliteral}{"{}]\ blinker\ period:\(\backslash\)t[\ nrm\ "{}}\ <<\ blinkper\_nrm\ <<\ \textcolor{stringliteral}{"{}\(\backslash\)tsgm\ "{}}\ <<\ blinkper\_sgm\ <<\ \textcolor{stringliteral}{"{}\ ]"{}}\ <<\ endl;}
+\DoxyCodeLine{00349\ \ \ \ \ \ \ \ \ res\ <<\ \textcolor{stringliteral}{"{}["{}}\ <<\ name\ <<\ \textcolor{stringliteral}{"{}]\ closure\ speed:\ \(\backslash\)t[\ nrm\ "{}}\ <<\ closure\_nrm\ \ <<\ \textcolor{stringliteral}{"{}\(\backslash\)tsgm\ "{}}\ <<\ closure\_sgm\ \ <<\ \textcolor{stringliteral}{"{}\ ]"{}}\ <<\ endl;}
+\DoxyCodeLine{00350\ \ \ \ \ \ \ \ \ res\ <<\ \textcolor{stringliteral}{"{}["{}}\ <<\ name\ <<\ \textcolor{stringliteral}{"{}]\ sustain\ speed:\ \(\backslash\)t[\ nrm\ "{}}\ <<\ sustain\_nrm\ \ <<\ \textcolor{stringliteral}{"{}\(\backslash\)tsgm\ "{}}\ <<\ sustain\_sgm\ \ <<\ \textcolor{stringliteral}{"{}\ ]"{}}\ <<\ endl;}
+\DoxyCodeLine{00351\ \ \ \ \ \ \ \ \ res\ <<\ \textcolor{stringliteral}{"{}["{}}\ <<\ name\ <<\ \textcolor{stringliteral}{"{}]\ opening\ speed:\ \(\backslash\)t[\ nrm\ "{}}\ <<\ opening\_nrm\ \ <<\ \textcolor{stringliteral}{"{}\(\backslash\)tsgm\ "{}}\ <<\ opening\_sgm\ \ <<\ \textcolor{stringliteral}{"{}\ ]"{}}\ <<\ endl;}
+\DoxyCodeLine{00352\ }
+\DoxyCodeLine{00353\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ res.str();}
+\DoxyCodeLine{00354\ \ \ \ \ \}}
+\DoxyCodeLine{00355\ }
+\DoxyCodeLine{00356\ \textcolor{comment}{\ \ \ \ /***************************************************************/}}
+\DoxyCodeLine{00357\ \ \ \ \ \textcolor{keywordtype}{bool}\ computeNextBlinkPeriod()}
+\DoxyCodeLine{00358\ \ \ \ \ \{}
+\DoxyCodeLine{00359\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (blinkingPeriod==\textcolor{stringliteral}{"{}fixed"{}})}
+\DoxyCodeLine{00360\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00361\ \ \ \ \ \ \ \ \ \ \ \ \ dt=fixed\_blinkper;}
+\DoxyCodeLine{00362\ \ \ \ \ \ \ \ \ \ \ \ \ yInfo(\textcolor{stringliteral}{"{}[iCubBlinker]\ Next\ blink\ in\ \%g\ [s]"{}},dt);}
+\DoxyCodeLine{00363\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00364\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00365\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}\ \textcolor{keywordflow}{if}\ (blinkingPeriod==\textcolor{stringliteral}{"{}gaussian"{}})}
+\DoxyCodeLine{00366\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00367\ \ \ \ \ \ \ \ \ \ \ \ \ dt=1e9;}
+\DoxyCodeLine{00368\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ i=0;}
+\DoxyCodeLine{00369\ }
+\DoxyCodeLine{00370\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Cut\ the\ normal\ distribution\ to\ its\ first\ sigma}}
+\DoxyCodeLine{00371\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{while}\ (dt<blinkper\_nrm-\/blinkper\_sgm\ ||\ dt>blinkper\_nrm+blinkper\_sgm)}
+\DoxyCodeLine{00372\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00373\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ dt\ =\ NormRand::scalar(blinkper\_nrm,blinkper\_sgm);}
+\DoxyCodeLine{00374\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ yDebug(\textcolor{stringliteral}{"{}[iCubBlinker]\ Computing\ next\ blink..\ \%g\ \%g\ \%g\ \%i"{}},dt,blinkper\_nrm-\/blinkper\_sgm,blinkper\_nrm+blinkper\_sgm,i);\ i++;}
+\DoxyCodeLine{00375\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00376\ \ \ \ \ \ \ \ \ \ \ \ \ yInfo(\textcolor{stringliteral}{"{}[iCubBlinker]\ Next\ blink\ in\ \%g\ [s]"{}},dt);}
+\DoxyCodeLine{00377\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00378\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00379\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00380\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00381\ \ \ \ \ \ \ \ \ \ \ \ \ yError(\textcolor{stringliteral}{"{}blinkingPeriod\ was\ neither\ gaussian\ nor\ fixed!"{}});}
+\DoxyCodeLine{00382\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00383\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00384\ \ \ \ \ \}}
+\DoxyCodeLine{00385\ }
+\DoxyCodeLine{00386\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00387\ \textcolor{comment}{\ \ \ \ /***************************************************************/}}
+\DoxyCodeLine{00388\ \ \ \ \ \textcolor{keywordtype}{bool}\ configure(ResourceFinder\ \&\_mainRF)}
+\DoxyCodeLine{00389\ \ \ \ \ \{}
+\DoxyCodeLine{00390\ \ \ \ \ \ \ \ \ rf\ =\ \textcolor{keyword}{const\_cast<}ResourceFinder*\textcolor{keyword}{>}(\&\_mainRF);}
+\DoxyCodeLine{00391\ }
+\DoxyCodeLine{00392\ \ \ \ \ \ \ \ \ name\ =rf-\/>check(\textcolor{stringliteral}{"{}name"{}},\ Value(\textcolor{stringliteral}{"{}iCubBlinker"{}})).asString().c\_str();}
+\DoxyCodeLine{00393\ \ \ \ \ \ \ \ \ robot=rf-\/>check(\textcolor{stringliteral}{"{}robot"{}},Value(\textcolor{stringliteral}{"{}icub"{}})).asString().c\_str();}
+\DoxyCodeLine{00394\ \ \ \ \ \ \ \ \ blinkingBehavior=rf-\/>check(\textcolor{stringliteral}{"{}blinkingBehavior"{}},Value(\textcolor{stringliteral}{"{}fast"{}})).asString().c\_str();}
+\DoxyCodeLine{00395\ \ \ \ \ \ \ \ \ blinkingPeriod=rf-\/>check(\textcolor{stringliteral}{"{}blinkingPeriod"{}},Value(\textcolor{stringliteral}{"{}fixed"{}})).asString().c\_str();}
+\DoxyCodeLine{00396\ \ \ \ \ \ \ \ \ fixed\_blinkper=rf-\/>check(\textcolor{stringliteral}{"{}fixedBlinkPer"{}},Value(5.0)).asFloat64();}
+\DoxyCodeLine{00397\ }
+\DoxyCodeLine{00398\ \ \ \ \ \ \ \ \ isBlinking=rf-\/>check(\textcolor{stringliteral}{"{}autoStart"{}});}
+\DoxyCodeLine{00399\ }
+\DoxyCodeLine{00400\ \ \ \ \ \ \ \ \ yarp::os::Property\ rcb\_face\_conf\{\ \{\textcolor{stringliteral}{"{}device"{}},Value(\textcolor{stringliteral}{"{}remote\_controlboard"{}})\},}
+\DoxyCodeLine{00401\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{\textcolor{stringliteral}{"{}local"{}},\ Value(getName(\textcolor{stringliteral}{"{}/face/remoteControlBoard"{}}))\},}
+\DoxyCodeLine{00402\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{\textcolor{stringliteral}{"{}remote"{}},Value(\textcolor{stringliteral}{"{}/icub/face"{}})\},}
+\DoxyCodeLine{00403\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{\textcolor{stringliteral}{"{}part"{}},Value(\textcolor{stringliteral}{"{}face"{}})\}\ \};}
+\DoxyCodeLine{00404\ }
+\DoxyCodeLine{00405\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (\_poly.open(rcb\_face\_conf))}
+\DoxyCodeLine{00406\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00407\ \ \ \ \ \ \ \ \ \ \ \ \ yarp::dev::IControlMode*\ iCM\{\ \textcolor{keyword}{nullptr}\ \};}
+\DoxyCodeLine{00408\ \ \ \ \ \ \ \ \ \ \ \ \ yarp::dev::IControlLimits*\ iCtrlLim\{\ \textcolor{keyword}{nullptr}\ \};}
+\DoxyCodeLine{00409\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{auto}\ ok\ =\ \_poly.view(iCM);}
+\DoxyCodeLine{00410\ \ \ \ \ \ \ \ \ \ \ \ \ ok\ \ \ \ \ \&=\ \_poly.view(\_iPos);}
+\DoxyCodeLine{00411\ \ \ \ \ \ \ \ \ \ \ \ \ ok\ \ \ \ \ \&=\ \_poly.view(iCtrlLim);}
+\DoxyCodeLine{00412\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (iCM)}
+\DoxyCodeLine{00413\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ok\ \&=\ iCM-\/>setControlMode(\_joint\_eylids,\ VOCAB\_CM\_POSITION);\ \textcolor{comment}{//\ TODO,\ maybe\ it\ is\ better\ POSITION\_DIRECT?\ }}
+\DoxyCodeLine{00414\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (iCtrlLim)\ \{}
+\DoxyCodeLine{00415\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ok\ \&=\ iCtrlLim-\/>getLimits(\_joint\_eylids,\ \&\_minPoly,\ \&\_maxPoly);}
+\DoxyCodeLine{00416\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \_maxPoly\ =\ \_maxPoly\ -\/\ 25.0;\ \textcolor{comment}{//\ safe\ zone\ for\ avoiding\ hw\ fault}}
+\DoxyCodeLine{00417\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00418\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (\_iPos)\ \{}
+\DoxyCodeLine{00419\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ok\ \&=\ \_iPos-\/>setRefSpeed(\_joint\_eylids,\ 50.0);\ \textcolor{comment}{//\ max\ velocity\ that\ doesn't\ give\ problems}}
+\DoxyCodeLine{00420\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ok\ \&=\ \_iPos-\/>setRefAcceleration(\_joint\_eylids,\ std::numeric\_limits<double>::max());}
+\DoxyCodeLine{00421\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00422\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!ok)}
+\DoxyCodeLine{00423\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00424\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ yError()\ <<\ \textcolor{stringliteral}{"{}Fail\ to\ configure\ correctly\ the\ remote\_controlboard"{}};}
+\DoxyCodeLine{00425\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00426\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00427\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00428\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00429\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00430\ \ \ \ \ \ \ \ \ \ \ \ \ yWarning()\ <<\ \textcolor{stringliteral}{"{}Failed\ to\ open\ the\ remote\_controlboard\ device\ for\ commanding\ the\ eyelids,\ you\ can\ ignore\ this\ warning\ if\ your\ robot\ doesn't\ have\ the\ rfe\ board"{}};}
+\DoxyCodeLine{00431\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{auto}\ ok\ =\ emotionsPort.open((\textcolor{stringliteral}{"{}/"{}}\ +\ name\ +\ \textcolor{stringliteral}{"{}/emotions/raw"{}}).c\_str());}
+\DoxyCodeLine{00432\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (rf-\/>check(\textcolor{stringliteral}{"{}autoConnect"{}}))}
+\DoxyCodeLine{00433\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00434\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ok\ \&=\ Network::connect(emotionsPort.getName().c\_str(),\ \textcolor{stringliteral}{"{}/"{}}\ +\ robot\ +\ \textcolor{stringliteral}{"{}/face/raw/in"{}});}
+\DoxyCodeLine{00435\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00436\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!ok)}
+\DoxyCodeLine{00437\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00438\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ yError()\ <<\ \textcolor{stringliteral}{"{}Configuration\ phase\ failed,\ please\ check\ if\ yarprobotinterface\ (iCub\ with\ RFE)\ or\ the\ the\ serial\ device\ (iCub\ without\ RFE)\ are\ running."{}};}
+\DoxyCodeLine{00439\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00440\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00441\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00442\ }
+\DoxyCodeLine{00443\ }
+\DoxyCodeLine{00444\ }
+\DoxyCodeLine{00445\ \ \ \ \ \ \ \ \ doubleBlink=rf-\/>check(\textcolor{stringliteral}{"{}doubleBlink"{}});}
+\DoxyCodeLine{00446\ }
+\DoxyCodeLine{00447\ \ \ \ \ \ \ \ \ rpcPort.open((\textcolor{stringliteral}{"{}/"{}}+name+\textcolor{stringliteral}{"{}/rpc"{}}).c\_str());}
+\DoxyCodeLine{00448\ \ \ \ \ \ \ \ \ attach(rpcPort);}
+\DoxyCodeLine{00449\ }
+\DoxyCodeLine{00450\ \ \ \ \ \ \ \ \ Bottle\ calib=(rf-\/>findGroup(\textcolor{stringliteral}{"{}calibration"{}}));}
+\DoxyCodeLine{00451\ }
+\DoxyCodeLine{00452\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (calib.size()\ >\ 0)}
+\DoxyCodeLine{00453\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00454\ \ \ \ \ \ \ \ \ \ \ \ \ sMin\ =\ calib.check(\textcolor{stringliteral}{"{}sMin"{}},Value(00)).asInt32();}
+\DoxyCodeLine{00455\ \ \ \ \ \ \ \ \ \ \ \ \ sMax\ =\ calib.check(\textcolor{stringliteral}{"{}sMax"{}},Value(70)).asInt32();}
+\DoxyCodeLine{00456\ }
+\DoxyCodeLine{00457\ \ \ \ \ \ \ \ \ \ \ \ \ yInfo(\textcolor{stringliteral}{"{}[iCubBlinker]\ Eyelid\ calibs\ loaded:\ (\%i\ \%i)"{}},\ sMin,\ sMax);}
+\DoxyCodeLine{00458\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00459\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00460\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00461\ \ \ \ \ \ \ \ \ \ \ \ \ sMin\ =\ 00;}
+\DoxyCodeLine{00462\ \ \ \ \ \ \ \ \ \ \ \ \ sMax\ =\ 70;}
+\DoxyCodeLine{00463\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00464\ }
+\DoxyCodeLine{00465\ \ \ \ \ \ \ \ \ Rand::init();}
+\DoxyCodeLine{00466\ \ \ \ \ \ \ \ \ NormRand::init();}
+\DoxyCodeLine{00467\ \ \ \ \ \ \ \ \ doubleBlinkCnt=0;}
+\DoxyCodeLine{00468\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00469\ \ \ \ \ \ \ \ \ int\_mode\ =\ INTERACTION\_MODE\_IDLE;}
+\DoxyCodeLine{00470\ \ \ \ \ \ \ \ \ set\_interaction\_mode(\textcolor{stringliteral}{"{}idle"{}});}
+\DoxyCodeLine{00471\ }
+\DoxyCodeLine{00472\ \ \ \ \ \ \ \ \ computeNextBlinkPeriod();}
+\DoxyCodeLine{00473\ \ \ \ \ \ \ \ \ t0=Time::now();}
+\DoxyCodeLine{00474\ }
+\DoxyCodeLine{00475\ \ \ \ \ \ \ \ \ print\_params();}
+\DoxyCodeLine{00476\ }
+\DoxyCodeLine{00477\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00478\ \ \ \ \ \}}
+\DoxyCodeLine{00479\ }
+\DoxyCodeLine{00480\ \textcolor{comment}{\ \ \ \ /************************************************************************/}}
+\DoxyCodeLine{00481\ \ \ \ \ \textcolor{keywordtype}{bool}\ attach(RpcServer\ \&source)}
+\DoxyCodeLine{00482\ \ \ \ \ \{}
+\DoxyCodeLine{00483\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ this-\/>yarp().attachAsServer(source);}
+\DoxyCodeLine{00484\ \ \ \ \ \}}
+\DoxyCodeLine{00485\ }
+\DoxyCodeLine{00486\ \textcolor{comment}{\ \ \ \ /***************************************************************/}}
+\DoxyCodeLine{00487\ \ \ \ \ \textcolor{keywordtype}{bool}\ close()}
+\DoxyCodeLine{00488\ \ \ \ \ \{}
+\DoxyCodeLine{00489\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (\_poly.isValid())}
+\DoxyCodeLine{00490\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00491\ \ \ \ \ \ \ \ \ \ \ \ \ \_poly.close();}
+\DoxyCodeLine{00492\ \ \ \ \ \ \ \ \ \ \ \ \ \_iPos\ =\ \textcolor{keyword}{nullptr};}
+\DoxyCodeLine{00493\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00494\ \ \ \ \ \ \ \ \ emotionsPort.close();}
+\DoxyCodeLine{00495\ \ \ \ \ \ \ \ \ rpcPort.close();}
+\DoxyCodeLine{00496\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00497\ \ \ \ \ \}}
+\DoxyCodeLine{00498\ }
+\DoxyCodeLine{00499\ \textcolor{comment}{\ \ \ \ /***************************************************************/}}
+\DoxyCodeLine{00500\ \ \ \ \ \textcolor{keywordtype}{double}\ getPeriod()\ \{\ \textcolor{keywordflow}{return}\ 0.01;\ \}}
+\DoxyCodeLine{00501\ }
+\DoxyCodeLine{00502\ \ \ \ \ \textcolor{keywordtype}{bool}\ start()}
+\DoxyCodeLine{00503\ \ \ \ \ \{}
+\DoxyCodeLine{00504\ \ \ \ \ \ \ \ \ yInfo(\textcolor{stringliteral}{"{}[iCubBlinker]\ start\ command\ received"{}});}
+\DoxyCodeLine{00505\ \ \ \ \ \ \ \ \ isBlinking=\textcolor{keyword}{true};}
+\DoxyCodeLine{00506\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00507\ \ \ \ \ \}}
+\DoxyCodeLine{00508\ }
+\DoxyCodeLine{00509\ \ \ \ \ \textcolor{keywordtype}{bool}\ stop()}
+\DoxyCodeLine{00510\ \ \ \ \ \{}
+\DoxyCodeLine{00511\ \ \ \ \ \ \ \ \ yInfo(\textcolor{stringliteral}{"{}[iCubBlinker]\ stop\ \ command\ received"{}});}
+\DoxyCodeLine{00512\ \ \ \ \ \ \ \ \ isBlinking=\textcolor{keyword}{false};}
+\DoxyCodeLine{00513\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00514\ \ \ \ \ \}}
+\DoxyCodeLine{00515\ }
+\DoxyCodeLine{00516\ \ \ \ \ \textcolor{keywordtype}{string}\ status()}
+\DoxyCodeLine{00517\ \ \ \ \ \{}
+\DoxyCodeLine{00518\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{string}\ res=isBlinking?\textcolor{stringliteral}{"{}on"{}}:\textcolor{stringliteral}{"{}off"{}};}
+\DoxyCodeLine{00519\ \ \ \ \ \ \ \ \ res=res+\textcolor{stringliteral}{"{}\_"{}}+get\_interaction\_mode();}
+\DoxyCodeLine{00520\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ res;}
+\DoxyCodeLine{00521\ \ \ \ \ \}}
+\DoxyCodeLine{00522\ }
+\DoxyCodeLine{00523\ \ \ \ \ \textcolor{keywordtype}{bool}\ blink\_single()}
+\DoxyCodeLine{00524\ \ \ \ \ \{}
+\DoxyCodeLine{00525\ \ \ \ \ \ \ \ \ t0=Time::now();}
+\DoxyCodeLine{00526\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ doBlink();}
+\DoxyCodeLine{00527\ \ \ \ \ \}}
+\DoxyCodeLine{00528\ }
+\DoxyCodeLine{00529\ \ \ \ \ \textcolor{keywordtype}{bool}\ blink\_fast()}
+\DoxyCodeLine{00530\ \ \ \ \ \{}
+\DoxyCodeLine{00531\ \ \ \ \ \ \ \ \ t0=Time::now();}
+\DoxyCodeLine{00532\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ doBlinkFast();}
+\DoxyCodeLine{00533\ \ \ \ \ \}}
+\DoxyCodeLine{00534\ }
+\DoxyCodeLine{00535\ \ \ \ \ \textcolor{keywordtype}{bool}\ blink\_naturalistic()}
+\DoxyCodeLine{00536\ \ \ \ \ \{}
+\DoxyCodeLine{00537\ \ \ \ \ \ \ \ \ t0=Time::now();}
+\DoxyCodeLine{00538\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ doBlinkNaturalistic();}
+\DoxyCodeLine{00539\ \ \ \ \ \}}
+\DoxyCodeLine{00540\ }
+\DoxyCodeLine{00541\ \ \ \ \ \textcolor{keywordtype}{bool}\ dblink()}
+\DoxyCodeLine{00542\ \ \ \ \ \{}
+\DoxyCodeLine{00543\ \ \ \ \ \ \ \ \ t0=Time::now();}
+\DoxyCodeLine{00544\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ doBlink()\ \&\&\ doBlink();}
+\DoxyCodeLine{00545\ \ \ \ \ \}}
+\DoxyCodeLine{00546\ }
+\DoxyCodeLine{00547\ \textcolor{comment}{\ \ \ \ /***************************************************************/}}
+\DoxyCodeLine{00548\ \ \ \ \ \textcolor{keywordtype}{string}\ print\_params()}
+\DoxyCodeLine{00549\ \ \ \ \ \{}
+\DoxyCodeLine{00550\ \ \ \ \ \ \ \ \ stringstream\ res;}
+\DoxyCodeLine{00551\ }
+\DoxyCodeLine{00552\ \ \ \ \ \ \ \ \ res\ <<\ endl;}
+\DoxyCodeLine{00553\ \ \ \ \ \ \ \ \ res\ <<\ \textcolor{stringliteral}{"{}["{}}\ <<\ name\ <<\ \textcolor{stringliteral}{"{}]\ robot:\ "{}}\ <<\ robot\ <<\ endl;}
+\DoxyCodeLine{00554\ \ \ \ \ \ \ \ \ res\ <<\ \textcolor{stringliteral}{"{}["{}}\ <<\ name\ <<\ \textcolor{stringliteral}{"{}]\ blinkingBehavior:\ "{}}\ <<\ blinkingBehavior;}
+\DoxyCodeLine{00555\ \ \ \ \ \ \ \ \ res\ <<\ \textcolor{stringliteral}{"{}\(\backslash\)tblinkingPeriod:\ "{}}\ <<\ blinkingPeriod\ <<\ \textcolor{stringliteral}{"{}\(\backslash\)tFixed\ Blink\ period:\ "{}}\ <<\ fixed\_blinkper\ <<\ endl;}
+\DoxyCodeLine{00556\ \ \ \ \ \ \ \ \ res\ <<\ \textcolor{stringliteral}{"{}["{}}\ <<\ name\ <<\ \textcolor{stringliteral}{"{}]\ isBlinking:\ "{}}\ <<\ (isBlinking?\textcolor{stringliteral}{"{}true"{}}:\textcolor{stringliteral}{"{}false"{}})\ <<\ \textcolor{stringliteral}{"{}\(\backslash\)tdoubleBlink:\ "{}}\ <<\ get\_double\_blink()\ <<\ endl;}
+\DoxyCodeLine{00557\ \ \ \ \ \ \ \ \ res\ <<\ \textcolor{stringliteral}{"{}["{}}\ <<\ name\ <<\ \textcolor{stringliteral}{"{}]\ calibration\ [sMin\ sMax]:\ ["{}}\ <<\ sMin\ <<\ \textcolor{stringliteral}{"{}\ "{}}\ <<\ sMax\ <<\ \textcolor{stringliteral}{"{}]"{}}\ <<\ endl;}
+\DoxyCodeLine{00558\ \ \ \ \ \ \ \ \ res\ <<\ \textcolor{stringliteral}{"{}["{}}\ <<\ name\ <<\ \textcolor{stringliteral}{"{}]\ InteractionMode:\ "{}}\ <<\ get\_interaction\_mode()\ <<\ endl;}
+\DoxyCodeLine{00559\ \ \ \ \ \ \ \ \ res\ <<\ InteractionMode\_params\_toString();}
+\DoxyCodeLine{00560\ }
+\DoxyCodeLine{00561\ \ \ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}\%s\(\backslash\)n"{}},\ res.str().c\_str());}
+\DoxyCodeLine{00562\ }
+\DoxyCodeLine{00563\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ res.str();}
+\DoxyCodeLine{00564\ \ \ \ \ \}}
+\DoxyCodeLine{00565\ }
+\DoxyCodeLine{00566\ \textcolor{comment}{\ \ \ \ /***************************************************************/}}
+\DoxyCodeLine{00567\ \ \ \ \ \textcolor{keywordtype}{string}\ save()}
+\DoxyCodeLine{00568\ \ \ \ \ \{}
+\DoxyCodeLine{00569\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{string}\ path\ \ \ \ =\ rf-\/>getHomeContextPath().c\_str();}
+\DoxyCodeLine{00570\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{string}\ inifile\ =\ path+\textcolor{stringliteral}{"{}/"{}}+rf-\/>find(\textcolor{stringliteral}{"{}from"{}}).asString();}
+\DoxyCodeLine{00571\ \ \ \ \ \ \ \ \ yInfo(\textcolor{stringliteral}{"{}Saving\ calib\ configuration\ to\ \%s"{}},inifile.c\_str());}
+\DoxyCodeLine{00572\ }
+\DoxyCodeLine{00573\ \ \ \ \ \ \ \ \ ofstream\ myfile;}
+\DoxyCodeLine{00574\ \ \ \ \ \ \ \ \ myfile.open(inifile.c\_str(),ios::trunc);}
+\DoxyCodeLine{00575\ }
+\DoxyCodeLine{00576\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (myfile.is\_open())}
+\DoxyCodeLine{00577\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00578\ \ \ \ \ \ \ \ \ \ \ \ \ myfile\ <<\ \textcolor{stringliteral}{"{}name\ \ \(\backslash\)t"{}}\ \ <<\ name\ \ \ <<\ endl;}
+\DoxyCodeLine{00579\ \ \ \ \ \ \ \ \ \ \ \ \ myfile\ <<\ \textcolor{stringliteral}{"{}robot\ \(\backslash\)t"{}}\ \ <<\ robot\ \ <<\ endl;}
+\DoxyCodeLine{00580\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (rf-\/>check(\textcolor{stringliteral}{"{}autoStart"{}}))}
+\DoxyCodeLine{00581\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00582\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ myfile\ <<\ \textcolor{stringliteral}{"{}autoStart"{}}\ <<\ endl;}
+\DoxyCodeLine{00583\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00584\ \ \ \ \ \ \ \ \ \ \ \ \ myfile\ <<\ \textcolor{stringliteral}{"{}calib\ \(\backslash\)t("{}}\ <<\ sMin\ <<\ \textcolor{stringliteral}{"{}\(\backslash\)t"{}}\ <<\ sMax\ <<\ \textcolor{stringliteral}{"{})\(\backslash\)n"{}};}
+\DoxyCodeLine{00585\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00586\ \ \ \ \ \ \ \ \ myfile.close();}
+\DoxyCodeLine{00587\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ inifile;}
+\DoxyCodeLine{00588\ \ \ \ \ \}}
+\DoxyCodeLine{00589\ }
+\DoxyCodeLine{00590\ \textcolor{comment}{\ \ \ \ /***************************************************************/}}
+\DoxyCodeLine{00591\ \ \ \ \ \textcolor{keywordtype}{string}\ load()}
+\DoxyCodeLine{00592\ \ \ \ \ \{}
+\DoxyCodeLine{00593\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{string}\ fileName=rf-\/>findFile(rf-\/>find(\textcolor{stringliteral}{"{}from"{}}).asString().c\_str());}
+\DoxyCodeLine{00594\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (fileName==\textcolor{stringliteral}{"{}"{}})}
+\DoxyCodeLine{00595\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00596\ \ \ \ \ \ \ \ \ \ \ \ \ yWarning(\textcolor{stringliteral}{"{}[iCubBlinker::load]\ No\ filename\ has\ been\ found.\ Skipping.."{}});}
+\DoxyCodeLine{00597\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ string(\textcolor{stringliteral}{"{}"{}});}
+\DoxyCodeLine{00598\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00599\ }
+\DoxyCodeLine{00600\ \ \ \ \ \ \ \ \ yInfo(\textcolor{stringliteral}{"{}[iCubBlinker::load]\ File\ loaded:\ \%s"{}},\ fileName.c\_str());}
+\DoxyCodeLine{00601\ \ \ \ \ \ \ \ \ yWarning(\textcolor{stringliteral}{"{}[iCubBlinker::load]\ Only\ the\ calib\ values\ will\ be\ loaded."{}});}
+\DoxyCodeLine{00602\ \ \ \ \ \ \ \ \ Property\ data;\ data.fromConfigFile(fileName.c\_str());}
+\DoxyCodeLine{00603\ \ \ \ \ \ \ \ \ Bottle\ b;\ b.read(data);}
+\DoxyCodeLine{00604\ \ \ \ \ \ \ \ \ Bottle\ calib=(b.findGroup(\textcolor{stringliteral}{"{}calibration"{}}));}
+\DoxyCodeLine{00605\ }
+\DoxyCodeLine{00606\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (calib.size()\ >\ 0)}
+\DoxyCodeLine{00607\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00608\ \ \ \ \ \ \ \ \ \ \ \ \ sMin\ =\ calib.check(\textcolor{stringliteral}{"{}sMin"{}},Value(00)).asInt32();}
+\DoxyCodeLine{00609\ \ \ \ \ \ \ \ \ \ \ \ \ sMax\ =\ calib.check(\textcolor{stringliteral}{"{}sMax"{}},Value(70)).asInt32();}
+\DoxyCodeLine{00610\ }
+\DoxyCodeLine{00611\ \ \ \ \ \ \ \ \ \ \ \ \ yInfo(\textcolor{stringliteral}{"{}[iCubBlinker::load]\ Eyelid\ calibs\ loaded:\ (\%i\ \%i)"{}},\ sMin,\ sMax);}
+\DoxyCodeLine{00612\ }
+\DoxyCodeLine{00613\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ fileName;}
+\DoxyCodeLine{00614\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00615\ }
+\DoxyCodeLine{00616\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ set\_calib\_values();}}
+\DoxyCodeLine{00617\ }
+\DoxyCodeLine{00618\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ string(\textcolor{stringliteral}{"{}"{}});}
+\DoxyCodeLine{00619\ \ \ \ \ \}}
+\DoxyCodeLine{00620\ }
+\DoxyCodeLine{00621\ \textcolor{comment}{\ \ \ \ /***************************************************************/}}
+\DoxyCodeLine{00622\ \ \ \ \ \textcolor{keywordtype}{bool}\ set\_interaction\_mode(\textcolor{keyword}{const}\ std::string\&\ val)}
+\DoxyCodeLine{00623\ \ \ \ \ \{}
+\DoxyCodeLine{00624\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ res\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00625\ }
+\DoxyCodeLine{00626\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (val\ ==\ \textcolor{stringliteral}{"{}idle"{}})}
+\DoxyCodeLine{00627\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00628\ \ \ \ \ \ \ \ \ \ \ \ \ res\ =\ setInteractionMode(INTERACTION\_MODE\_IDLE);}
+\DoxyCodeLine{00629\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00630\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}\ \textcolor{keywordflow}{if}\ (val\ ==\ \textcolor{stringliteral}{"{}conversation"{}})}
+\DoxyCodeLine{00631\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00632\ \ \ \ \ \ \ \ \ \ \ \ \ res\ =\ setInteractionMode(INTERACTION\_MODE\_CONVERSATION);}
+\DoxyCodeLine{00633\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00634\ }
+\DoxyCodeLine{00635\ \ \ \ \ \ \ \ \ yInfo(\textcolor{stringliteral}{"{}[iCubBlinker]\ Interaction\ mode\ set\ to\ \%s"{}},get\_interaction\_mode().c\_str());}
+\DoxyCodeLine{00636\ \ \ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}\%s\(\backslash\)n"{}},InteractionMode\_params\_toString().c\_str());}
+\DoxyCodeLine{00637\ }
+\DoxyCodeLine{00638\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ res;}
+\DoxyCodeLine{00639\ \ \ \ \ \}}
+\DoxyCodeLine{00640\ }
+\DoxyCodeLine{00641\ \textcolor{comment}{\ \ \ \ /***************************************************************/}}
+\DoxyCodeLine{00642\ \ \ \ \ \textcolor{keywordtype}{bool}\ setInteractionMode(InteractionMode\ \_int\_mode)}
+\DoxyCodeLine{00643\ \ \ \ \ \{}
+\DoxyCodeLine{00644\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (\_int\_mode==INTERACTION\_MODE\_IDLE)}
+\DoxyCodeLine{00645\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00646\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ setInteractionMode\_IDLE();}
+\DoxyCodeLine{00647\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00648\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}\ \textcolor{keywordflow}{if}\ (\_int\_mode==INTERACTION\_MODE\_CONVERSATION)}
+\DoxyCodeLine{00649\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00650\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ setInteractionMode\_CONVERSATION();}
+\DoxyCodeLine{00651\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00652\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00653\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00654\ \ \ \ \ \ \ \ \ \ \ \ \ int\_mode\ =\ \_int\_mode;}
+\DoxyCodeLine{00655\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00656\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00657\ \ \ \ \ \}}
+\DoxyCodeLine{00658\ }
+\DoxyCodeLine{00659\ \textcolor{comment}{\ \ \ \ /***************************************************************/}}
+\DoxyCodeLine{00660\ \ \ \ \ \textcolor{keywordtype}{string}\ get\_interaction\_mode()}
+\DoxyCodeLine{00661\ \ \ \ \ \{}
+\DoxyCodeLine{00662\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (int\_mode\ ==\ INTERACTION\_MODE\_UNKNOWN)}
+\DoxyCodeLine{00663\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00664\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{stringliteral}{"{}interaction\_mode\_unknown"{}};}
+\DoxyCodeLine{00665\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00666\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}\ \textcolor{keywordflow}{if}\ (int\_mode\ ==\ INTERACTION\_MODE\_IDLE)}
+\DoxyCodeLine{00667\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00668\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{stringliteral}{"{}idle"{}};}
+\DoxyCodeLine{00669\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00670\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}\ \textcolor{keywordflow}{if}\ (int\_mode\ ==\ INTERACTION\_MODE\_CONVERSATION)}
+\DoxyCodeLine{00671\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00672\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{stringliteral}{"{}conversation"{}};}
+\DoxyCodeLine{00673\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00674\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}\ \textcolor{keywordflow}{if}\ (int\_mode\ ==\ INTERACTION\_MODE\_CALIBRATION\_OPENING\ ||\ }
+\DoxyCodeLine{00675\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ int\_mode\ ==\ INTERACTION\_MODE\_CALIBRATION\_CLOSURE)}
+\DoxyCodeLine{00676\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00677\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{stringliteral}{"{}calibration"{}};}
+\DoxyCodeLine{00678\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00679\ }
+\DoxyCodeLine{00680\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ string(\textcolor{stringliteral}{"{}"{}});}
+\DoxyCodeLine{00681\ \ \ \ \ \}}
+\DoxyCodeLine{00682\ }
+\DoxyCodeLine{00683\ \textcolor{comment}{\ \ \ \ /***************************************************************/}}
+\DoxyCodeLine{00684\ \ \ \ \ \textcolor{keywordtype}{bool}\ calib()}
+\DoxyCodeLine{00685\ \ \ \ \ \{}
+\DoxyCodeLine{00686\ \ \ \ \ \ \ \ \ yError(\textcolor{stringliteral}{"{}Not\ yet\ implemented!"{}});}
+\DoxyCodeLine{00687\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00688\ \ \ \ \ \}}
+\DoxyCodeLine{00689\ }
+\DoxyCodeLine{00690\ \textcolor{comment}{\ \ \ \ /***************************************************************/}}
+\DoxyCodeLine{00691\ \ \ \ \ \textcolor{keywordtype}{bool}\ set\_blinking\_behavior(\textcolor{keyword}{const}\ std::string\&\ val)}
+\DoxyCodeLine{00692\ \ \ \ \ \{}
+\DoxyCodeLine{00693\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ res=\textcolor{keyword}{false};}
+\DoxyCodeLine{00694\ }
+\DoxyCodeLine{00695\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (val==\textcolor{stringliteral}{"{}naturalistic"{}}\ ||\ val==\textcolor{stringliteral}{"{}fast"{}})}
+\DoxyCodeLine{00696\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00697\ \ \ \ \ \ \ \ \ \ \ \ \ blinkingBehavior=val;}
+\DoxyCodeLine{00698\ \ \ \ \ \ \ \ \ \ \ \ \ res=\textcolor{keyword}{true};}
+\DoxyCodeLine{00699\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00700\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00701\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00702\ \ \ \ \ \ \ \ \ \ \ \ \ yError(\textcolor{stringliteral}{"{}Invalid\ blinking\ behavior\ requested!\ \%s"{}},val.c\_str());}
+\DoxyCodeLine{00703\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00704\ }
+\DoxyCodeLine{00705\ \ \ \ \ \ \ \ \ yInfo(\textcolor{stringliteral}{"{}Blinking\ behavior\ set\ to\ \%s"{}},get\_blinking\_behavior().c\_str());}
+\DoxyCodeLine{00706\ }
+\DoxyCodeLine{00707\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ res;}
+\DoxyCodeLine{00708\ \ \ \ \ \}}
+\DoxyCodeLine{00709\ }
+\DoxyCodeLine{00710\ \textcolor{comment}{\ \ \ \ /***************************************************************/}}
+\DoxyCodeLine{00711\ \ \ \ \ \textcolor{keywordtype}{string}\ get\_blinking\_behavior()}
+\DoxyCodeLine{00712\ \ \ \ \ \{}
+\DoxyCodeLine{00713\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ blinkingBehavior;}
+\DoxyCodeLine{00714\ \ \ \ \ \}}
+\DoxyCodeLine{00715\ }
+\DoxyCodeLine{00716\ \textcolor{comment}{\ \ \ \ /***************************************************************/}}
+\DoxyCodeLine{00717\ \ \ \ \ \textcolor{keywordtype}{bool}\ set\_blinking\_period(\textcolor{keyword}{const}\ std::string\&\ val)}
+\DoxyCodeLine{00718\ \ \ \ \ \{}
+\DoxyCodeLine{00719\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ res=\textcolor{keyword}{false};}
+\DoxyCodeLine{00720\ }
+\DoxyCodeLine{00721\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (val==\textcolor{stringliteral}{"{}gaussian"{}}\ ||\ val==\textcolor{stringliteral}{"{}fixed"{}})}
+\DoxyCodeLine{00722\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00723\ \ \ \ \ \ \ \ \ \ \ \ \ blinkingPeriod=val;}
+\DoxyCodeLine{00724\ \ \ \ \ \ \ \ \ \ \ \ \ res=\textcolor{keyword}{true};}
+\DoxyCodeLine{00725\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00726\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00727\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00728\ \ \ \ \ \ \ \ \ \ \ \ \ yError(\textcolor{stringliteral}{"{}Invalid\ blinking\ period\ requested!\ \%s"{}},val.c\_str());}
+\DoxyCodeLine{00729\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00730\ }
+\DoxyCodeLine{00731\ \ \ \ \ \ \ \ \ yInfo(\textcolor{stringliteral}{"{}Blinking\ period\ set\ to\ \%s"{}},get\_blinking\_period().c\_str());}
+\DoxyCodeLine{00732\ }
+\DoxyCodeLine{00733\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ res;}
+\DoxyCodeLine{00734\ \ \ \ \ \}}
+\DoxyCodeLine{00735\ }
+\DoxyCodeLine{00736\ \textcolor{comment}{\ \ \ \ /***************************************************************/}}
+\DoxyCodeLine{00737\ \ \ \ \ \textcolor{keywordtype}{string}\ get\_blinking\_period()}
+\DoxyCodeLine{00738\ \ \ \ \ \{}
+\DoxyCodeLine{00739\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (blinkingPeriod==\textcolor{stringliteral}{"{}gaussian"{}})}
+\DoxyCodeLine{00740\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00741\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ blinkingPeriod;}
+\DoxyCodeLine{00742\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00743\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}\ }
+\DoxyCodeLine{00744\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00745\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ blinkingPeriod\ +\ \textcolor{stringliteral}{"{}\ ("{}}\ +\ double2string(fixed\_blinkper)\ +\ \textcolor{stringliteral}{"{}\ [s])"{}};}
+\DoxyCodeLine{00746\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00747\ \ \ \ \ \}}
+\DoxyCodeLine{00748\ }
+\DoxyCodeLine{00749\ \textcolor{comment}{\ \ \ \ /***************************************************************/}}
+\DoxyCodeLine{00750\ \ \ \ \ \textcolor{keywordtype}{bool}\ set\_double\_blink(\textcolor{keyword}{const}\ \textcolor{keywordtype}{string}\ \&val)}
+\DoxyCodeLine{00751\ \ \ \ \ \{}
+\DoxyCodeLine{00752\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (val==\textcolor{stringliteral}{"{}on"{}})}
+\DoxyCodeLine{00753\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00754\ \ \ \ \ \ \ \ \ \ \ \ \ doubleBlink=\textcolor{keyword}{true};}
+\DoxyCodeLine{00755\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00756\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}\ \textcolor{keywordflow}{if}\ (val==\textcolor{stringliteral}{"{}off"{}})}
+\DoxyCodeLine{00757\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00758\ \ \ \ \ \ \ \ \ \ \ \ \ doubleBlink=\textcolor{keyword}{false};}
+\DoxyCodeLine{00759\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00760\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00761\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00762\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00763\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00764\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00765\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00766\ \ \ \ \ \}}
+\DoxyCodeLine{00767\ }
+\DoxyCodeLine{00768\ \textcolor{comment}{\ \ \ \ /***************************************************************/}}
+\DoxyCodeLine{00769\ \ \ \ \ \textcolor{keywordtype}{string}\ get\_double\_blink()}
+\DoxyCodeLine{00770\ \ \ \ \ \{}
+\DoxyCodeLine{00771\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ (doubleBlink?\textcolor{stringliteral}{"{}on"{}}:\textcolor{stringliteral}{"{}off"{}});}
+\DoxyCodeLine{00772\ \ \ \ \ \}}
+\DoxyCodeLine{00773\ }
+\DoxyCodeLine{00774\ \textcolor{comment}{\ \ \ \ /***************************************************************/}}
+\DoxyCodeLine{00775\ \ \ \ \ \textcolor{keywordtype}{bool}\ updateModule()}
+\DoxyCodeLine{00776\ \ \ \ \ \{}
+\DoxyCodeLine{00777\ \ \ \ \ \ \ \ \ lock\_guard<mutex>\ lg(mtx);}
+\DoxyCodeLine{00778\ }
+\DoxyCodeLine{00779\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (Time::now()-\/t0>=dt)}
+\DoxyCodeLine{00780\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00781\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (isBlinking)}
+\DoxyCodeLine{00782\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00783\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ doBlink();}
+\DoxyCodeLine{00784\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (doubleBlink)}
+\DoxyCodeLine{00785\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00786\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ ((++doubleBlinkCnt)\%5==0)}
+\DoxyCodeLine{00787\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00788\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ doBlink();}
+\DoxyCodeLine{00789\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ doubleBlinkCnt=0;}
+\DoxyCodeLine{00790\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00791\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00792\ }
+\DoxyCodeLine{00793\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ computeNextBlinkPeriod();}
+\DoxyCodeLine{00794\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ t0=Time::now();}
+\DoxyCodeLine{00795\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00796\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00797\ }
+\DoxyCodeLine{00798\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00799\ \ \ \ \ \}}
+\DoxyCodeLine{00800\ \};}
+\DoxyCodeLine{00801\ }
+\DoxyCodeLine{00802\ \textcolor{comment}{/***************************************************************/}}
+\DoxyCodeLine{00803\ \textcolor{keywordtype}{int}\ main(\textcolor{keywordtype}{int}\ argc,\ \textcolor{keywordtype}{char}\ *argv[])}
+\DoxyCodeLine{00804\ \{}
+\DoxyCodeLine{00805\ \ \ \ \ ResourceFinder\ rf;}
+\DoxyCodeLine{00806\ \ \ \ \ rf.setDefaultContext(\textcolor{stringliteral}{"{}funny-\/things"{}});}
+\DoxyCodeLine{00807\ \ \ \ \ rf.setDefaultConfigFile(\textcolor{stringliteral}{"{}iCubBlinker.ini"{}});}
+\DoxyCodeLine{00808\ \ \ \ \ rf.configure(argc,argv);}
+\DoxyCodeLine{00809\ }
+\DoxyCodeLine{00810\ \ \ \ \ \textcolor{keywordflow}{if}\ (rf.check(\textcolor{stringliteral}{"{}help"{}}))}
+\DoxyCodeLine{00811\ \ \ \ \ \{\ \ \ \ }
+\DoxyCodeLine{00812\ \ \ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}\(\backslash\)n"{}});}
+\DoxyCodeLine{00813\ \ \ \ \ \ \ \ \ yInfo(\textcolor{stringliteral}{"{}[ICUB\ BLINKER]\ Options:"{}});}
+\DoxyCodeLine{00814\ \ \ \ \ \ \ \ \ yInfo(\textcolor{stringliteral}{"{}\ \ -\/-\/context\ \ \ \ \ \ \ \ \ \ \ path:\ \ \ where\ to\ find\ the\ called\ resource\ (default\ funnyThings)."{}});}
+\DoxyCodeLine{00815\ \ \ \ \ \ \ \ \ yInfo(\textcolor{stringliteral}{"{}\ \ -\/-\/from\ \ \ \ \ \ \ \ \ \ \ \ \ \ from:\ \ \ the\ name\ of\ the\ .ini\ file\ (default\ iCubBlinker.ini)."{}});}
+\DoxyCodeLine{00816\ \ \ \ \ \ \ \ \ yInfo(\textcolor{stringliteral}{"{}\ \ -\/-\/name\ \ \ \ \ \ \ \ \ \ \ \ \ \ name:\ \ \ the\ name\ of\ the\ module\ (default\ iCubBlinker)."{}});}
+\DoxyCodeLine{00817\ \ \ \ \ \ \ \ \ yInfo(\textcolor{stringliteral}{"{}\ \ -\/-\/robot\ \ \ \ \ \ \ \ \ \ \ \ \ robot:\ \ the\ name\ of\ the\ robot.\ Default\ icub."{}});}
+\DoxyCodeLine{00818\ \ \ \ \ \ \ \ \ yInfo(\textcolor{stringliteral}{"{}\ \ -\/-\/autoStart\ \ \ \ \ \ \ \ \ flag:\ \ \ If\ the\ module\ should\ autostart\ the\ blinking\ behavior.\ Default\ no."{}});}
+\DoxyCodeLine{00819\ \ \ \ \ \ \ \ \ yInfo(\textcolor{stringliteral}{"{}\ \ -\/-\/autoConnect\ \ \ \ \ \ \ flag:\ \ \ If\ the\ module\ should\ autoconnect\ itself\ to\ the\ face\ expression\ port.\ Default\ no."{}});}
+\DoxyCodeLine{00820\ \ \ \ \ \ \ \ \ yInfo(\textcolor{stringliteral}{"{}\ \ -\/-\/blinkingBehavior\ \ string:\ String\ that\ specifies\ the\ desired\ blinking\ behavior\ (either\ naturalistic\ or\ fast)."{}});}
+\DoxyCodeLine{00821\ \ \ \ \ \ \ \ \ yInfo(\textcolor{stringliteral}{"{}\ \ -\/-\/blinkingPeriod\ \ \ \ string:\ String\ that\ specifies\ the\ desired\ blinking\ period\ \ \ (either\ gaussian\ or\ fixed)."{}});}
+\DoxyCodeLine{00822\ \ \ \ \ \ \ \ \ yInfo(\textcolor{stringliteral}{"{}\ \ -\/-\/fixedBlinkPer\ \ \ \ \ double:\ the\ blinking\ period\ in\ case\ of\ fixed\ blinkingPeriod\ (default\ 5.0)."{}});}
+\DoxyCodeLine{00823\ \ \ \ \ \ \ \ \ yInfo(\textcolor{stringliteral}{"{}\ \ -\/-\/calibration::sMin\ int:\ \ \ \ Manually\ set\ the\ minimum\ value\ for\ the\ blinking\ behavior\ (default\ 00)."{}});}
+\DoxyCodeLine{00824\ \ \ \ \ \ \ \ \ yInfo(\textcolor{stringliteral}{"{}\ \ -\/-\/calibration::sMax\ int:\ \ \ \ Manually\ set\ the\ maximum\ value\ for\ the\ blinking\ behavior\ (default\ 70)."{}});}
+\DoxyCodeLine{00825\ \ \ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}\(\backslash\)n"{}});}
+\DoxyCodeLine{00826\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 0;}
+\DoxyCodeLine{00827\ \ \ \ \ \}}
+\DoxyCodeLine{00828\ }
+\DoxyCodeLine{00829\ \ \ \ \ Network\ yarp;}
+\DoxyCodeLine{00830\ \ \ \ \ \textcolor{keywordflow}{if}\ (!yarp.checkNetwork())}
+\DoxyCodeLine{00831\ \ \ \ \ \{}
+\DoxyCodeLine{00832\ \ \ \ \ \ \ \ \ yError(\textcolor{stringliteral}{"{}YARP\ server\ not\ available!"{}});}
+\DoxyCodeLine{00833\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 1;}
+\DoxyCodeLine{00834\ \ \ \ \ \}}
+\DoxyCodeLine{00835\ }
+\DoxyCodeLine{00836\ \ \ \ \ Blinker\ blinker;}
+\DoxyCodeLine{00837\ \ \ \ \ \textcolor{keywordflow}{return}\ blinker.runModule(rf);}
+\DoxyCodeLine{00838\ \}}
+\DoxyCodeLine{00839\ }
+\DoxyCodeLine{00840\ }
+
+\end{DoxyCode}

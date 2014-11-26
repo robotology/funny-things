@@ -1,0 +1,71 @@
+baseurl: http://robotology.github.io/funny-things
+reading_time: true
+words_per_minute: 200
+
+# Site settings
+title: Funny Things
+subtitle: Because robotics is fun
+email: ugo.pattacini@iit.it
+description: "Template for GitHub pages on robotology"
+logo: yes
+tag: [icub,yarp,blinker,breather,funny things]
+documentation: http://robotology.github.io/funny-things/doxygen/doc/html/modules.html
+
+gems:
+  - jekyll-paginate
+  - rouge
+  - jekyll-sitemap
+
+# Color settings (hex-codes without the leading hash-tag)
+color:
+  navbar: 607d8b
+  navbar-dark: 45626f
+  secondary: eceff1
+  text:
+    default: 333333
+    muted:   777777
+  bg:
+    default: ffffff
+    alt: f7f7f7
+    alt2: 607d8b
+
+# Team names, titles and social links
+authors:
+- name: Alessandro Roncone
+  link: https://alecive.github.io
+  pic: alecive
+  description: "Alessandro does not have a personal page, but instead his face links to his external personal website"
+  social:
+    - title: home
+      url: http://alecive.github.io
+    - title: github
+      url: http://github.com/alecive
+    - title: google-plus
+      url: https://plus.google.com/+AlessandroRoncone
+    - title: linkedin
+      url: https://www.linkedin.com/in/alessandroroncone
+- name: Ugo Pattacini
+  single-page: pattacini
+  pic: pattacini
+  description: "Ugo has a single page hosted on this website: if you click on his face, you go to a themed page written in markdown."
+  social:
+    - title: home
+      url: http://www.iit.it/it/persone/ugo-pattacini.html
+    - title: github
+      url: http://github.com/pattacini
+    - title: google-plus
+      url: https://plus.google.com/+UgoPattacini
+
+# Social networks usernames (many more available: google-plus, flickr, dribbble, pinterest, instagram, tumblr, linkedin, etc.)
+social:
+  - title: github
+    url: http://github.com/robotology/funny-things
+
+# Build settings
+markdown: kramdown
+# https://github.com/mojombo/jekyll/wiki/Permalinks
+permalink:   /:categories/:title.html
+#permalink: pretty
+
+# Amount of post to show on home page
+paginate: 4

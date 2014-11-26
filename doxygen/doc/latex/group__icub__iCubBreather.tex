@@ -1,0 +1,58 @@
+\doxysection{i\+Cub\+Breather}
+\label{group__icub__iCubBreather}\index{iCubBreather@{iCubBreather}}
+
+
+A module for implementing the IMU IDENTIFIER on the i\+Cub.  
+
+
+A module for implementing the IMU IDENTIFIER on the i\+Cub. 
+
+Date first release\+: 07/07/2014
+
+Copy\+Policy\+: Released under the terms of the GNU GPL v2.\+0.\hypertarget{group__icub__iCubWriter_intro_sec}{}\doxysubsection{\texorpdfstring{Description}{Description}}\label{group__icub__iCubWriter_intro_sec}
+This is a module for implementing the IMU IDENTIFIER on the i\+Cub. It uses a set of waypoints in order to move the i\+Cub head to a specified position with a specified velocity. In the meanwhile, it reads both references at the PID level, and the gyro output from the inertial, sending them out through the IMU\+:o port for later log and use.\hypertarget{group__icub__iCubWriter_lib_sec}{}\doxysubsection{\texorpdfstring{Libraries}{Libraries}}\label{group__icub__iCubWriter_lib_sec}
+YARP\hypertarget{group__icub__iCubWriter_parameters_sec}{}\doxysubsection{\texorpdfstring{Parameters}{Parameters}}\label{group__icub__iCubWriter_parameters_sec}
+--context {\itshape path} 
+\begin{DoxyItemize}
+\item Where to find the called resource.
+\end{DoxyItemize}
+
+--from {\itshape from} 
+\begin{DoxyItemize}
+\item The name of the .ini file with the configuration parameters.
+\end{DoxyItemize}
+
+--name {\itshape name} 
+\begin{DoxyItemize}
+\item The name of the module (default i\+Cub\+Breather).
+\end{DoxyItemize}
+
+--robot {\itshape rob} 
+\begin{DoxyItemize}
+\item The name of the robot (either "{}icub"{} or "{}icub"{}). Default "{}icub"{}. If you are guessing\+: Yes, the test HAS to be performed on the real robot!
+\end{DoxyItemize}
+
+--rate {\itshape rate} 
+\begin{DoxyItemize}
+\item The period used by the thread. Default 100ms.
+\end{DoxyItemize}
+
+--verbosity {\itshape verb} 
+\begin{DoxyItemize}
+\item Verbosity level (default 1). The higher is the verbosity, the more information is printed out.
+\end{DoxyItemize}\hypertarget{group__icub__iCubWriter_portsc_sec}{}\doxysubsection{\texorpdfstring{Ports Created}{Ports Created}}\label{group__icub__iCubWriter_portsc_sec}
+
+\begin{DoxyItemize}
+\item {\itshape  /$<$name$>$/inertial\+:i } it reads values from the inertial sensor
+\item {\itshape  /$<$name$>$/\+IMU\+:o } it prints out useful data in order to track both the pid controllers and the inertial sensor
+\end{DoxyItemize}\hypertarget{group__icub__iCubBreather_in_files_sec}{}\doxysubsection{\texorpdfstring{Input Data Files}{Input Data Files}}\label{group__icub__iCubBreather_in_files_sec}
+
+\begin{DoxyItemize}
+\item {\itshape  $<$name$>$.ini } it is a (mandatory) file from which the module can retrieve the waypoints used in the experiment.
+\end{DoxyItemize}\hypertarget{group__icub__iCubBreather_out_data_sec}{}\doxysubsection{\texorpdfstring{Output Data Files}{Output Data Files}}\label{group__icub__iCubBreather_out_data_sec}
+\hypertarget{group__icub__iCubWriter_tested_os_sec}{}\doxysubsection{\texorpdfstring{Tested OS}{Tested OS}}\label{group__icub__iCubWriter_tested_os_sec}
+Linux (Ubuntu 14.\+04, Debian Wheezy).
+
+\begin{DoxyAuthor}{Author}
+Alessandro Roncone 
+\end{DoxyAuthor}
