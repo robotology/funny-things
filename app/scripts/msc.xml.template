@@ -1,0 +1,71 @@
+<application>
+    <name>MSC Movements</name>
+
+    <module>
+        <name>iCubBlinker</name>
+        <parameters>--autoStart</parameters>
+        <node>icub15</node>
+    </module>
+    <module>
+        <name>iSpeak</name>
+        <parameters>--package acapelacmd --package_options icub_ita</parameters>
+        <node>icub-win1</node>
+    </module>
+    <module>
+        <name>iCubBreather</name>
+        <parameters>--name iCubBreatherRA --part right_arm --autoStart</parameters>
+        <node>icub15</node>
+    </module>
+    <module>
+        <name>iCubBreather</name>
+        <parameters>--name iCubBreatherLA --part left_arm --autoStart</parameters>
+        <node>icub15</node>
+    </module>
+    <module>
+        <name>iCubBreather</name>
+        <parameters>--name iCubBreatherT --part torso --autoStart</parameters>
+        <node>icub15</node>
+    </module>
+    <module>
+        <name>iCubBreather</name>
+        <parameters>--name iCubBreatherH --part head --autoStart --rate 1500</parameters>
+        <node>icub15</node>
+    </module>
+    <module>
+        <name>ctpService</name>
+        <parameters>--robot icub --part head</parameters>
+        <node>icub15</node>
+    </module>
+    <module>
+        <name>ctpService</name>
+        <parameters>--robot icub --part left_arm</parameters>
+        <node>icub15</node>
+    </module>
+    <module>
+        <name>ctpService</name>
+        <parameters>--robot icub --part right_arm</parameters>
+        <node>icub15</node>
+    </module>
+    <module>
+        <name>ctpService</name>
+        <parameters>--robot icub --part torso</parameters>
+        <node>icub15</node>
+    </module>   
+    <module>
+        <name>cartesianInterfaceExample</name>
+        <parameters>--part left_arm --T 1.5 --DOF8 --tol 0.01</parameters>
+        <node>icub15</node>
+    </module>
+
+    <connection>
+        <from>/iCubBlinker/emotions/raw</from>
+        <to>/icub/face/raw/in</to>
+        <protocol>tcp</protocol>
+    </connection>  
+    <connection>
+        <from>/iSpeak/emotions:o</from>
+        <to>/icub/face/emotions/in</to>
+        <protocol>tcp</protocol>
+    </connection>    
+
+</application>
