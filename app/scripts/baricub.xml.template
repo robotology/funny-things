@@ -1,5 +1,5 @@
 <application>
-    <name>MSC Movements</name>
+    <name>Bar iCub</name>
 
     <module>
         <name>iCubBlinker</name>
@@ -50,7 +50,7 @@
         <name>ctpService</name>
         <parameters>--robot icub --part torso</parameters>
         <node>icub15</node>
-    </module>   
+    </module>
     <module>
         <name>cartesianInterfaceExample</name>
         <parameters>--part left_arm --T 1.5 --DOF8 --tol 0.01</parameters>
@@ -61,11 +61,11 @@
         <from>/iCubBlinker/emotions/raw</from>
         <to>/icub/face/raw/in</to>
         <protocol>tcp</protocol>
-    </connection>  
+    </connection>
     <connection>
         <from>/iSpeak/emotions:o</from>
         <to>/icub/face/emotions/in</to>
         <protocol>tcp</protocol>
-    </connection>    
+    </connection>
 
 </application>
