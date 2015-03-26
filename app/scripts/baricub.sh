@@ -12,6 +12,10 @@ init() {
     echo "ctpq time 1.5 off 0 pos (-4.0 31.0 22.0 37.0 40.0 -31.0 -19.0 50.0 0.0 10.0 10.0 10.0 10.0 10.0 10.0 10.0)" | yarp rpc /ctpservice/right_arm/rpc
 }
 
+fini() {
+    echo "set track 0" | yarp rpc /iKinGazeCtrl/rpc
+}
+
 speak() {
     echo "\"$1\"" | yarp write ... /iSpeak
 }
@@ -105,6 +109,7 @@ pour_syrup() {
     sleep 3.0
     echo "-0.220 -0.250 0.036 -0.155917 0.702537 -0.694357 2.598576" | yarp write ... /armCtrl/left_arm/xd:i
     sleep 3.0
+    speak "un altro po'; perche' no?"
     echo "-0.310 -0.250 0.036 -0.155917 0.702537 -0.694357 2.598576" | yarp write ... /armCtrl/left_arm/xd:i
     sleep 3.0
     echo "-0.220 -0.250 0.036 -0.155917 0.702537 -0.694357 2.598576" | yarp write ... /armCtrl/left_arm/xd:i
@@ -174,14 +179,12 @@ run_all() {
 ################################################################################
 # "MAIN" FUNCTION:                                                             #
 ################################################################################
-echo "*************************************************************************"
-echo ""
-
-$1 $2 $3 $4
-
 if [[ $# -eq 0 ]] ; then
     echo "No options were passed!"
     echo ""
-    usage
     exit 1
 fi
+
+$1 $2 $3 $4
+
+exit 0
