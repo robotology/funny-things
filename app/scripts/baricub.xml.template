@@ -1,6 +1,11 @@
 <application>
     <name>Bar iCub</name>
 
+    <dependencies>
+        <port>/iKinGazeCtrl/rpc</port>
+        <port>/icub/cartesianController/left_arm/state:o</port>
+    </dependencies>
+
     <module>
         <name>iCubBlinker</name>
         <parameters>--autoStart</parameters>
@@ -10,31 +15,6 @@
         <name>iSpeak</name>
         <parameters>--package acapelacmd --package_options icub_ita</parameters>
         <node>icub-win1</node>
-    </module>
-    <module>
-        <name>iCubBreather</name>
-        <parameters>--name iCubBreatherRA --part right_arm --autoStart</parameters>
-        <node>icub15</node>
-    </module>
-    <module>
-        <name>iCubBreather</name>
-        <parameters>--name iCubBreatherLA --part left_arm --autoStart</parameters>
-        <node>icub15</node>
-    </module>
-    <module>
-        <name>iCubBreather</name>
-        <parameters>--name iCubBreatherT --part torso --autoStart</parameters>
-        <node>icub15</node>
-    </module>
-    <module>
-        <name>iCubBreather</name>
-        <parameters>--name iCubBreatherH --part head --autoStart --rate 1500</parameters>
-        <node>icub15</node>
-    </module>
-    <module>
-        <name>ctpService</name>
-        <parameters>--robot icub --part head</parameters>
-        <node>icub15</node>
     </module>
     <module>
         <name>ctpService</name>
