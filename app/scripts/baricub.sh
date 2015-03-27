@@ -43,9 +43,9 @@ reach_glass() {
     echo "ctpq time 1.3 off 0 pos (-40.0 17.0 -18.0 33.0 18.0 0.0 -20.0 38.0 90.0 10.0 10.0 10.0 10.0 10.0 10.0 10.0)" | yarp rpc /ctpservice/left_arm/rpc
     echo "ctpq time 1.0 off 0 pos (-40.0 17.0 -18.0 33.0 18.0 0.0 -20.0 38.0 90.0 14.0 66.0 35.0 77.0 20.0 86.0 10.0)" | yarp rpc /ctpservice/left_arm/rpc
     echo "ctpq time 1.0 off 0 pos (-40.0 17.0 -18.0 33.0 18.0 0.0 -20.0 38.0 90.0 14.0 66.0 35.0 77.0 20.0 86.0 120.0)" | yarp rpc /ctpservice/left_arm/rpc
-    sleep 3.0
+    sleep 5.0
     speak "e' viola, frivolo come piace a me"
-    sleep 4.0
+    sleep 2.0
 }
 
 reach_sugar() {

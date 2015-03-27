@@ -27,6 +27,7 @@ yarp.Time_delay(4.5)
 speech:clear()
 speech:addString(drink)
 port_speak_eng:write(speech)
+yarp.Time_delay(2.0)
 
 print("./baricub.sh run_all")
 os.execute("./baricub.sh run_all")
