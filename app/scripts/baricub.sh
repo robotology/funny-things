@@ -17,7 +17,7 @@ fini() {
 }
 
 speak() {
-    echo "\"$1\"" | yarp write ... /iSpeak
+    echo "\"$1\"" | yarp write ... /iSpeak_ita
 }
 
 blink() {

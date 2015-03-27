@@ -13,7 +13,12 @@
     </module>
     <module>
         <name>iSpeak</name>
-        <parameters>--package acapelacmd --package_options icub_ita</parameters>
+        <parameters>--name iSpeak_ita --package acapelacmd --package_options iCub_ita</parameters>
+        <node>icub-win1</node>
+    </module>
+    <module>
+        <name>iSpeak</name>
+        <parameters>--name iSpeak_eng --package acapelacmd --package_options iCub_eng</parameters>
         <node>icub-win1</node>
     </module>
     <module>
@@ -43,7 +48,12 @@
         <protocol>tcp</protocol>
     </connection>
     <connection>
-        <from>/iSpeak/emotions:o</from>
+        <from>/iSpeak_ita/emotions:o</from>
+        <to>/icub/face/emotions/in</to>
+        <protocol>tcp</protocol>
+    </connection>
+    <connection>
+        <from>/iSpeak_eng/emotions:o</from>
         <to>/icub/face/emotions/in</to>
         <protocol>tcp</protocol>
     </connection>
