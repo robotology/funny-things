@@ -109,7 +109,7 @@ pour_syrup() {
     sleep 3.0
     echo "-0.220 -0.250 0.036 -0.155917 0.702537 -0.694357 2.598576" | yarp write ... /armCtrl/left_arm/xd:i
     sleep 3.0
-    speak "un altro po'; perche' no?"
+    speak "un altro po', perche no?"
     echo "-0.310 -0.250 0.036 -0.155917 0.702537 -0.694357 2.598576" | yarp write ... /armCtrl/left_arm/xd:i
     sleep 3.0
     echo "-0.220 -0.250 0.036 -0.155917 0.702537 -0.694357 2.598576" | yarp write ... /armCtrl/left_arm/xd:i
