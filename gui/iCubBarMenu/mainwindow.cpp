@@ -8,7 +8,7 @@ MainWindow::MainWindow(ResourceFinder &rf, QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    QPixmap pix("/home/icub/tmp_vadim/iCubBarMenu/data/image.png");
+    QPixmap pix("/usr/local/src/robot/icub-contrib-iit/funny-things/gui/iCubBarMenu/data/image.png");
     ui->labelImg->setPixmap(pix);
 
     moduleName =  QString("%1").arg(rf.check("name", Value("iCubBarMenu"), "module name (string)").asString().c_str());

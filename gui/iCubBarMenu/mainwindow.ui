@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>504</width>
-    <height>352</height>
+    <width>592</width>
+    <height>411</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -23,8 +23,8 @@
    <widget class="QPushButton" name="makeButton">
     <property name="geometry">
      <rect>
-      <x>300</x>
-      <y>210</y>
+      <x>360</x>
+      <y>310</y>
       <width>121</width>
       <height>61</height>
      </rect>
@@ -42,10 +42,10 @@
    <widget class="QLabel" name="label">
     <property name="geometry">
      <rect>
-      <x>60</x>
-      <y>10</y>
-      <width>381</width>
-      <height>20</height>
+      <x>190</x>
+      <y>0</y>
+      <width>201</width>
+      <height>31</height>
      </rect>
     </property>
     <property name="font">
@@ -56,14 +56,14 @@
      </font>
     </property>
     <property name="text">
-     <string>iCub Bar Menu - Please choose your drink</string>
+     <string>iCub Bar Menu</string>
     </property>
    </widget>
    <widget class="QListWidget" name="listWidget">
     <property name="geometry">
      <rect>
-      <x>10</x>
-      <y>50</y>
+      <x>30</x>
+      <y>100</y>
       <width>211</width>
       <height>191</height>
      </rect>
@@ -162,10 +162,10 @@
    <widget class="QLabel" name="labelImg">
     <property name="geometry">
      <rect>
-      <x>260</x>
-      <y>70</y>
-      <width>201</width>
-      <height>101</height>
+      <x>300</x>
+      <y>120</y>
+      <width>251</width>
+      <height>131</height>
      </rect>
     </property>
     <property name="text">
@@ -175,8 +175,8 @@
    <widget class="QPushButton" name="stopButton">
     <property name="geometry">
      <rect>
-      <x>50</x>
-      <y>250</y>
+      <x>70</x>
+      <y>330</y>
       <width>131</width>
       <height>41</height>
      </rect>
@@ -191,13 +191,33 @@
      <string>Emergency Stop</string>
     </property>
    </widget>
+   <widget class="QLabel" name="label_2">
+    <property name="geometry">
+     <rect>
+      <x>120</x>
+      <y>50</y>
+      <width>401</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>18</pointsize>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="text">
+     <string>Please choose your drink:</string>
+    </property>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menuBar">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>504</width>
+     <width>592</width>
      <height>22</height>
     </rect>
    </property>
