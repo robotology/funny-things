@@ -22,9 +22,21 @@ print("drink received: " .. drink)
 speech=yarp.Bottle()
 speech:addString("ah! bella scelta! allora adesso ti preparo un bel")
 port_speak:write(speech)
+yarp.Time_delay(2.0)
 
 opt=yarp.Bottle()
 rep=yarp.Bottle()
+
+opt:addString("stat")
+while true do
+    port_speak_opt:write(opt,rep)
+    local ret=rep:toString()
+    print("iSpeak is " .. ret)
+    if ret=="quiet" then break end
+    yarp.Time_delay(0.01)
+end
+
+opt:clear()
 opt:addString("set")
 opt:addString("opt")
 opt:addString("icub_eng")
@@ -33,6 +45,7 @@ port_speak_opt:write(opt,rep)
 speech:clear()
 speech:addString(drink)
 port_speak:write(speech)
+yarp.Time_delay(1.0)
 
 opt:clear()
 opt:addString("set")
