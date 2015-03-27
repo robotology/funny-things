@@ -1,3 +1,4 @@
 build/*
 jekyll/_site/*
 _site/*
+gui/iCubBarMenu/build/*
