@@ -207,13 +207,10 @@ protected:
                 Bottle points(pElem->Attribute("points"));
                 wp.duration/=points.size();
 
-                for (int i=0; i<points.size(); i++)
+                for (int i=0; i<points.size(); i+=2)
                 {
-                    char ch;
-                    istringstream iss(points.get(i).asString().c_str());
-                    iss>>wp.x[0]; iss>>ch; iss>>wp.x[1];                    
-                    wp.x*=scale;
-
+                    wp.x[0]=scale*points.get(i).asDouble();
+                    wp.x[1]=scale*points.get(i+1).asDouble();
                     path.push_back(wp);
 
                     top_left_corner[0]=std::min(top_left_corner[0],wp.x[0]);
@@ -343,6 +340,8 @@ public:
         Property option(bGeneral.toString().c_str());
         option.put("local",name.c_str());
         option.put("part",partUsed.c_str());
+        option.put("grasp_model_type",rf.find("grasp_model_type").asString().c_str());
+        option.put("grasp_model_file",rf.findFile("grasp_model_file").c_str());
         option.put("hand_sequences_file",rf.findFile("hand_sequences_file").c_str());
 
         Bottle &bWriting=config.findGroup("writing_general");
@@ -624,6 +623,8 @@ int main(int argc, char *argv[])
     rf.setDefaultContext("funny-things");
     rf.setDefaultConfigFile("iCubWriter.ini");
     rf.setDefault("part","right_arm");
+    rf.setDefault("grasp_model_type","springy");
+    rf.setDefault("grasp_model_file","grasp_model.ini");
     rf.setDefault("hand_sequences_file","hand_sequences.ini");
     rf.setDefault("drawing","drawings/icub.svg");
     rf.setDefault("name","iCubWriter");
