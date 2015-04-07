@@ -35,7 +35,7 @@ are recognized. \n
 --part \e part
 - select the arm to control.
  
---text \e text
+--drawing \e drawing
 - select the svg file containing the drawing to write.
 
 \section portsc_sec Ports Created 
@@ -48,8 +48,6 @@ Windows, Linux
 \author Ugo Pattacini
 */ 
 
-#include <iostream>
-#include <iomanip>
 #include <string>
 #include <sstream>
 #include <deque>
@@ -143,7 +141,7 @@ protected:
     }
 
     /************************************************************************/
-    Vector parseText(TiXmlDocument& text)
+    Vector parseDrawing(TiXmlDocument& drawing)
     {
         SegmentParameters params;
         params.orientation=orientation;
@@ -163,7 +161,7 @@ protected:
 
         Vector top_left_corner(2,0.0);
 
-        TiXmlHandle hText(&text);
+        TiXmlHandle hText(&drawing);
         TiXmlElement *pElem;
 
         pElem=hText.FirstChildElement().Element();
@@ -258,12 +256,9 @@ protected:
         {
             for (size_t j=0; j<wayPoints[i].size(); j++)
             {
-                cout<<"point["<<i<<"]["<<j<<"]=("
-                    <<wayPoints[i][j].x.toString(3,3).c_str()<<")"
-                    <<endl;
+                yInfo()<<"point["<<i<<"]["<<j<<"]=("
+                       <<wayPoints[i][j].x.toString(3,3).c_str()<<")";
             }
-
-            cout<<endl;
         }
     }
 
@@ -332,7 +327,7 @@ public:
         string partUsed=rf.find("part").asString().c_str();
         if ((partUsed!="left_arm") && (partUsed!="right_arm"))
         {
-            cout<<"Invalid part requested!"<<endl;
+            yError()<<"invalid part requested!";
             return false;
         }        
 
@@ -340,7 +335,7 @@ public:
         Bottle &bGeneral=config.findGroup("general");
         if (bGeneral.isNull())
         {
-            cout<<"Error: group \"general\" is missing!"<<endl;
+            yError()<<"group \"general\" is missing!";
             return false;
         }
 
@@ -352,7 +347,7 @@ public:
         Bottle &bWriting=config.findGroup("writing_general");
         if (bWriting.isNull())
         {
-            cout<<"Error: group \"writing_general\" is missing!"<<endl;
+            yError()<<"group \"writing_general\" is missing!";
             return false;
         }
         
@@ -384,14 +379,14 @@ public:
         H(0,1)=1.0; H(1,0)=1.0; H(2,2)=-1.0;
         H.setCol(3,top_left_corner);
 
-        TiXmlDocument text(rf.findFile("text").c_str());
-        if (!text.LoadFile())
+        TiXmlDocument drawing(rf.findFile("drawing").c_str());
+        if (!drawing.LoadFile())
         {
             close();
             return false;
         }
 
-        Vector data_top_left_corner=parseText(text);
+        Vector data_top_left_corner=parseDrawing(drawing);
         for (size_t i=0; i<wayPoints.size(); i++)
         {
             ostringstream segment_tag;
@@ -426,7 +421,7 @@ public:
         tranformPoints(data_top_left_corner);
         printPoints();
         
-        cout<<"***** Instantiating primitives for "<<partUsed<<endl;
+        yInfo()<<"***** Instantiating primitives for "<<partUsed;
         action=new ActionPrimitives(option);
         if (!action->isValid())
         {
@@ -612,7 +607,7 @@ int main(int argc, char *argv[])
     Network yarp;
     if (!yarp.checkNetwork())
     {
-        cout<<"YARP server not available!"<<endl;
+        yError()<<"YARP server not available!";
         return -1;
     }
 
@@ -624,7 +619,7 @@ int main(int argc, char *argv[])
     rf.setDefaultConfigFile("iCubWriter.ini");
     rf.setDefault("part","right_arm");
     rf.setDefault("hand_sequences_file","hand_sequences.ini");
-    rf.setDefault("text","icub.svg");
+    rf.setDefault("drawing","icub.svg");
     rf.setDefault("name","iCubWriter");
     rf.configure(argc,argv);
 
