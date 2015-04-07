@@ -619,7 +619,7 @@ int main(int argc, char *argv[])
     rf.setDefaultConfigFile("iCubWriter.ini");
     rf.setDefault("part","right_arm");
     rf.setDefault("hand_sequences_file","hand_sequences.ini");
-    rf.setDefault("drawing","icub.svg");
+    rf.setDefault("drawing","drawings/icub.svg");
     rf.setDefault("name","iCubWriter");
     rf.configure(argc,argv);
 
