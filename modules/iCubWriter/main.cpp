@@ -109,6 +109,7 @@ protected:
     Gazer            *gazer;
     RpcServer         rpcPort;
     bool              interrupting;
+    bool              impedanceOn;
 
     struct SegmentParameters
     {
@@ -431,10 +432,12 @@ public:
         
         setStraightness(cartesian_straightness);
 
+        impedanceOn=false;
         Bottle &bImpedance=config.findGroup("impedance");
         if (!bImpedance.isNull())
         {
-            if (bImpedance.check("enable",Value("off")).asString()=="on")
+            impedanceOn=bImpedance.check("enable",Value("off")).asString()=="on";
+            if (impedanceOn)
             {
                 Vector stiffness(5,0.0);
                 if (Bottle *pB=bImpedance.find("stiffness").asList())
@@ -458,7 +461,7 @@ public:
                 driverOption.put("local",("/"+name+"/impedance").c_str());
                 if (driverArm.open(driverOption))
                 {
-                    IControlMode      *imod;
+                    IInteractionMode  *imod;
                     IImpedanceControl *iimp;
 
                     driverArm.view(imod);
@@ -470,7 +473,7 @@ public:
                     {
                         iimp->getImpedance(i,&stiffness_old[i],&damping_old[i]);
                         iimp->setImpedance(i,stiffness[i],damping[i]);
-                        imod->setImpedanceVelocityMode(i);
+                        imod->setInteractionMode(i,VOCAB_IM_COMPLIANT);
                     }
                 }
                 else
@@ -573,16 +576,19 @@ public:
 
         if (driverArm.isValid())
         {
-            IControlMode      *imod;
-            IImpedanceControl *iimp;
-
-            driverArm.view(imod);
-            driverArm.view(iimp);
-
-            for (size_t i=0; i<stiffness_old.length(); i++)
+            if (impedanceOn)
             {
-                imod->setPositionMode(i);
-                iimp->setImpedance(i,stiffness_old[i],damping_old[i]);                    
+                IInteractionMode  *imod; 
+                IImpedanceControl *iimp;
+
+                driverArm.view(imod);
+                driverArm.view(iimp);
+
+                for (size_t i=0; i<stiffness_old.length(); i++)
+                {
+                    imod->setInteractionMode(i,VOCAB_IM_STIFF);
+                    iimp->setImpedance(i,stiffness_old[i],damping_old[i]);                    
+                }
             }
 
             driverArm.close();
