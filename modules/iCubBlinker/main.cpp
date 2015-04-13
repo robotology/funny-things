@@ -101,6 +101,18 @@ public:
     }
 
     /***************************************************************/
+    double getMinDT()
+    {
+        return min_dt;
+    }
+
+    /***************************************************************/
+    double getMaxDT()
+    {
+        return max_dt;
+    }
+
+    /***************************************************************/
     void setMinDT(const double _min_dt)
     {
         min_dt = _min_dt;
@@ -178,11 +190,26 @@ public:
                 if (command.get(1).asString() == "min_dt")
                 {
                     setMinDT(command.get(2).asDouble());
+                    reply.addDouble(getMinDT());
                     reply.addVocab(ack);
                 }
                 else if (command.get(1).asString() == "max_dt")
                 {
                     setMaxDT(command.get(2).asDouble());
+                    reply.addDouble(getMaxDT());
+                    reply.addVocab(ack);
+                }
+            }
+            else if (cmd == "get")
+            {
+                if (command.get(1).asString() == "min_dt")
+                {
+                    reply.addDouble(getMinDT());
+                    reply.addVocab(ack);
+                }
+                else if (command.get(1).asString() == "max_dt")
+                {
+                    reply.addDouble(getMaxDT());
                     reply.addVocab(ack);
                 }
             }
@@ -190,6 +217,7 @@ public:
             {
                 return RFModule::respond(command,reply);
             }
+            return true;
         }
 
         reply.addVocab(nack);
