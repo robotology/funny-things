@@ -132,7 +132,7 @@ public:
         max_dt = _max_dt;
     }
 
-    /***************************************************************/    
+    /***************************************************************/
     bool setInteractionMode_IDLE()
     {
         // we should set:
@@ -161,6 +161,24 @@ public:
 
         return true;
     }
+
+    /***************************************************************/
+    string getInteractionMode()
+    {
+        if (int_mode==INTERACTION_MODE_UNKNOWN)
+        {
+            return "unknown";
+        }
+        else if (int_mode==INTERACTION_MODE_IDLE)
+        {
+            return "idle";
+        }
+        else if (int_mode==INTERACTION_MODE_CONVERSATION)
+        {
+            return "conversation";
+        }
+    }
+
 
     /***************************************************************/
     bool updateModule()
@@ -259,6 +277,11 @@ public:
                 else if (command.get(1).asString() == "max_dt")
                 {
                     reply.addDouble(getMaxDT());
+                    reply.addVocab(ack);
+                }
+                else if (command.get(1).asString() == "interaction_mode")
+                {
+                    reply.addString(getInteractionMode());
                     reply.addVocab(ack);
                 }
             }
