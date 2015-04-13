@@ -1,6 +1,6 @@
 /* 
  * Copyright (C) 2014 iCub Facility - Istituto Italiano di Tecnologia
- * Author: Ugo Pattacini
+ * Author: Ugo Pattacini & Alessandro Roncone
  * email:  ugo.pattacini@iit.it
  * website: www.robotcub.org
  * Permission is granted to copy, distribute, and/or modify this program
@@ -24,6 +24,10 @@ using namespace std;
 using namespace yarp::os;
 using namespace yarp::math;
 
+enum InteractionMode { 
+    INTERACTION_MODE_UNKNOWN=0, 
+    INTERACTION_MODE_IDLE, INTERACTION_MODE_CONVERSATION
+};
 
 /***************************************************************/
 class Blinker: public RFModule
@@ -36,6 +40,8 @@ private:
     bool blinking;
     double min_dt,max_dt,dt,t0;
     int doubleBlinkCnt;
+
+    InteractionMode int_mode;
 
     /***************************************************************/
     bool blink()
@@ -83,6 +89,8 @@ public:
         dt=Rand::scalar(min_dt,max_dt);
         t0=Time::now();
 
+        int_mode = INTERACTION_MODE_UNKNOWN;
+
         return true;
     }
 
@@ -125,25 +133,31 @@ public:
     }
 
     /***************************************************************/    
-    bool setBlinkinkingMode_IDLE()
+    bool setInteractionMode_IDLE()
     {
         // we should set:
         //   1. the frequency of multiple blinks
         //   2. the speed with which the icub closes its eyes
         //   3. the time the icub stays with the eyes closed
         //   4. the speed with which the icub opens its eyes
+        //   
+        
+        int_mode = INTERACTION_MODE_IDLE;
 
         return true;
     }
 
     /***************************************************************/    
-    bool setBlinkinkingMode_CONVERSATION()
+    bool setInteractionMode_CONVERSATION()
     {
         // we should set:
         //   1. the frequency of multiple blinks
         //   2. the speed with which the icub closes its eyes
         //   3. the time the icub stays with the eyes closed
         //   4. the speed with which the icub opens its eyes
+        //   
+
+        int_mode = INTERACTION_MODE_CONVERSATION;
 
         return true;
     }
@@ -222,6 +236,17 @@ public:
                     setMaxDT(command.get(2).asDouble());
                     reply.addDouble(getMaxDT());
                     reply.addVocab(ack);
+                }
+                else if (command.get(1).asString() == "interaction_mode")
+                {
+                    if (command.get(2).asString() == "idle")
+                    {
+                        reply.addVocab(setInteractionMode_IDLE()?ack:nack);
+                    }
+                    else if (command.get(2).asString() == "conversation")
+                    {
+                        reply.addVocab(setInteractionMode_CONVERSATION()?ack:nack);
+                    }
                 }
             }
             else if (cmd == "get")

@@ -1,6 +1,6 @@
 /* 
  * Copyright (C) 2014 iCub Facility - Istituto Italiano di Tecnologia
- * Author: Alessandro Roncone
+ * Author: Alessandro Roncone & Ugo Pattacini
  * email:  alessandro.roncone@iit.it
  * Permission is granted to copy, distribute, and/or modify this program
  * under the terms of the GNU General Public License, version 2 or any
