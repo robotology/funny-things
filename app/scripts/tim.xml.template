@@ -12,6 +12,11 @@
         <node>icub16</node>
     </module>
     <module>
+        <name>iCubBreather</name>
+        <parameters>--name iCubBreatherH --part head --rate 1500</parameters>
+        <node>icub16</node>
+    </module>
+    <module>
         <name>iSpeak</name>
         <parameters>--name iSpeak_ita --package acapelacmd --package_options iCub_ita</parameters>
         <node>icub-win1</node>
