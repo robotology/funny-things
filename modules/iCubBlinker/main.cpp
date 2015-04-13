@@ -101,6 +101,18 @@ public:
     }
 
     /***************************************************************/
+    void setMinDT(const double _min_dt)
+    {
+        min_dt = _min_dt;
+    }
+
+    /***************************************************************/
+    void setMaxDT(const double _max_dt)
+    {
+        max_dt = _max_dt;
+    }
+
+    /***************************************************************/
     bool updateModule()
     {
         LockGuard lg(mutex);
@@ -131,35 +143,57 @@ public:
         int ack=Vocab::encode("ack");
         int nack=Vocab::encode("nack");
 
-        string cmd=command.get(0).asString().c_str();
-        if (cmd=="start")
+        if (command.size()>0)
         {
-            blinking=true;
-            reply.addVocab(ack);
-        }
-        else if (cmd=="stop")
-        {
-            blinking=false;
-            reply.addVocab(ack);
-        }
-        else if (cmd=="get")
-        {
-            reply.addVocab(ack);
-            reply.addString(blinking?"on":"off");
-        }
-        else if (cmd=="blink")
-        {
-            reply.addVocab(blink()?ack:nack);
-        }
-        else if (cmd=="dblink")
-        {
-            bool res = blink() && blink();
-            reply.addVocab(res?ack:nack);
-        }
-        else
-            return RFModule::respond(command,reply);
+            string cmd=command.get(0).asString().c_str();
 
-        return true; 
+            if (cmd == "start")
+            {
+                blinking=true;
+                reply.addVocab(ack);
+            }
+            else if (cmd == "stop")
+            {
+                blinking=false;
+                reply.addVocab(ack);
+            }
+            else if (cmd == "status")
+            {
+                reply.addVocab(ack);
+                reply.addString(blinking?"on":"off");
+            }
+            else if (cmd == "blink")
+            {
+                reply.addVocab(blink()?ack:nack);
+            }
+            else if (cmd == "dblink")
+            {
+                bool res = blink() && blink();
+                reply.addVocab(res?ack:nack);
+            }
+            else if (cmd == "set")
+            {
+                reply.addString(command.get(1).asString());
+
+                if (command.get(1).asString() == "min_dt")
+                {
+                    setMinDT(command.get(2).asDouble());
+                    reply.addVocab(ack);
+                }
+                else if (command.get(1).asString() == "max_dt")
+                {
+                    setMaxDT(command.get(2).asDouble());
+                    reply.addVocab(ack);
+                }
+            }
+            else
+            {
+                return RFModule::respond(command,reply);
+            }
+        }
+
+        reply.addVocab(nack);
+        return true;
     }
 };
 
