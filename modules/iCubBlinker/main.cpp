@@ -124,6 +124,30 @@ public:
         max_dt = _max_dt;
     }
 
+    /***************************************************************/    
+    bool setBlinkinkingMode_IDLE()
+    {
+        // we should set:
+        //   1. the frequency of multiple blinks
+        //   2. the speed with which the icub closes its eyes
+        //   3. the time the icub stays with the eyes closed
+        //   4. the speed with which the icub opens its eyes
+
+        return true;
+    }
+
+    /***************************************************************/    
+    bool setBlinkinkingMode_CONVERSATION()
+    {
+        // we should set:
+        //   1. the frequency of multiple blinks
+        //   2. the speed with which the icub closes its eyes
+        //   3. the time the icub stays with the eyes closed
+        //   4. the speed with which the icub opens its eyes
+
+        return true;
+    }
+
     /***************************************************************/
     bool updateModule()
     {
