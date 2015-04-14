@@ -14,6 +14,7 @@
 */
 
 #include <iostream>
+#include <fstream>
 #include <iomanip>
 #include <string>
 
@@ -30,17 +31,29 @@ enum InteractionMode
     INTERACTION_MODE_IDLE, INTERACTION_MODE_CONVERSATION
 };
 
-string int2hex(int _i)
+string int2hex(const int _i)
 {
     std::ostringstream hex;
     hex << std::hex << _i;
     return hex.str();
 }
 
+string int2string(const int _a)
+{
+    std::ostringstream ss;
+    ss << _a;
+    return ss.str();
+}
+
 /***************************************************************/
 class Blinker: public RFModule
 {
-private:    
+private:
+    // Resource finder used to find for files and configurations:
+    ResourceFinder* rf;
+
+    string name,robot;
+
     Port emotionsPort;
     RpcServer rpcPort;
 
@@ -51,20 +64,10 @@ private:
 
     InteractionMode int_mode;
 
+    string eyelids_open;    // it's the `E` command
+    string eyelids_closed;  // it's the `U` command
+
     /***************************************************************/
-    bool blink()
-    {
-        bool res = true;
-
-        res = res && sendRawValue("S00"); // close eyelids
-        Time::delay(0.05);
-
-        res = res && sendRawValue("S5A"); // open  eyelids
-        Time::delay(0.05);
-
-        return res;
-    }
-
     bool sendRawValue(const string &_value)
     {
         if (emotionsPort.getOutputCount()>0)
@@ -80,34 +83,124 @@ private:
     }
 
     /***************************************************************/
-    bool save_calib()
+    bool blink()
     {
+        bool res = true;
 
+        res = res && sendRawValue("S00"); // close eyelids
+        Time::delay(0.05);
+
+        res = res && sendRawValue("S5A"); // open  eyelids
+        Time::delay(0.05);
+
+        return res;
     }
 
     /***************************************************************/
-    bool load_calib()
+    string save()
     {
+        string path    = rf->getHomeContextPath().c_str();
+        string inifile = path+"/"+rf->find("from").asString();
+        yInfo("Saving calib configuration to %s",inifile.c_str());
 
+        ofstream myfile;
+        myfile.open(inifile.c_str(),ios::trunc);
+
+        if (myfile.is_open())
+        {
+            myfile << "name  \t"  << name   << endl;
+            myfile << "robot \t"  << robot  << endl;
+            myfile << "min_dt\t"  << min_dt << endl;
+            myfile << "max_dt\t"  << max_dt << endl;
+            if (rf->check("autoStart"))
+            {
+                myfile << "autoStart" << endl;
+            }
+            myfile << "calib \t(" << eyelids_closed << "\t" << eyelids_open << ")\n";
+        }
+        myfile.close();
+        return inifile;
+    }
+
+    /***************************************************************/
+    string load()
+    {
+        rf->setVerbose(true);
+        string fileName=rf->findFile(rf->find("from").asString().c_str());
+        rf->setVerbose(false);
+        if (fileName=="")
+        {
+            yWarning("[vtRF::load] No filename has been found. Skipping..");
+            return string("");
+        }
+
+        yInfo("[iCubBlinker::load] File loaded: %s", fileName.c_str());
+        Property data; data.fromConfigFile(fileName.c_str());
+        Bottle b; b.read(data);
+        Bottle calib=*(b.find("calib").asList());
+
+        if (calib.size() > 0)
+        {
+            eyelids_closed = calib.get(0).asString();
+            eyelids_open   = calib.get(1).asString();
+
+            yInfo("[iCubBlinker::load] Eyelid calibs loaded: (%s %s)", eyelids_closed.c_str(), eyelids_open.c_str());
+
+            return fileName;
+        }
+
+        eyelids_open   = "E99";
+        eyelids_closed = "U00";
+
+        set_calib();
+
+        return string("");
+    }
+
+    /***************************************************************/
+    bool set_calib()
+    {
+        bool res = true;
+        res = res && sendRawValue(eyelids_closed); // close eyelids
+        res = res && sendRawValue(eyelids_open);   // open  eyelids
+
+        return res;
     }
 
 public:
     /***************************************************************/
-    bool configure(ResourceFinder &rf)
+    bool configure(ResourceFinder &_mainRF)
     {
-        string name =rf.check("name", Value("iCubBlinker")).asString().c_str();
-        string robot=rf.check("robot",Value("icub")).asString().c_str();
+        rf = const_cast<ResourceFinder*>(&_mainRF);
 
-        min_dt=rf.check("min_dt",Value(3.0)).asDouble();
-        max_dt=rf.check("max_dt",Value(10.0)).asDouble();
+        name =rf->check("name", Value("iCubBlinker")).asString().c_str();
+        robot=rf->check("robot",Value("icub")).asString().c_str();
 
-        blinking=rf.check("autoStart");
+        min_dt=rf->check("min_dt",Value(3.0)).asDouble();
+        max_dt=rf->check("max_dt",Value(10.0)).asDouble();
+
+        blinking=rf->check("autoStart");
+
+        // string path = rf->getHomeContextPath().c_str();
+        // path = path+"/";
+        // if (rf->check("taxelsFile"))
+        // {
+        //     taxelsFile = rf->find("taxelsFile").asString();
+        // }
+        // else
+        // {
+        //     taxelsFile = "taxels"+modality+".ini";
+        //     rf->setDefault("taxelsFile",taxelsFile.c_str());
+        // }
+        // yInfo("Storing file set to: %s", (path+taxelsFile).c_str());
 
         emotionsPort.open(("/"+name+"/emotions/raw").c_str());
         Network::connect(emotionsPort.getName().c_str(),"/"+robot+"/face/raw/in");
 
         rpcPort.open(("/"+name+"/rpc").c_str());
         attach(rpcPort);
+
+        load();
 
         Rand::init();
         doubleBlinkCnt=0;
@@ -264,6 +357,34 @@ public:
                 bool res = blink() && blink();
                 reply.addVocab(res?ack:nack);
             }
+            else if (cmd == "save")
+            {
+                string fileName = save();
+
+                if (fileName=="")
+                {
+                    reply.addVocab(nack);
+                }
+                else
+                {
+                    reply.addVocab(ack);
+                    reply.addString(fileName.c_str());
+                }
+            }
+            else if (cmd == "load")
+            {
+                string fileName = load();
+
+                if (fileName=="")
+                {
+                    reply.addVocab(nack);
+                }
+                else
+                {
+                    reply.addVocab(ack);
+                    reply.addString(fileName.c_str());
+                }
+            }
             else if (cmd == "set")
             {
                 reply.addString(command.get(1).asString());
@@ -326,7 +447,6 @@ public:
     }
 };
 
-
 /***************************************************************/
 int main(int argc, char *argv[])
 {
@@ -343,8 +463,8 @@ int main(int argc, char *argv[])
         yInfo("  --from       from:   the name of the .ini file (default iCubBlinker.ini).");
         yInfo("  --name       name:   the name of the module (default iCubBlinker).");
         yInfo("  --robot      robot:  the name of the robot. Default icub.");
-        yInfo("  --min_dt     double: the default minimum delta T between consecutive blinks. Default 3s.");
-        yInfo("  --max_dt     double: the default maximum delta T between consecutive blinks. Default 10s.");
+        yInfo("  --min_dt     double: the default minimum delta T between consecutive blinks. Default  3.0[s].");
+        yInfo("  --max_dt     double: the default maximum delta T between consecutive blinks. Default 10.0[s].");
         yInfo("  --autoStart  flag:   If the module should autostart the blinking behavior. Default no.");
         printf("\n");
         return 0;
@@ -356,7 +476,6 @@ int main(int argc, char *argv[])
         yError("YARP server not available!");
         return -1;
     }
-
 
     Blinker blinker;
     return blinker.runModule(rf);
