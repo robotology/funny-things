@@ -6,7 +6,7 @@ cmake_minimum_required(VERSION 2.8)
 set(PROJECTNAME iCubBlinker)
 project(${PROJECTNAME})
 
-set(source main.cpp)
+set(source iCubBlinker.cpp)
 source_group("Source Files" FILES ${source})
 include_directories(${YARP_INCLUDE_DIRS})
 add_executable(${PROJECTNAME} ${source})
