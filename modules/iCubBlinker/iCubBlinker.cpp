@@ -24,10 +24,18 @@ using namespace std;
 using namespace yarp::os;
 using namespace yarp::math;
 
-enum InteractionMode { 
+enum InteractionMode
+{ 
     INTERACTION_MODE_UNKNOWN=0, 
     INTERACTION_MODE_IDLE, INTERACTION_MODE_CONVERSATION
 };
+
+string int2hex(int _i)
+{
+    std::ostringstream hex;
+    hex << std::hex << _i;
+    return hex.str();
+}
 
 /***************************************************************/
 class Blinker: public RFModule
@@ -46,26 +54,41 @@ private:
     /***************************************************************/
     bool blink()
     {
+        bool res = true;
+
+        res = res && sendRawValue("S00"); // close eyelids
+        Time::delay(0.05);
+
+        res = res && sendRawValue("S5A"); // open  eyelids
+        Time::delay(0.05);
+
+        return res;
+    }
+
+    bool sendRawValue(const string &_value)
+    {
         if (emotionsPort.getOutputCount()>0)
         {
-            // close eyelids
             Bottle cmd;
-            cmd.addString("S00");
+            cmd.addString(_value);
             emotionsPort.write(cmd);
-
-            Time::delay(0.05);
-
-            // open eyelids
-            cmd.clear();
-            cmd.addString("S5A");
-            emotionsPort.write(cmd);
-
-            Time::delay(0.05);
 
             return true;
         }
         else
             return false;
+    }
+
+    /***************************************************************/
+    bool save_calib()
+    {
+
+    }
+
+    /***************************************************************/
+    bool load_calib()
+    {
+
     }
 
 public:
@@ -228,6 +251,7 @@ public:
             {
                 reply.addVocab(ack);
                 reply.addString(blinking?"on":"off");
+                reply.addString(getInteractionMode());
             }
             else if (cmd == "blink")
             {
@@ -283,6 +307,10 @@ public:
                     reply.addString(getInteractionMode());
                     reply.addVocab(ack);
                 }
+            }
+            else if (cmd == "calib")
+            {
+
             }
             else
             {
