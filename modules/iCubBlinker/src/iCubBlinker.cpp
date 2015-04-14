@@ -21,6 +21,8 @@
 #include <yarp/os/all.h>
 #include <yarp/math/Rand.h>
 
+#include "iCubBlinker_IDL.h"
+
 using namespace std;
 using namespace yarp::os;
 using namespace yarp::math;
@@ -47,7 +49,7 @@ string int2string(const int _a)
 }
 
 /***************************************************************/
-class Blinker: public RFModule
+class Blinker: public RFModule, public iCubBlinker_IDL
 {
 private:
     // Resource finder used to find for files and configurations:
@@ -84,7 +86,7 @@ private:
     }
 
     /***************************************************************/
-    bool blink()
+    bool doSingleBlink()
     {
         LockGuard lg(mutex);
 
@@ -97,69 +99,6 @@ private:
         Time::delay(0.05);
 
         return res;
-    }
-
-    /***************************************************************/
-    string save()
-    {
-        LockGuard lg(mutex);
-        string path    = rf->getHomeContextPath().c_str();
-        string inifile = path+"/"+rf->find("from").asString();
-        yInfo("Saving calib configuration to %s",inifile.c_str());
-
-        ofstream myfile;
-        myfile.open(inifile.c_str(),ios::trunc);
-
-        if (myfile.is_open())
-        {
-            myfile << "name  \t"  << name   << endl;
-            myfile << "robot \t"  << robot  << endl;
-            myfile << "min_dt\t"  << min_dt << endl;
-            myfile << "max_dt\t"  << max_dt << endl;
-            if (rf->check("autoStart"))
-            {
-                myfile << "autoStart" << endl;
-            }
-            myfile << "calib \t(" << eyelids_closed << "\t" << eyelids_open << ")\n";
-        }
-        myfile.close();
-        return inifile;
-    }
-
-    /***************************************************************/
-    string load()
-    {
-        LockGuard lg(mutex);
-        rf->setVerbose(true);
-        string fileName=rf->findFile(rf->find("from").asString().c_str());
-        rf->setVerbose(false);
-        if (fileName=="")
-        {
-            yWarning("[vtRF::load] No filename has been found. Skipping..");
-            return string("");
-        }
-
-        yInfo("[iCubBlinker::load] File loaded: %s [WARNING] only the calib values will be loaded.", fileName.c_str());
-        Property data; data.fromConfigFile(fileName.c_str());
-        Bottle b; b.read(data);
-        Bottle calib=*(b.find("calib").asList());
-
-        if (calib.size() > 0)
-        {
-            eyelids_closed = calib.get(0).asString();
-            eyelids_open   = calib.get(1).asString();
-
-            yInfo("[iCubBlinker::load] Eyelid calibs loaded: (%s %s)", eyelids_closed.c_str(), eyelids_open.c_str());
-
-            return fileName;
-        }
-
-        eyelids_open   = "E99";
-        eyelids_closed = "U00";
-
-        set_calib_values();
-
-        return string("");
     }
 
     /***************************************************************/
@@ -234,6 +173,12 @@ public:
         return true;
     }
 
+    /************************************************************************/
+    bool attach(RpcServer &source)
+    {
+        return this->yarp().attachAsServer(source);
+    }
+
     /***************************************************************/
     bool close()
     {
@@ -244,14 +189,131 @@ public:
 
     /***************************************************************/
     double getPeriod() { return 0.1;    }
-    double getMinDT()  { return min_dt; }
-    double getMaxDT()  { return max_dt; }
 
-    void setMinDT(const double _min_dt) { min_dt = _min_dt; }
-    void setMaxDT(const double _max_dt) { max_dt = _max_dt; }
+    bool blink_start()
+    {
+        blinking=true;
+        return true;
+    }
+
+    bool blink_stop()
+    {
+        blinking=false;
+        return true;
+    }
+
+    string blink_status()
+    {
+        string res=blinking?"on":"off";
+        res=res+"_"+get_interaction_mode();
+        return res;
+    }
+
+    bool blink()
+    {
+        return doSingleBlink();
+    }
+
+    bool dblink()
+    {
+        return doSingleBlink() && doSingleBlink();
+    }
 
     /***************************************************************/
-    bool setInteractionMode(InteractionMode &_int_mode)
+    string save()
+    {
+        LockGuard lg(mutex);
+        string path    = rf->getHomeContextPath().c_str();
+        string inifile = path+"/"+rf->find("from").asString();
+        yInfo("Saving calib configuration to %s",inifile.c_str());
+
+        ofstream myfile;
+        myfile.open(inifile.c_str(),ios::trunc);
+
+        if (myfile.is_open())
+        {
+            myfile << "name  \t"  << name   << endl;
+            myfile << "robot \t"  << robot  << endl;
+            myfile << "min_dt\t"  << min_dt << endl;
+            myfile << "max_dt\t"  << max_dt << endl;
+            if (rf->check("autoStart"))
+            {
+                myfile << "autoStart" << endl;
+            }
+            myfile << "calib \t(" << eyelids_closed << "\t" << eyelids_open << ")\n";
+        }
+        myfile.close();
+        return inifile;
+    }
+
+    /***************************************************************/
+    string load()
+    {
+        LockGuard lg(mutex);
+        rf->setVerbose(true);
+        string fileName=rf->findFile(rf->find("from").asString().c_str());
+        rf->setVerbose(false);
+        if (fileName=="")
+        {
+            yWarning("[iCubBlinker::load] No filename has been found. Skipping..");
+            return string("");
+        }
+
+        yInfo("[iCubBlinker::load] File loaded: %s", fileName.c_str());
+        yWarning("[iCubBlinker::load] Only the calib values will be loaded.");
+        Property data; data.fromConfigFile(fileName.c_str());
+        Bottle b; b.read(data);
+        Bottle calib=*(b.find("calib").asList());
+
+        if (calib.size() > 0)
+        {
+            eyelids_closed = calib.get(0).asString();
+            eyelids_open   = calib.get(1).asString();
+
+            yInfo("[iCubBlinker::load] Eyelid calibs loaded: (%s %s)", eyelids_closed.c_str(), eyelids_open.c_str());
+
+            return fileName;
+        }
+
+        eyelids_open   = "E99";
+        eyelids_closed = "U00";
+
+        set_calib_values();
+
+        return string("");
+    }
+
+    bool set_interaction_mode(const std::string& val)
+    {
+        if (val == "idle")
+        {
+            return setInteractionMode(INTERACTION_MODE_IDLE);
+        }
+        else if (val == "conversation")
+        {
+            return setInteractionMode(INTERACTION_MODE_CONVERSATION);
+        }
+
+        return false;
+    }
+
+    bool  set_min_dt(const double val)
+    {
+        min_dt = val;
+        return true;
+    }
+
+    bool  set_max_dt(const double val)
+    {
+        max_dt = val;
+        return true;
+    }
+
+    double get_min_dt() { return min_dt; }
+    double get_max_dt() { return max_dt; }
+
+    /***************************************************************/
+    bool setInteractionMode(InteractionMode _int_mode)
     {
         if (_int_mode==INTERACTION_MODE_IDLE)
         {
@@ -269,11 +331,11 @@ public:
     }
 
     /***************************************************************/
-    string getInteractionMode()
+    string get_interaction_mode()
     {
         if (int_mode == INTERACTION_MODE_UNKNOWN)
         {
-            return "unknown";
+            return "interaction_mode_unknown";
         }
         else if (int_mode == INTERACTION_MODE_IDLE)
         {
@@ -293,6 +355,13 @@ public:
     }
 
     /***************************************************************/
+    bool calib()
+    {
+        yError("Not yet implemented!");
+        return false;
+    }
+
+    /***************************************************************/
     bool updateModule()
     {
         LockGuard lg(mutex);
@@ -301,10 +370,10 @@ public:
         {
             if (blinking)
             {
-                blink();
+                doSingleBlink();
                 if ((++doubleBlinkCnt)%5==0)
                 {
-                    blink();
+                    doSingleBlink();
                     doubleBlinkCnt=0;
                 }
             }
@@ -313,131 +382,6 @@ public:
             t0=Time::now();
         }
 
-        return true;
-    }
-
-    /***************************************************************/
-    bool respond(const Bottle &command, Bottle &reply)
-    {
-        LockGuard lg(mutex);
-        int ack=Vocab::encode("ack");
-        int nack=Vocab::encode("nack");
-
-        if (command.size()>0)
-        {
-            string cmd=command.get(0).asString().c_str();
-
-            if (cmd == "start")
-            {
-                blinking=true;
-                reply.addVocab(ack);
-            }
-            else if (cmd == "stop")
-            {
-                blinking=false;
-                reply.addVocab(ack);
-            }
-            else if (cmd == "status")
-            {
-                reply.addVocab(ack);
-                reply.addString(blinking?"on":"off");
-                reply.addString(getInteractionMode());
-            }
-            else if (cmd == "blink")
-            {
-                reply.addVocab(blink()?ack:nack);
-            }
-            else if (cmd == "dblink")
-            {
-                bool res = blink() && blink();
-                reply.addVocab(res?ack:nack);
-            }
-            else if (cmd == "save")
-            {
-                string fileName = save();
-
-                if (fileName=="")
-                {
-                    reply.addVocab(nack);
-                }
-                else
-                {
-                    reply.addVocab(ack);
-                    reply.addString(fileName.c_str());
-                }
-            }
-            else if (cmd == "load")
-            {
-                string fileName = load();
-
-                if (fileName=="")
-                {
-                    reply.addVocab(nack);
-                }
-                else
-                {
-                    reply.addVocab(ack);
-                    reply.addString(fileName.c_str());
-                }
-            }
-            else if (cmd == "set")
-            {
-                reply.addString(command.get(1).asString());
-
-                if (command.get(1).asString() == "min_dt")
-                {
-                    setMinDT(command.get(2).asDouble());
-                    reply.addDouble(getMinDT());
-                    reply.addVocab(ack);
-                }
-                else if (command.get(1).asString() == "max_dt")
-                {
-                    setMaxDT(command.get(2).asDouble());
-                    reply.addDouble(getMaxDT());
-                    reply.addVocab(ack);
-                }
-                else if (command.get(1).asString() == "interaction_mode")
-                {
-                    if (command.get(2).asString() == "idle")
-                    {
-                        reply.addVocab(setInteractionMode_IDLE()?ack:nack);
-                    }
-                    else if (command.get(2).asString() == "conversation")
-                    {
-                        reply.addVocab(setInteractionMode_CONVERSATION()?ack:nack);
-                    }
-                }
-            }
-            else if (cmd == "get")
-            {
-                if (command.get(1).asString() == "min_dt")
-                {
-                    reply.addDouble(getMinDT());
-                    reply.addVocab(ack);
-                }
-                else if (command.get(1).asString() == "max_dt")
-                {
-                    reply.addDouble(getMaxDT());
-                    reply.addVocab(ack);
-                }
-                else if (command.get(1).asString() == "interaction_mode")
-                {
-                    reply.addString(getInteractionMode());
-                    reply.addVocab(ack);
-                }
-            }
-            else if (cmd == "calib")
-            {
-
-            }
-            else
-            {
-                return RFModule::respond(command,reply);
-            }
-            return true;
-        }
-
-        reply.addVocab(nack);
         return true;
     }
 };
