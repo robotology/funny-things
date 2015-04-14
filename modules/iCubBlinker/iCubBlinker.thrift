@@ -11,29 +11,29 @@
 */
 service iCubBlinker_IDL
 {
-  bool   start();
+  bool start();
 
-  bool   stop();
+  bool stop();
 
-  bool   status();
+  bool status();
 
-  bool   blink();
+  bool blink();
 
-  bool   dblink();
+  bool dblink();
 
-  bool   save();
+  bool save();
 
-  bool   load();
+  bool load();
 
-  bool   set(1:string param, 2:string val);
+  bool set_param(1:string param, 2:string val);
 
-  double get (1:string param);
-  
-  bool   calib();  
+  double get_parma(1:string param);
+
+  bool calib();
 
   /**
   * Quit the module.
   * @return true/false on success/failure.
   */
-  bool   quit();  
+  bool quit();
 }
