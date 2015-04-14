@@ -95,11 +95,13 @@ public:
     /***************************************************************/
     bool configure(ResourceFinder &rf)
     {
-        string name=rf.check("name",Value("iCubBlinker")).asString().c_str();
+        string name =rf.check("name", Value("iCubBlinker")).asString().c_str();
+        string robot=rf.check("robot",Value("icub")).asString().c_str();
+
         min_dt=rf.check("min_dt",Value(3.0)).asDouble();
         max_dt=rf.check("max_dt",Value(10.0)).asDouble();
+
         blinking=rf.check("autoStart");
-        string robot=rf.check("robot",Value("icub")).asString().c_str();
 
         emotionsPort.open(("/"+name+"/emotions/raw").c_str());
         Network::connect(emotionsPort.getName().c_str(),"/"+robot+"/face/raw/in");
@@ -328,6 +330,26 @@ public:
 /***************************************************************/
 int main(int argc, char *argv[])
 {
+    ResourceFinder rf;
+    rf.setDefaultContext("funnyThings");
+    rf.setDefaultConfigFile("iCubBlinker.ini");
+    rf.configure(argc,argv);
+
+    if (rf.check("help"))
+    {    
+        printf("\n");
+        yInfo("[ICUB BLINKER] Options:");
+        yInfo("  --context    path:   where to find the called resource (default funnyThings).");
+        yInfo("  --from       from:   the name of the .ini file (default iCubBlinker.ini).");
+        yInfo("  --name       name:   the name of the module (default iCubBlinker).");
+        yInfo("  --robot      robot:  the name of the robot. Default icub.");
+        yInfo("  --min_dt     double: the default minimum delta T between consecutive blinks. Default 3s.");
+        yInfo("  --max_dt     double: the default maximum delta T between consecutive blinks. Default 10s.");
+        yInfo("  --autoStart  flag:   If the module should autostart the blinking behavior. Default no.");
+        printf("\n");
+        return 0;
+    }
+
     Network yarp;
     if (!yarp.checkNetwork())
     {
@@ -335,8 +357,6 @@ int main(int argc, char *argv[])
         return -1;
     }
 
-    ResourceFinder rf;
-    rf.configure(argc,argv);
 
     Blinker blinker;
     return blinker.runModule(rf);
