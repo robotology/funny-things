@@ -165,20 +165,19 @@ public:
     /***************************************************************/
     string getInteractionMode()
     {
-        if (int_mode==INTERACTION_MODE_UNKNOWN)
+        if (int_mode == INTERACTION_MODE_UNKNOWN)
         {
             return "unknown";
         }
-        else if (int_mode==INTERACTION_MODE_IDLE)
+        else if (int_mode == INTERACTION_MODE_IDLE)
         {
             return "idle";
         }
-        else if (int_mode==INTERACTION_MODE_CONVERSATION)
+        else if (int_mode == INTERACTION_MODE_CONVERSATION)
         {
             return "conversation";
         }
     }
-
 
     /***************************************************************/
     bool updateModule()
