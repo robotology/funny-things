@@ -28,7 +28,8 @@ using namespace yarp::math;
 enum InteractionMode
 { 
     INTERACTION_MODE_UNKNOWN=0, 
-    INTERACTION_MODE_IDLE, INTERACTION_MODE_CONVERSATION
+    INTERACTION_MODE_IDLE, INTERACTION_MODE_CONVERSATION,
+    INTERACTION_MODE_CALIBRATION_CLOSURE,INTERACTION_MODE_CALIBRATION_OPENING
 };
 
 string int2hex(const int _i)
@@ -85,6 +86,8 @@ private:
     /***************************************************************/
     bool blink()
     {
+        LockGuard lg(mutex);
+
         bool res = true;
 
         res = res && sendRawValue("S00"); // close eyelids
@@ -99,6 +102,7 @@ private:
     /***************************************************************/
     string save()
     {
+        LockGuard lg(mutex);
         string path    = rf->getHomeContextPath().c_str();
         string inifile = path+"/"+rf->find("from").asString();
         yInfo("Saving calib configuration to %s",inifile.c_str());
@@ -125,6 +129,7 @@ private:
     /***************************************************************/
     string load()
     {
+        LockGuard lg(mutex);
         rf->setVerbose(true);
         string fileName=rf->findFile(rf->find("from").asString().c_str());
         rf->setVerbose(false);
@@ -134,7 +139,7 @@ private:
             return string("");
         }
 
-        yInfo("[iCubBlinker::load] File loaded: %s", fileName.c_str());
+        yInfo("[iCubBlinker::load] File loaded: %s [WARNING] only the calib values will be loaded.", fileName.c_str());
         Property data; data.fromConfigFile(fileName.c_str());
         Bottle b; b.read(data);
         Bottle calib=*(b.find("calib").asList());
@@ -152,102 +157,19 @@ private:
         eyelids_open   = "E99";
         eyelids_closed = "U00";
 
-        set_calib();
+        set_calib_values();
 
         return string("");
     }
 
     /***************************************************************/
-    bool set_calib()
+    bool set_calib_values()
     {
         bool res = true;
         res = res && sendRawValue(eyelids_closed); // close eyelids
         res = res && sendRawValue(eyelids_open);   // open  eyelids
 
         return res;
-    }
-
-public:
-    /***************************************************************/
-    bool configure(ResourceFinder &_mainRF)
-    {
-        rf = const_cast<ResourceFinder*>(&_mainRF);
-
-        name =rf->check("name", Value("iCubBlinker")).asString().c_str();
-        robot=rf->check("robot",Value("icub")).asString().c_str();
-
-        min_dt=rf->check("min_dt",Value(3.0)).asDouble();
-        max_dt=rf->check("max_dt",Value(10.0)).asDouble();
-
-        blinking=rf->check("autoStart");
-
-        // string path = rf->getHomeContextPath().c_str();
-        // path = path+"/";
-        // if (rf->check("taxelsFile"))
-        // {
-        //     taxelsFile = rf->find("taxelsFile").asString();
-        // }
-        // else
-        // {
-        //     taxelsFile = "taxels"+modality+".ini";
-        //     rf->setDefault("taxelsFile",taxelsFile.c_str());
-        // }
-        // yInfo("Storing file set to: %s", (path+taxelsFile).c_str());
-
-        emotionsPort.open(("/"+name+"/emotions/raw").c_str());
-        Network::connect(emotionsPort.getName().c_str(),"/"+robot+"/face/raw/in");
-
-        rpcPort.open(("/"+name+"/rpc").c_str());
-        attach(rpcPort);
-
-        load();
-
-        Rand::init();
-        doubleBlinkCnt=0;
-        dt=Rand::scalar(min_dt,max_dt);
-        t0=Time::now();
-
-        int_mode = INTERACTION_MODE_UNKNOWN;
-
-        return true;
-    }
-
-    /***************************************************************/
-    bool close()
-    {
-        emotionsPort.close();
-        rpcPort.close();
-        return true;
-    }
-
-    /***************************************************************/
-    double getPeriod()
-    {
-        return 0.1;
-    }
-
-    /***************************************************************/
-    double getMinDT()
-    {
-        return min_dt;
-    }
-
-    /***************************************************************/
-    double getMaxDT()
-    {
-        return max_dt;
-    }
-
-    /***************************************************************/
-    void setMinDT(const double _min_dt)
-    {
-        min_dt = _min_dt;
-    }
-
-    /***************************************************************/
-    void setMaxDT(const double _max_dt)
-    {
-        max_dt = _max_dt;
     }
 
     /***************************************************************/
@@ -280,6 +202,72 @@ public:
         return true;
     }
 
+public:
+    /***************************************************************/
+    bool configure(ResourceFinder &_mainRF)
+    {
+        rf = const_cast<ResourceFinder*>(&_mainRF);
+
+        name =rf->check("name", Value("iCubBlinker")).asString().c_str();
+        robot=rf->check("robot",Value("icub")).asString().c_str();
+
+        min_dt=rf->check("min_dt",Value(3.0)).asDouble();
+        max_dt=rf->check("max_dt",Value(10.0)).asDouble();
+
+        blinking=rf->check("autoStart");
+
+        emotionsPort.open(("/"+name+"/emotions/raw").c_str());
+        Network::connect(emotionsPort.getName().c_str(),"/"+robot+"/face/raw/in");
+
+        rpcPort.open(("/"+name+"/rpc").c_str());
+        attach(rpcPort);
+
+        load();
+
+        Rand::init();
+        doubleBlinkCnt=0;
+        dt=Rand::scalar(min_dt,max_dt);
+        t0=Time::now();
+
+        int_mode = INTERACTION_MODE_UNKNOWN;
+
+        return true;
+    }
+
+    /***************************************************************/
+    bool close()
+    {
+        emotionsPort.close();
+        rpcPort.close();
+        return true;
+    }
+
+    /***************************************************************/
+    double getPeriod() { return 0.1;    }
+    double getMinDT()  { return min_dt; }
+    double getMaxDT()  { return max_dt; }
+
+    void setMinDT(const double _min_dt) { min_dt = _min_dt; }
+    void setMaxDT(const double _max_dt) { max_dt = _max_dt; }
+
+    /***************************************************************/
+    bool setInteractionMode(InteractionMode &_int_mode)
+    {
+        if (_int_mode==INTERACTION_MODE_IDLE)
+        {
+            return setInteractionMode_IDLE();
+        }
+        else if (_int_mode==INTERACTION_MODE_CONVERSATION)
+        {
+            return setInteractionMode_CONVERSATION();
+        }
+        else
+        {
+            int_mode = _int_mode;
+            return true;
+        }
+    }
+
     /***************************************************************/
     string getInteractionMode()
     {
@@ -295,6 +283,13 @@ public:
         {
             return "conversation";
         }
+        else if (int_mode == INTERACTION_MODE_CALIBRATION_OPENING || 
+                 int_mode == INTERACTION_MODE_CALIBRATION_CLOSURE)
+        {
+            return "calibration";
+        }
+
+        return string("");
     }
 
     /***************************************************************/
