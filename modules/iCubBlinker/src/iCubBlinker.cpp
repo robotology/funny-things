@@ -20,6 +20,7 @@
 
 #include <yarp/os/all.h>
 #include <yarp/math/Rand.h>
+#include <yarp/math/NormRand.h>
 
 #include "iCubBlinker_IDL.h"
 
@@ -62,10 +63,16 @@ private:
 
     Mutex mutex;
     bool blinking;
-    double min_dt,max_dt,dt,t0;
+
+    double min_dt,max_dt;
+
+    double dt,t0;
     int doubleBlinkCnt;
 
     InteractionMode int_mode;
+    double closure_nrm, closure_sgm;
+    double sustain_nrm, sustain_sgm;
+    double opening_nrm, opening_sgm;
 
     string eyelids_open;    // it's the `E` command
     string eyelids_closed;  // it's the `U` command
@@ -102,6 +109,35 @@ private:
     }
 
     /***************************************************************/
+    bool doBlinkTimed()
+    {
+        printf("achacdhac\n");
+        double t_cl = NormRand::scalar(closure_nrm,closure_sgm);
+        double t_su = NormRand::scalar(sustain_nrm,sustain_sgm);
+        double t_op = NormRand::scalar(opening_nrm,opening_sgm);
+
+        yDebug("Starting a timed blink. T_cl %g \t T_su %g \t T_op %g",t_cl,t_su,t_op);
+
+        for (int i = 0; i < 11; i++)
+        {
+            string rawvalue = "S" + int2hex(i*10);
+            yDebug("Sending raw value: %s %i",rawvalue.c_str(),i*10);
+            sendRawValue(rawvalue);
+            Time::delay(t_cl/10.0);
+        }
+
+        Time::delay(t_su);
+
+        for (int i = 0; i < 11; i++)
+        {
+            string rawvalue = "S" + int2hex(100-i*10);
+            yDebug("Sending raw value: %s %i",rawvalue.c_str(),100-i*10);
+            sendRawValue(rawvalue);
+            Time::delay(t_op/10.0);
+        }
+    }
+
+    /***************************************************************/
     bool set_calib_values()
     {
         bool res = true;
@@ -119,8 +155,14 @@ private:
         //   2. the speed with which the icub closes its eyes
         //   3. the time the icub stays with the eyes closed
         //   4. the speed with which the icub opens its eyes
-        //   
         
+        closure_nrm = 0.200;
+        closure_sgm = 0.010;
+        sustain_nrm = 0.050;
+        sustain_sgm = 0.001;
+        opening_nrm = 0.300;
+        opening_sgm = 0.050;
+
         int_mode = INTERACTION_MODE_IDLE;
 
         return true;
@@ -134,7 +176,13 @@ private:
         //   2. the speed with which the icub closes its eyes
         //   3. the time the icub stays with the eyes closed
         //   4. the speed with which the icub opens its eyes
-        //   
+
+        closure_nrm = 0.200;
+        closure_sgm = 0.010;
+        sustain_nrm = 0.050;
+        sustain_sgm = 0.001;
+        opening_nrm = 0.300;
+        opening_sgm = 0.050;
 
         int_mode = INTERACTION_MODE_CONVERSATION;
 
@@ -164,6 +212,7 @@ public:
         load();
 
         Rand::init();
+        NormRand::init();
         doubleBlinkCnt=0;
         dt=Rand::scalar(min_dt,max_dt);
         t0=Time::now();
@@ -285,16 +334,20 @@ public:
 
     bool set_interaction_mode(const std::string& val)
     {
+        bool res = false;
+
         if (val == "idle")
         {
-            return setInteractionMode(INTERACTION_MODE_IDLE);
+            res = setInteractionMode(INTERACTION_MODE_IDLE);
         }
         else if (val == "conversation")
         {
-            return setInteractionMode(INTERACTION_MODE_CONVERSATION);
+            res = setInteractionMode(INTERACTION_MODE_CONVERSATION);
         }
 
-        return false;
+        yInfo("Setting interaction mode to %s",get_interaction_mode().c_str());
+
+        return res;
     }
 
     bool  set_min_dt(const double val)
@@ -370,11 +423,18 @@ public:
         {
             if (blinking)
             {
-                doSingleBlink();
-                if ((++doubleBlinkCnt)%5==0)
+                if (int_mode == INTERACTION_MODE_IDLE || int_mode == INTERACTION_MODE_CONVERSATION)
+                {
+                    doBlinkTimed();
+                }
+                else
                 {
                     doSingleBlink();
-                    doubleBlinkCnt=0;
+                    if ((++doubleBlinkCnt)%5==0)
+                    {
+                        doSingleBlink();
+                        doubleBlinkCnt=0;
+                    }
                 }
             }
 
