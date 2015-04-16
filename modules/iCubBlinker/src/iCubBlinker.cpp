@@ -102,7 +102,7 @@ private:
         res = res && sendRawValue("S00"); // close eyelids
         Time::delay(0.05);
 
-        res = res && sendRawValue("S5A"); // open  eyelids
+        res = res && sendRawValue("S99"); // open  eyelids
         Time::delay(0.05);
 
         return res;
@@ -120,19 +120,18 @@ private:
 
         for (int i = 0; i < 11; i++)
         {
-            string rawvalue = "S" + int2hex(100-i*10);
-            yTrace("Sending raw value: %s %i",rawvalue.c_str(),100-i*10);
+            string rawvalue = "S" + int2string(100-i*10);
+            yDebug("Sending raw value: %s %i",rawvalue.c_str(),100-i*10);
             sendRawValue(rawvalue);
             Time::delay(t_cl/10.0);
         }
 
         Time::delay(t_su);
 
-
         for (int i = 0; i < 11; i++)
         {
-            string rawvalue = "S" + int2hex(i*10);
-            yTrace("Sending raw value: %s %i",rawvalue.c_str(),i*10);
+            string rawvalue = "S" + int2string(i*10);
+            yDebug("Sending raw value: %s %i",rawvalue.c_str(),i*10);
             sendRawValue(rawvalue);
             Time::delay(t_op/10.0);
         }
