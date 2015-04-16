@@ -116,22 +116,23 @@ private:
         double t_su = NormRand::scalar(sustain_nrm,sustain_sgm);
         double t_op = NormRand::scalar(opening_nrm,opening_sgm);
 
-        yDebug("Starting a timed blink. T_cl %g \t T_su %g \t T_op %g",t_cl,t_su,t_op);
+        yDebug("Starting a timed blink. T_cl %g \t T_su %g \t T_op %g Total %g",t_cl,t_su,t_op,t_cl+t_su+t_op);
 
         for (int i = 0; i < 11; i++)
         {
-            string rawvalue = "S" + int2hex(i*10);
-            yDebug("Sending raw value: %s %i",rawvalue.c_str(),i*10);
+            string rawvalue = "S" + int2hex(100-i*10);
+            yTrace("Sending raw value: %s %i",rawvalue.c_str(),100-i*10);
             sendRawValue(rawvalue);
             Time::delay(t_cl/10.0);
         }
 
         Time::delay(t_su);
 
+
         for (int i = 0; i < 11; i++)
         {
-            string rawvalue = "S" + int2hex(100-i*10);
-            yDebug("Sending raw value: %s %i",rawvalue.c_str(),100-i*10);
+            string rawvalue = "S" + int2hex(i*10);
+            yTrace("Sending raw value: %s %i",rawvalue.c_str(),i*10);
             sendRawValue(rawvalue);
             Time::delay(t_op/10.0);
         }
@@ -156,12 +157,12 @@ private:
         //   3. the time the icub stays with the eyes closed
         //   4. the speed with which the icub opens its eyes
         
-        closure_nrm = 0.200;
-        closure_sgm = 0.010;
+        closure_nrm = 0.111;
+        closure_sgm = 0.031;
         sustain_nrm = 0.050;
-        sustain_sgm = 0.001;
+        sustain_sgm = 0.005;
         opening_nrm = 0.300;
-        opening_sgm = 0.050;
+        opening_sgm = 0.123;
 
         int_mode = INTERACTION_MODE_IDLE;
 
@@ -237,7 +238,7 @@ public:
     }
 
     /***************************************************************/
-    double getPeriod() { return 0.1;    }
+    double getPeriod() { return 0.01;    }
 
     bool blink_start()
     {
