@@ -111,12 +111,12 @@ private:
     /***************************************************************/
     bool doBlinkTimed()
     {
-        printf("achacdhac\n");
         double t_cl = NormRand::scalar(closure_nrm,closure_sgm);
         double t_su = NormRand::scalar(sustain_nrm,sustain_sgm);
         double t_op = NormRand::scalar(opening_nrm,opening_sgm);
 
-        yDebug("Starting a timed blink. T_cl %g \t T_su %g \t T_op %g Total %g",t_cl,t_su,t_op,t_cl+t_su+t_op);
+        yDebug("Starting a timed blink. T_cl %g \t T_su %g \t T_op %g Total %g",
+                t_cl,t_su,t_op,t_cl+t_su+t_op);
 
         for (int i = 0; i < 11; i++)
         {
