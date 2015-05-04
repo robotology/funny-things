@@ -70,9 +70,10 @@ private:
     int doubleBlinkCnt;
 
     InteractionMode int_mode;
-    double closure_nrm, closure_sgm;
-    double sustain_nrm, sustain_sgm;
-    double opening_nrm, opening_sgm;
+    double blinkper_nrm, blinkper_sgm;  // period of the blinking
+    double closure_nrm, closure_sgm;    // closure statistics
+    double sustain_nrm, sustain_sgm;    // sustain statistics
+    double opening_nrm, opening_sgm;    // opening statistics
 
     string eyelids_open;    // it's the `E` command
     string eyelids_closed;  // it's the `U` command
@@ -112,8 +113,25 @@ private:
     bool doBlinkTimed()
     {
         double t_cl = NormRand::scalar(closure_nrm,closure_sgm);
+        // Cut the normal distribution to its first sigma
+        while (t_cl<closure_nrm-closure_sgm || t_cl>closure_nrm+closure_sgm)
+        {
+            t_cl = NormRand::scalar(closure_nrm,closure_sgm);
+        }
+         
         double t_su = NormRand::scalar(sustain_nrm,sustain_sgm);
+        // Cut the normal distribution to its first sigma
+        while (t_su<sustain_nrm-sustain_sgm || t_su>sustain_nrm+sustain_sgm)
+        {
+            t_su = NormRand::scalar(sustain_nrm,sustain_sgm);
+        }
+
         double t_op = NormRand::scalar(opening_nrm,opening_sgm);
+        // Cut the normal distribution to its first sigma
+        while (t_op<opening_nrm-opening_sgm || t_op>opening_nrm+opening_sgm)
+        {
+            t_op = NormRand::scalar(opening_nrm,opening_sgm);
+        }
 
         yDebug("Starting a timed blink. T_cl %g \t T_su %g \t T_op %g Total %g",
                 t_cl,t_su,t_op,t_cl+t_su+t_op);
@@ -155,13 +173,18 @@ private:
         //   2. the speed with which the icub closes its eyes
         //   3. the time the icub stays with the eyes closed
         //   4. the speed with which the icub opens its eyes
+
+        blinkper_nrm = 5.2;             blinkper_sgm = 3.7;
         
-        closure_nrm = 0.111;
-        closure_sgm = 0.031;
-        sustain_nrm = 0.050;
-        sustain_sgm = 0.005;
-        opening_nrm = 0.300;
-        opening_sgm = 0.123;
+        // These would be the "slow" settings:
+        closure_nrm = 0.111;            closure_sgm = 0.031;
+        sustain_nrm = 0.020;            sustain_sgm = 0.005;
+        opening_nrm = 0.300;            opening_sgm = 0.123;
+
+        // // These would be the "fast" settings:
+        // closure_nrm = 0.111-0.031;            closure_sgm = 0.031;
+        // sustain_nrm = 0.020-0.005;            sustain_sgm = 0.005;
+        // opening_nrm = 0.300-0.123;            opening_sgm = 0.123;
 
         int_mode = INTERACTION_MODE_IDLE;
 
@@ -177,12 +200,17 @@ private:
         //   3. the time the icub stays with the eyes closed
         //   4. the speed with which the icub opens its eyes
 
-        closure_nrm = 0.200;
-        closure_sgm = 0.010;
-        sustain_nrm = 0.050;
-        sustain_sgm = 0.001;
-        opening_nrm = 0.300;
-        opening_sgm = 0.050;
+        blinkper_nrm = 2.3;             blinkper_sgm = 2.0;
+
+        // These would be the "slow" settings:
+        closure_nrm = 0.111;            closure_sgm = 0.031;
+        sustain_nrm = 0.020;            sustain_sgm = 0.005;
+        opening_nrm = 0.300;            opening_sgm = 0.123;
+
+        // // These would be the "fast" settings:
+        // closure_nrm = 0.111-0.031;            closure_sgm = 0.031;
+        // sustain_nrm = 0.020-0.005;            sustain_sgm = 0.005;
+        // opening_nrm = 0.300-0.123;            opening_sgm = 0.123;
 
         int_mode = INTERACTION_MODE_CONVERSATION;
 
@@ -198,8 +226,8 @@ public:
         name =rf->check("name", Value("iCubBlinker")).asString().c_str();
         robot=rf->check("robot",Value("icub")).asString().c_str();
 
-        min_dt=rf->check("min_dt",Value(3.0)).asDouble();
-        max_dt=rf->check("max_dt",Value(10.0)).asDouble();
+        // min_dt=rf->check("min_dt",Value(3.0)).asDouble();
+        // max_dt=rf->check("max_dt",Value(10.0)).asDouble();
 
         blinking=rf->check("autoStart");
 
@@ -214,10 +242,17 @@ public:
         Rand::init();
         NormRand::init();
         doubleBlinkCnt=0;
-        dt=Rand::scalar(min_dt,max_dt);
+        
+        dt = NormRand::scalar(blinkper_nrm,blinkper_sgm);
+        // Cut the normal distribution to its first sigma
+        while (dt<blinkper_nrm-blinkper_sgm || dt>blinkper_nrm+blinkper_sgm)
+        {
+            dt = NormRand::scalar(blinkper_nrm,blinkper_sgm);
+        }
         t0=Time::now();
 
-        int_mode = INTERACTION_MODE_UNKNOWN;
+        int_mode = INTERACTION_MODE_IDLE;
+        set_interaction_mode("idle");
 
         return true;
     }
@@ -237,7 +272,7 @@ public:
     }
 
     /***************************************************************/
-    double getPeriod() { return 0.01;    }
+    double getPeriod() { return 0.01; }
 
     bool blink_start()
     {
@@ -260,12 +295,14 @@ public:
 
     bool blink()
     {
-        return doSingleBlink();
+        return doBlinkTimed();
+        // return doSingleBlink();
     }
 
     bool dblink()
     {
-        return doSingleBlink() && doSingleBlink();
+        return doBlinkTimed() && doBlinkTimed();
+        // return doSingleBlink() && doSingleBlink();
     }
 
     /***************************************************************/
@@ -426,6 +463,11 @@ public:
                 if (int_mode == INTERACTION_MODE_IDLE || int_mode == INTERACTION_MODE_CONVERSATION)
                 {
                     doBlinkTimed();
+                    if ((++doubleBlinkCnt)%5==0)
+                    {
+                        doBlinkTimed();
+                        doubleBlinkCnt=0;
+                    }
                 }
                 else
                 {
@@ -438,7 +480,13 @@ public:
                 }
             }
 
-            dt=Rand::scalar(min_dt,max_dt);
+            dt = NormRand::scalar(blinkper_nrm,blinkper_sgm);
+            // Cut the normal distribution to its first sigma
+            while (dt<blinkper_nrm-blinkper_sgm || dt>blinkper_nrm+blinkper_sgm)
+            {
+                dt = NormRand::scalar(blinkper_nrm,blinkper_sgm);
+            }
+
             t0=Time::now();
         }
 
@@ -462,8 +510,8 @@ int main(int argc, char *argv[])
         yInfo("  --from       from:   the name of the .ini file (default iCubBlinker.ini).");
         yInfo("  --name       name:   the name of the module (default iCubBlinker).");
         yInfo("  --robot      robot:  the name of the robot. Default icub.");
-        yInfo("  --min_dt     double: the default minimum delta T between consecutive blinks. Default  3.0[s].");
-        yInfo("  --max_dt     double: the default maximum delta T between consecutive blinks. Default 10.0[s].");
+        // yInfo("  --min_dt     double: the default minimum delta T between consecutive blinks. Default  3.0[s].");
+        // yInfo("  --max_dt     double: the default maximum delta T between consecutive blinks. Default 10.0[s].");
         yInfo("  --autoStart  flag:   If the module should autostart the blinking behavior. Default no.");
         printf("\n");
         return 0;
