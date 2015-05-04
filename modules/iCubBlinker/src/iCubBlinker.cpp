@@ -102,7 +102,7 @@ private:
         res = res && sendRawValue("S00"); // close eyelids
         Time::delay(0.05);
 
-        res = res && sendRawValue("S64"); // open  eyelids
+        res = res && sendRawValue("S99"); // open  eyelids
         Time::delay(0.05);
 
         return res;
