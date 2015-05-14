@@ -61,8 +61,7 @@ wait_till_quiet() {
         sleep 0.05
         # echo $isSpeaking
     done
-    echo "I'm not speaking any more :)"
-    echo $isSpeaking
+    echo "I'm not speaking any more"
 }
 
 speak_hri() {
