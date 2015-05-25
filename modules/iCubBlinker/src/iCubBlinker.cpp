@@ -69,6 +69,8 @@ private:
     double dt,t0;
     int doubleBlinkCnt;
 
+    int sMin, sMax;
+
     InteractionMode int_mode;
     double blinkper_nrm, blinkper_sgm;  // period of the blinking
     double closure_nrm, closure_sgm;    // closure statistics
@@ -100,10 +102,10 @@ private:
 
         bool res = true;
 
-        res = res && sendRawValue("S00"); // close eyelids
+        res = res && sendRawValue(("S" + int2string(sMin))); // close eyelids
         Time::delay(0.05);
 
-        res = res && sendRawValue("S99"); // open  eyelids
+        res = res && sendRawValue(("S" + int2string(sMax))); // open  eyelids
         Time::delay(0.05);
 
         return res;
@@ -138,7 +140,8 @@ private:
 
         for (int i = 0; i < 11; i++)
         {
-            string rawvalue = "S" + int2string(100-i*10);
+        	int valueToSend = sMax-i*(sMax-sMin)/10;
+            string rawvalue = "S" + int2string(valueToSend);
             yDebug("Sending raw value: %s %i",rawvalue.c_str(),100-i*10);
             sendRawValue(rawvalue);
             Time::delay(t_cl/10.0);
@@ -148,7 +151,8 @@ private:
 
         for (int i = 0; i < 11; i++)
         {
-            string rawvalue = "S" + int2string(i*10);
+        	int valueToSend = sMin+i*(sMax-sMin)/10;
+            string rawvalue = "S" + int2string(valueToSend);
             yDebug("Sending raw value: %s %i",rawvalue.c_str(),i*10);
             sendRawValue(rawvalue);
             Time::delay(t_op/10.0);
@@ -158,11 +162,13 @@ private:
     /***************************************************************/
     bool set_calib_values()
     {
-        bool res = true;
-        res = res && sendRawValue(eyelids_closed); // close eyelids
-        res = res && sendRawValue(eyelids_open);   // open  eyelids
+    	yWarning("[iCubBlinker] Sending calib values does nothing currently!");
+        // bool res = true;
+        // res = res && sendRawValue(eyelids_closed); // close eyelids
+        // res = res && sendRawValue(eyelids_open);   // open  eyelids
 
-        return res;
+        // return res;
+        return false;
     }
 
     /***************************************************************/
@@ -232,12 +238,28 @@ public:
         blinking=rf->check("autoStart");
 
         emotionsPort.open(("/"+name+"/emotions/raw").c_str());
-        Network::connect(emotionsPort.getName().c_str(),"/"+robot+"/face/raw/in");
+        if (rf->check("autoConnect"))
+        {
+            Network::connect(emotionsPort.getName().c_str(),"/"+robot+"/face/raw/in");
+        }
 
         rpcPort.open(("/"+name+"/rpc").c_str());
         attach(rpcPort);
 
-        load();
+        Bottle calib=(rf->findGroup("calibration"));
+
+        if (calib.size() > 0)
+        {
+            sMin = calib.check("sMin",Value(00)).asInt();
+            sMax = calib.check("sMax",Value(70)).asInt();
+
+            yInfo("[iCubBlinker] Eyelid calibs loaded: (%i %i)", sMin, sMax);
+        }
+        else
+        {
+        	sMin = 00;
+        	sMax = 70;
+        }
 
         Rand::init();
         NormRand::init();
@@ -326,7 +348,7 @@ public:
             {
                 myfile << "autoStart" << endl;
             }
-            myfile << "calib \t(" << eyelids_closed << "\t" << eyelids_open << ")\n";
+            myfile << "calib \t(" << sMin << "\t" << sMax << ")\n";
         }
         myfile.close();
         return inifile;
@@ -349,22 +371,19 @@ public:
         yWarning("[iCubBlinker::load] Only the calib values will be loaded.");
         Property data; data.fromConfigFile(fileName.c_str());
         Bottle b; b.read(data);
-        Bottle calib=*(b.find("calib").asList());
+        Bottle calib=(b.findGroup("calibration"));
 
         if (calib.size() > 0)
         {
-            eyelids_closed = calib.get(0).asString();
-            eyelids_open   = calib.get(1).asString();
+            sMin = calib.check("sMin",Value(00)).asInt();
+            sMax = calib.check("sMax",Value(70)).asInt();
 
-            yInfo("[iCubBlinker::load] Eyelid calibs loaded: (%s %s)", eyelids_closed.c_str(), eyelids_open.c_str());
+            yInfo("[iCubBlinker::load] Eyelid calibs loaded: (%i %i)", sMin, sMax);
 
             return fileName;
         }
 
-        eyelids_open   = "E99";
-        eyelids_closed = "U00";
-
-        set_calib_values();
+        // set_calib_values();
 
         return string("");
     }
@@ -498,7 +517,7 @@ public:
 int main(int argc, char *argv[])
 {
     ResourceFinder rf;
-    rf.setDefaultContext("funnyThings");
+    rf.setDefaultContext("funny-things");
     rf.setDefaultConfigFile("iCubBlinker.ini");
     rf.configure(argc,argv);
 
@@ -506,13 +525,16 @@ int main(int argc, char *argv[])
     {    
         printf("\n");
         yInfo("[ICUB BLINKER] Options:");
-        yInfo("  --context    path:   where to find the called resource (default funnyThings).");
-        yInfo("  --from       from:   the name of the .ini file (default iCubBlinker.ini).");
-        yInfo("  --name       name:   the name of the module (default iCubBlinker).");
-        yInfo("  --robot      robot:  the name of the robot. Default icub.");
+        yInfo("  --context           path:   where to find the called resource (default funnyThings).");
+        yInfo("  --from              from:   the name of the .ini file (default iCubBlinker.ini).");
+        yInfo("  --name              name:   the name of the module (default iCubBlinker).");
+        yInfo("  --robot             robot:  the name of the robot. Default icub.");
         // yInfo("  --min_dt     double: the default minimum delta T between consecutive blinks. Default  3.0[s].");
         // yInfo("  --max_dt     double: the default maximum delta T between consecutive blinks. Default 10.0[s].");
-        yInfo("  --autoStart  flag:   If the module should autostart the blinking behavior. Default no.");
+        yInfo("  --autoStart         flag:   If the module should autostart the blinking behavior. Default no.");
+        yInfo("  --autoConnect       flag:   If the module should autoconnect itself to the face expression port. Default no.");
+        yInfo("  --calibration::sMin int:    Manually set the minimum value for the blinking behavior (default 00).");
+        yInfo("  --calibration::sMax int:    Manually set the maximum value for the blinking behavior (default 70).");
         printf("\n");
         return 0;
     }
