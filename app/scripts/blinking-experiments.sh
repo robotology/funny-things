@@ -47,26 +47,28 @@ EOF
 #######################################################################################
 speak() {
     echo "\"$1\"" | yarp write ... /iSpeak
+    echo "[BlinkingScript] Speaking: \"$1\""
 }
 
 blink() {
     echo "blink" | yarp rpc /iCubBlinker/rpc
-    sleep 0.5
 }
 
 wait_till_quiet() {
     isSpeaking=$(echo "stat" | yarp rpc /iSpeak/rpc)
+    # echo $isSpeaking
     while [ "$isSpeaking" == "Response: speaking" ]; do
         isSpeaking=$(echo "stat" | yarp rpc /iSpeak/rpc)
-        sleep 0.05
         # echo $isSpeaking
+        sleep 0.01
     done
-    echo "I'm not speaking any more"
+    echo "[BlinkingScript] I'm not speaking any more"
 }
 
 speak_hri() {
     blink
-    speak $1
+    speak "$1"
+    sleep 0.15
     wait_till_quiet
     blink    
 }
@@ -76,9 +78,28 @@ speak_hri() {
 #######################################################################################
 
 run() {
-    speak_hri "Something"
-    sleep 3.0
-    speak_hri "Something"
+    speak_hri "Hello!"
+    sleep 2.0
+    speak_hri "Fine thanks, how about yourself?"
+    sleep 8.0
+    speak_hri "Sure, go ahead. What would you like to know?"
+    sleep 4.5
+    speak_hri "Hmmm, let's see."
+    speak_hri "So, typically, one of the humans working with me, stands on the other side of a table located between the two of us."
+    speak_hri "Then, I am shown different objects on the table, and the human asks me: 'Where is the octopus?'"
+    speak_hri "I then point to one of the objects, that resembles an octopus and say: 'I think this is the octopus.'."
+    sleep 4.0
+    speak_hri "Well, it is more like recognizing different shapes and changes in my surroundings."
+    sleep 4.0
+    speak_hri "The humans working with me, usually tell them to me while pointing at the objects."
+    speak_hri "They do this quite often and repetitively."
+    sleep 7.0
+    speak_hri "Not really? We also shuffle the objects on the table around, so I can restart looking for the octopus."
+    speak_hri "Sometimes, if the humans feel very adventurous, I am also shown new objects, and then I can start looking for them on the table."
+    sleep 5.0
+    speak_hri "No problem. my pleasure."
+    sleep 1.6
+    speak_hri "Okay. Bye, see you next time."
 }
 
 #######################################################################################
@@ -90,7 +111,7 @@ echo ""
 $1 "$2"
 
 if [[ $# -eq 0 ]] ; then 
-    echo "No options were passed!"
+    echo "[BlinkingScript] No options were passed!"
     echo ""
     usage
     exit 1
