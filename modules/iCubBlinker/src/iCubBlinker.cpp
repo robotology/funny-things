@@ -98,13 +98,12 @@ private:
     /***************************************************************/
     bool doSingleBlink()
     {
-        LockGuard lg(mutex);
-
         bool res = true;
-
+        yDebug("Sending raw value: %i",sMin);
         res = res && sendRawValue(("S" + int2string(sMin))); // close eyelids
-        Time::delay(0.05);
+        Time::delay(0.15);
 
+        yDebug("Sending raw value: %i",sMax);
         res = res && sendRawValue(("S" + int2string(sMax))); // open  eyelids
         Time::delay(0.05);
 
@@ -206,7 +205,7 @@ private:
         //   3. the time the icub stays with the eyes closed
         //   4. the speed with which the icub opens its eyes
 
-        blinkper_nrm = 2.3;             blinkper_sgm = 2.0;
+        blinkper_nrm = 4.6;             blinkper_sgm = 2.0;
 
         // These would be the "slow" settings:
         closure_nrm = 0.111;            closure_sgm = 0.031;
@@ -271,6 +270,7 @@ public:
         {
             dt = NormRand::scalar(blinkper_nrm,blinkper_sgm);
         }
+        dt=5.0;
         t0=Time::now();
 
         int_mode = INTERACTION_MODE_IDLE;
@@ -317,20 +317,22 @@ public:
 
     bool blink()
     {
-        return doBlinkTimed();
-        // return doSingleBlink();
+    	t0=Time::now();
+        // return doBlinkTimed();
+        return doSingleBlink();
     }
 
     bool dblink()
     {
-        return doBlinkTimed() && doBlinkTimed();
-        // return doSingleBlink() && doSingleBlink();
+    	t0=Time::now();
+        // return doBlinkTimed() && doBlinkTimed();
+        return doSingleBlink() && doSingleBlink();
     }
 
     /***************************************************************/
     string save()
     {
-        LockGuard lg(mutex);
+        // LockGuard lg(mutex);
         string path    = rf->getHomeContextPath().c_str();
         string inifile = path+"/"+rf->find("from").asString();
         yInfo("Saving calib configuration to %s",inifile.c_str());
@@ -357,7 +359,7 @@ public:
     /***************************************************************/
     string load()
     {
-        LockGuard lg(mutex);
+        // LockGuard lg(mutex);
         rf->setVerbose(true);
         string fileName=rf->findFile(rf->find("from").asString().c_str());
         rf->setVerbose(false);
@@ -473,40 +475,47 @@ public:
     /***************************************************************/
     bool updateModule()
     {
-        LockGuard lg(mutex);
+        // LockGuard lg(mutex);
 
         if (Time::now()-t0>=dt)
         {
             if (blinking)
             {
-                if (int_mode == INTERACTION_MODE_IDLE || int_mode == INTERACTION_MODE_CONVERSATION)
+                if (int_mode == INTERACTION_MODE_CONVERSATION)
                 {
                     doBlinkTimed();
+                    // doSingleBlink();
                     if ((++doubleBlinkCnt)%5==0)
                     {
                         doBlinkTimed();
+                        // doSingleBlink();
                         doubleBlinkCnt=0;
                     }
                 }
                 else
                 {
                     doSingleBlink();
-                    if ((++doubleBlinkCnt)%5==0)
-                    {
-                        doSingleBlink();
-                        doubleBlinkCnt=0;
-                    }
+                    // if ((++doubleBlinkCnt)%5==0)
+                    // {
+                    //     doSingleBlink();
+                    //     doubleBlinkCnt=0;
+                    // }
                 }
-            }
 
-            dt = NormRand::scalar(blinkper_nrm,blinkper_sgm);
-            // Cut the normal distribution to its first sigma
-            while (dt<blinkper_nrm-blinkper_sgm || dt>blinkper_nrm+blinkper_sgm)
-            {
-                dt = NormRand::scalar(blinkper_nrm,blinkper_sgm);
-            }
+	            dt = NormRand::scalar(blinkper_nrm,blinkper_sgm);
+	            int i=0;
+	            yInfo("[iCubBlinker] Next blink in %g %g %g %i",dt,blinkper_nrm-blinkper_sgm,blinkper_nrm+blinkper_sgm,i); i++;
+	            // Cut the normal distribution to its first sigma
+	            while (dt<blinkper_nrm-blinkper_sgm || dt>blinkper_nrm+blinkper_sgm)
+	            {
+	                dt = NormRand::scalar(blinkper_nrm,blinkper_sgm);
+	                yInfo("[iCubBlinker] Next blink in %g %g %g %i",dt,blinkper_nrm-blinkper_sgm,blinkper_nrm+blinkper_sgm,i); i++;
+	            }
+	            dt = 5.0;
+	            yInfo("[iCubBlinker] Next blink in %g %g %g",dt,blinkper_nrm-blinkper_sgm,blinkper_nrm+blinkper_sgm,i);
 
-            t0=Time::now();
+	            t0=Time::now();
+            }
         }
 
         return true;
