@@ -16,6 +16,6 @@ source_group("Source Files" FILES main.cpp)
 
 include_directories(${YARP_INCLUDE_DIRS} ${ICUB_INCLUDE_DIRS} ${TinyXML_INCLUDE_DIRS})
 add_executable(${PROJECTNAME} main.cpp ${TinyXML_CODE})
-target_link_libraries(${PROJECTNAME} ${YARP_LIBRARIES} actionPrimitives icubmod)
+target_link_libraries(${PROJECTNAME} ${YARP_LIBRARIES} actionPrimitives)
 install(TARGETS ${PROJECTNAME} DESTINATION bin)
 

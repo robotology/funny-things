@@ -80,8 +80,6 @@ tested_os_sec Tested OS Windows, Linux
 
 #include <iCub/ctrl/math.h>
 
-YARP_DECLARE_DEVICES(icubmod)
-
 using namespace std;
 using namespace yarp::os;
 using namespace yarp::dev;
@@ -838,8 +836,6 @@ int main(int argc, char *argv[])
         printf("YARP server not available!\n");
         return -1;
     }
-
-    YARP_REGISTER_DEVICES(icubmod)
 
     ResourceFinder rf;
     rf.setDefaultContext("funny-things");
