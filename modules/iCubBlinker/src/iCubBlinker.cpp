@@ -270,7 +270,7 @@ public:
         {
             dt = NormRand::scalar(blinkper_nrm,blinkper_sgm);
         }
-        dt=5.0;
+        // dt=5.0;
         t0=Time::now();
 
         int_mode = INTERACTION_MODE_IDLE;
@@ -296,19 +296,19 @@ public:
     /***************************************************************/
     double getPeriod() { return 0.01; }
 
-    bool blink_start()
+    bool start()
     {
         blinking=true;
         return true;
     }
 
-    bool blink_stop()
+    bool stop()
     {
         blinking=false;
         return true;
     }
 
-    string blink_status()
+    string status()
     {
         string res=blinking?"on":"off";
         res=res+"_"+get_interaction_mode();
@@ -495,11 +495,11 @@ public:
                 else
                 {
                     doSingleBlink();
-                    // if ((++doubleBlinkCnt)%5==0)
-                    // {
-                    //     doSingleBlink();
-                    //     doubleBlinkCnt=0;
-                    // }
+                    if ((++doubleBlinkCnt)%5==0)
+                    {
+                        doSingleBlink();
+                        doubleBlinkCnt=0;
+                    }
                 }
 
 	            dt = NormRand::scalar(blinkper_nrm,blinkper_sgm);
@@ -511,8 +511,8 @@ public:
 	                dt = NormRand::scalar(blinkper_nrm,blinkper_sgm);
 	                yInfo("[iCubBlinker] Next blink in %g %g %g %i",dt,blinkper_nrm-blinkper_sgm,blinkper_nrm+blinkper_sgm,i); i++;
 	            }
-	            dt = 5.0;
-	            yInfo("[iCubBlinker] Next blink in %g %g %g",dt,blinkper_nrm-blinkper_sgm,blinkper_nrm+blinkper_sgm,i);
+	            // dt = 5.0;
+	            yInfo("[iCubBlinker] Next blink in %g %g %g %i",dt,blinkper_nrm-blinkper_sgm,blinkper_nrm+blinkper_sgm,i);
 
 	            t0=Time::now();
             }

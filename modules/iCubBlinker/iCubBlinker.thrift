@@ -15,20 +15,20 @@ service iCubBlinker_IDL
   * Starts the blinking behavior (if it was not started before).
   * @return true/false on success/failure.
   */
-  bool blink_start();
+  bool start();
 
   /**
   * Starts the blinking behavior (if it was running).
   * @return true/false on success/failure.
   */
-  bool blink_stop();
+  bool stop();
 
   /**
   * Provides the status of the module.
   * @return a string with both the blinking status (either on or off),
   *         and the interaction mode in which the blinker is.
   */
-  string blink_status();
+  string status();
 
   /**
   * Performs a single blink.

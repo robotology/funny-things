@@ -6,7 +6,7 @@
 
 
 
-class iCubBlinker_IDL_blink_start : public yarp::os::Portable {
+class iCubBlinker_IDL_start : public yarp::os::Portable {
 public:
   bool _return;
   void init();
@@ -14,7 +14,7 @@ public:
   virtual bool read(yarp::os::ConnectionReader& connection);
 };
 
-class iCubBlinker_IDL_blink_stop : public yarp::os::Portable {
+class iCubBlinker_IDL_stop : public yarp::os::Portable {
 public:
   bool _return;
   void init();
@@ -22,7 +22,7 @@ public:
   virtual bool read(yarp::os::ConnectionReader& connection);
 };
 
-class iCubBlinker_IDL_blink_status : public yarp::os::Portable {
+class iCubBlinker_IDL_status : public yarp::os::Portable {
 public:
   std::string _return;
   void init();
@@ -121,14 +121,14 @@ public:
   virtual bool read(yarp::os::ConnectionReader& connection);
 };
 
-bool iCubBlinker_IDL_blink_start::write(yarp::os::ConnectionWriter& connection) {
+bool iCubBlinker_IDL_start::write(yarp::os::ConnectionWriter& connection) {
   yarp::os::idl::WireWriter writer(connection);
-  if (!writer.writeListHeader(2)) return false;
-  if (!writer.writeTag("blink_start",1,2)) return false;
+  if (!writer.writeListHeader(1)) return false;
+  if (!writer.writeTag("start",1,1)) return false;
   return true;
 }
 
-bool iCubBlinker_IDL_blink_start::read(yarp::os::ConnectionReader& connection) {
+bool iCubBlinker_IDL_start::read(yarp::os::ConnectionReader& connection) {
   yarp::os::idl::WireReader reader(connection);
   if (!reader.readListReturn()) return false;
   if (!reader.readBool(_return)) {
@@ -138,18 +138,18 @@ bool iCubBlinker_IDL_blink_start::read(yarp::os::ConnectionReader& connection) {
   return true;
 }
 
-void iCubBlinker_IDL_blink_start::init() {
+void iCubBlinker_IDL_start::init() {
   _return = false;
 }
 
-bool iCubBlinker_IDL_blink_stop::write(yarp::os::ConnectionWriter& connection) {
+bool iCubBlinker_IDL_stop::write(yarp::os::ConnectionWriter& connection) {
   yarp::os::idl::WireWriter writer(connection);
-  if (!writer.writeListHeader(2)) return false;
-  if (!writer.writeTag("blink_stop",1,2)) return false;
+  if (!writer.writeListHeader(1)) return false;
+  if (!writer.writeTag("stop",1,1)) return false;
   return true;
 }
 
-bool iCubBlinker_IDL_blink_stop::read(yarp::os::ConnectionReader& connection) {
+bool iCubBlinker_IDL_stop::read(yarp::os::ConnectionReader& connection) {
   yarp::os::idl::WireReader reader(connection);
   if (!reader.readListReturn()) return false;
   if (!reader.readBool(_return)) {
@@ -159,18 +159,18 @@ bool iCubBlinker_IDL_blink_stop::read(yarp::os::ConnectionReader& connection) {
   return true;
 }
 
-void iCubBlinker_IDL_blink_stop::init() {
+void iCubBlinker_IDL_stop::init() {
   _return = false;
 }
 
-bool iCubBlinker_IDL_blink_status::write(yarp::os::ConnectionWriter& connection) {
+bool iCubBlinker_IDL_status::write(yarp::os::ConnectionWriter& connection) {
   yarp::os::idl::WireWriter writer(connection);
-  if (!writer.writeListHeader(2)) return false;
-  if (!writer.writeTag("blink_status",1,2)) return false;
+  if (!writer.writeListHeader(1)) return false;
+  if (!writer.writeTag("status",1,1)) return false;
   return true;
 }
 
-bool iCubBlinker_IDL_blink_status::read(yarp::os::ConnectionReader& connection) {
+bool iCubBlinker_IDL_status::read(yarp::os::ConnectionReader& connection) {
   yarp::os::idl::WireReader reader(connection);
   if (!reader.readListReturn()) return false;
   if (!reader.readString(_return)) {
@@ -180,7 +180,7 @@ bool iCubBlinker_IDL_blink_status::read(yarp::os::ConnectionReader& connection) 
   return true;
 }
 
-void iCubBlinker_IDL_blink_status::init() {
+void iCubBlinker_IDL_status::init() {
   _return = "";
 }
 
@@ -424,32 +424,32 @@ void iCubBlinker_IDL_calib::init() {
 iCubBlinker_IDL::iCubBlinker_IDL() {
   yarp().setOwner(*this);
 }
-bool iCubBlinker_IDL::blink_start() {
+bool iCubBlinker_IDL::start() {
   bool _return = false;
-  iCubBlinker_IDL_blink_start helper;
+  iCubBlinker_IDL_start helper;
   helper.init();
   if (!yarp().canWrite()) {
-    yError("Missing server method '%s'?","bool iCubBlinker_IDL::blink_start()");
+    yError("Missing server method '%s'?","bool iCubBlinker_IDL::start()");
   }
   bool ok = yarp().write(helper,helper);
   return ok?helper._return:_return;
 }
-bool iCubBlinker_IDL::blink_stop() {
+bool iCubBlinker_IDL::stop() {
   bool _return = false;
-  iCubBlinker_IDL_blink_stop helper;
+  iCubBlinker_IDL_stop helper;
   helper.init();
   if (!yarp().canWrite()) {
-    yError("Missing server method '%s'?","bool iCubBlinker_IDL::blink_stop()");
+    yError("Missing server method '%s'?","bool iCubBlinker_IDL::stop()");
   }
   bool ok = yarp().write(helper,helper);
   return ok?helper._return:_return;
 }
-std::string iCubBlinker_IDL::blink_status() {
+std::string iCubBlinker_IDL::status() {
   std::string _return = "";
-  iCubBlinker_IDL_blink_status helper;
+  iCubBlinker_IDL_status helper;
   helper.init();
   if (!yarp().canWrite()) {
-    yError("Missing server method '%s'?","std::string iCubBlinker_IDL::blink_status()");
+    yError("Missing server method '%s'?","std::string iCubBlinker_IDL::status()");
   }
   bool ok = yarp().write(helper,helper);
   return ok?helper._return:_return;
@@ -574,9 +574,9 @@ bool iCubBlinker_IDL::read(yarp::os::ConnectionReader& connection) {
   if (direct) tag = reader.readTag();
   while (!reader.isError()) {
     // TODO: use quick lookup, this is just a test
-    if (tag == "blink_start") {
+    if (tag == "start") {
       bool _return;
-      _return = blink_start();
+      _return = start();
       yarp::os::idl::WireWriter writer(reader);
       if (!writer.isNull()) {
         if (!writer.writeListHeader(1)) return false;
@@ -585,9 +585,9 @@ bool iCubBlinker_IDL::read(yarp::os::ConnectionReader& connection) {
       reader.accept();
       return true;
     }
-    if (tag == "blink_stop") {
+    if (tag == "stop") {
       bool _return;
-      _return = blink_stop();
+      _return = stop();
       yarp::os::idl::WireWriter writer(reader);
       if (!writer.isNull()) {
         if (!writer.writeListHeader(1)) return false;
@@ -596,9 +596,9 @@ bool iCubBlinker_IDL::read(yarp::os::ConnectionReader& connection) {
       reader.accept();
       return true;
     }
-    if (tag == "blink_status") {
+    if (tag == "status") {
       std::string _return;
-      _return = blink_status();
+      _return = status();
       yarp::os::idl::WireWriter writer(reader);
       if (!writer.isNull()) {
         if (!writer.writeListHeader(1)) return false;
@@ -777,9 +777,9 @@ std::vector<std::string> iCubBlinker_IDL::help(const std::string& functionName) 
   std::vector<std::string> helpString;
   if(showAll) {
     helpString.push_back("*** Available commands:");
-    helpString.push_back("blink_start");
-    helpString.push_back("blink_stop");
-    helpString.push_back("blink_status");
+    helpString.push_back("start");
+    helpString.push_back("stop");
+    helpString.push_back("status");
     helpString.push_back("blink");
     helpString.push_back("dblink");
     helpString.push_back("save");
@@ -794,18 +794,18 @@ std::vector<std::string> iCubBlinker_IDL::help(const std::string& functionName) 
     helpString.push_back("help");
   }
   else {
-    if (functionName=="blink_start") {
-      helpString.push_back("bool blink_start() ");
+    if (functionName=="start") {
+      helpString.push_back("bool start() ");
       helpString.push_back("Starts the blinking behavior (if it was not started before). ");
       helpString.push_back("@return true/false on success/failure. ");
     }
-    if (functionName=="blink_stop") {
-      helpString.push_back("bool blink_stop() ");
+    if (functionName=="stop") {
+      helpString.push_back("bool stop() ");
       helpString.push_back("Starts the blinking behavior (if it was running). ");
       helpString.push_back("@return true/false on success/failure. ");
     }
-    if (functionName=="blink_status") {
-      helpString.push_back("std::string blink_status() ");
+    if (functionName=="status") {
+      helpString.push_back("std::string status() ");
       helpString.push_back("Provides the status of the module. ");
       helpString.push_back("@return a string with both the blinking status (either on or off), ");
       helpString.push_back("        and the interaction mode in which the blinker is. ");

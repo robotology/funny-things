@@ -21,18 +21,18 @@ public:
    * Starts the blinking behavior (if it was not started before).
    * @return true/false on success/failure.
    */
-  virtual bool blink_start();
+  virtual bool start();
   /**
    * Starts the blinking behavior (if it was running).
    * @return true/false on success/failure.
    */
-  virtual bool blink_stop();
+  virtual bool stop();
   /**
    * Provides the status of the module.
    * @return a string with both the blinking status (either on or off),
    *         and the interaction mode in which the blinker is.
    */
-  virtual std::string blink_status();
+  virtual std::string status();
   /**
    * Performs a single blink.
    * @return true/false on success/failure.
