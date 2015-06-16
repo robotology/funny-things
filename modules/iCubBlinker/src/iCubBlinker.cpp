@@ -298,12 +298,14 @@ public:
 
     bool start()
     {
+    	yInfo("[iCubBlinker] start command received");
         blinking=true;
         return true;
     }
 
     bool stop()
     {
+    	yInfo("[iCubBlinker] stop  command received");
         blinking=false;
         return true;
     }
