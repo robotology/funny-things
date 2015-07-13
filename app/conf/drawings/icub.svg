@@ -1,12 +1,80 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!-- Generator: Adobe Illustrator 14.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 43363)  -->
-<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
-<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-	 width="595.28px" height="841.89px" viewBox="0 0 595.28 841.89" enable-background="new 0 0 595.28 841.89" xml:space="preserve">
-<line fill="none" stroke="#000000" x1="26.291" y1="119.25" x2="26.291" y2="299.281"/>
-<polyline fill="none" stroke="#000000" points="198.726,53.89 163.368,53.951 129.763,66.236 101.201,89.545 80.476,121.595 
-	69.618,159.249 69.688,198.822 80.681,236.438 101.521,268.417 130.167,291.627 163.816,303.801 199.173,303.74 232.778,291.455 "/>
-<polyline fill="none" stroke="#000000" points="256.541,119.25 256.541,304.221 379.14,304.221 379.14,119.25 "/>
-<line fill="none" stroke="#000000" x1="428.163" y1="51.145" x2="428.163" y2="304.176"/>
-<polyline fill="none" stroke="#000000" points="427.163,179.058 595.281,179.058 595.281,305.145 427.163,305.145 "/>
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   version="1.1"
+   id="Layer_1"
+   x="0px"
+   y="0px"
+   width="595.28px"
+   height="841.89px"
+   viewBox="0 0 595.28 841.89"
+   enable-background="new 0 0 595.28 841.89"
+   xml:space="preserve"
+   inkscape:version="0.48.3.1 r9886"
+   sodipodi:docname="icub.svg"><metadata
+   id="metadata17"><rdf:RDF><cc:Work
+       rdf:about=""><dc:format>image/svg+xml</dc:format><dc:type
+         rdf:resource="http://purl.org/dc/dcmitype/StillImage" /></cc:Work></rdf:RDF></metadata><defs
+   id="defs15" /><sodipodi:namedview
+   pagecolor="#ffffff"
+   bordercolor="#666666"
+   borderopacity="1"
+   objecttolerance="10"
+   gridtolerance="10"
+   guidetolerance="10"
+   inkscape:pageopacity="0"
+   inkscape:pageshadow="2"
+   inkscape:window-width="1680"
+   inkscape:window-height="967"
+   id="namedview13"
+   showgrid="false"
+   inkscape:zoom="0.65948012"
+   inkscape:cx="81.398447"
+   inkscape:cy="878.50228"
+   inkscape:window-x="0"
+   inkscape:window-y="25"
+   inkscape:window-maximized="1"
+   inkscape:current-layer="Layer_1" />
+<line
+   fill="none"
+   stroke="#000000"
+   x1="6.291"
+   y1="129.25"
+   x2="6.291"
+   y2="259.281"
+   id="line3" />
+<polyline
+   points="198.726,53.89 163.368,53.951 129.763,66.236 101.201,89.545 80.476,121.595   69.618,159.249 69.688,198.822 80.681,236.438 101.521,268.417 130.167,291.627 163.816,303.801 199.173,303.74 "
+   id="polyline5"
+   transform="translate(6.2456596,0)"
+   style="fill:none;stroke:#000000" />
+<polyline
+   points="256.541,119.25 256.541,304.221 379.14,304.221 379.14,119.25 "
+   id="polyline7"
+   transform="translate(-1.5496809,0)"
+   style="fill:none;stroke:#000000" />
+
+
+
+<line
+   style="fill:none;stroke:#000000"
+   x1="428.16296"
+   y1="51.145"
+   x2="428.16296"
+   y2="304.17599"
+   id="line9" />
+
+<polyline
+   style="fill:none;stroke:#000000"
+   points="427.163,179.058 595.281,179.058 595.281,305.145 427.163,305.145 "
+   id="polyline11"
+   transform="translate(-2.2508603e-5,0)" />
 </svg>
