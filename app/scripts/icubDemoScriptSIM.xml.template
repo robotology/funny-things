@@ -57,7 +57,7 @@
     </module>
     <module>
         <name>iSpeak</name>
-        <parameters>--package acapelacmd --robot icubSim --package_options icub_ita</parameters>
+        <parameters>--package acapela-tts --package_options icub_ita</parameters>
         <node>icub-win1</node>
         <stdio></stdio>
     </module>
