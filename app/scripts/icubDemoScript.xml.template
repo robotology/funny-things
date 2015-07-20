@@ -1,27 +1,27 @@
 <application>
-    <name>Dea Movements</name>
+    <name>icubDemoScript</name>
 
     <module>
         <name>iCubBreather</name>
-        <parameters>--name iCubBreatherRA --part right_arm --autoStart</parameters>
+        <parameters>--name iCubBreatherRA --robot icub --part right_arm --autoStart</parameters>
         <node>localhost</node>
         <stdio></stdio>
     </module>
     <module>
         <name>iCubBreather</name>
-        <parameters>--name iCubBreatherLA --part left_arm --autoStart</parameters>
+        <parameters>--name iCubBreatherLA --robot icub --part left_arm --autoStart</parameters>
         <node>localhost</node>
         <stdio></stdio>
     </module>
     <module>
         <name>iCubBreather</name>
-        <parameters>--name iCubBreatherT --part torso --autoStart</parameters>
+        <parameters>--name iCubBreatherT  --robot icub --part torso --autoStart</parameters>
         <node>localhost</node>
         <stdio></stdio>
     </module>
     <module>
         <name>iCubBreather</name>
-        <parameters>--name iCubBreatherH --part head --autoStart --rate 1500</parameters>
+        <parameters>--name iCubBreatherH --robot icub --part head --autoStart --rate 1500</parameters>
         <node>localhost</node>
         <stdio></stdio>
     </module>
@@ -51,13 +51,13 @@
     </module>
     <module>
         <name>iCubBlinker</name>
-        <parameters>--autoStart</parameters>
+        <parameters>--autoStart --robot icub</parameters>
         <node>localhost</node>
         <stdio></stdio>
     </module>
     <module>
         <name>iSpeak</name>
-        <parameters>--package acapelacmd --package_options icub_ita</parameters>
+        <parameters>--package acapela-tts --package_options icub_ita</parameters>
         <node>icub-win1</node>
         <stdio></stdio>
     </module>
