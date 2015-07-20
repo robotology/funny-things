@@ -105,7 +105,7 @@ go_home_helperR()
 
 go_home_helperH()
 {
-    echo "ctpq time $1 off 0 pos (0.0 0.0 5.0 0.0 0.0 5.0)" | yarp rpc /ctpservice/head/rpc
+    echo "ctpq time $1 off 0 pos (0.0 0.0 0.0 0.0 0.0 5.0)" | yarp rpc /ctpservice/head/rpc
 }
 
 go_homeH() {
@@ -209,31 +209,56 @@ saluta() {
 # Story board                                                                       #
 #######################################################################################
 
+scene_all() 
+{
+    scene_0
+    scene_1
+    sleep 5.0 && scene_2
+    scene_3
+    sleep 5.0 && scene_4
+    sleep 2.0 && scene_5
+    sleep 4.0 && scene_6
+    sleep 1.0 && scene_7
+    sleep 3.0 && scene_8
+}
+
+scene_0() {
+    breathers "stop"  
+    echo "ctpq time 0.05 off 0 pos (0.0 0.0   0.0 0.0 35.0 5.0)" | yarp rpc /ctpservice/head/rpc
+    echo "ctpq time 1.0 off 0 pos (0.0 0.0 -35.0 0.0  0.0 5.0)" | yarp rpc /ctpservice/head/rpc
+    sleep 1.2
+    echo "ctpq time 4.0 off 0 pos (0.0 0.0 0.0 0.0 0.0 5.0)" | yarp rpc /ctpservice/head/rpc
+    speak "Bentornati!"  
+    sleep 4.0 && breathers "start"  
+}
+
 scene_1() {
     breathers "stop"
-    echo "ctpq time 2.0 off 0 pos (-60.0 44.0 -2.0 96.0 53.0 -17.0 -11.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0)" | yarp rpc /ctpservice/right_arm/rpc
-    sleep 2.0 && speak "Bentornati!"
+    speak "Ciao Luciana!"
     #sleep 3.0 && smile
+    echo "ctpq time 2.0 off 0 pos (-60.0 44.0 -2.0 96.0 53.0 -17.0 -11.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0)" | yarp rpc /ctpservice/right_arm/rpc
     echo "ctpq time 0.5 off 0 pos (-60.0 44.0 -2.0 96.0 53.0 -17.0  25.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0)" | yarp rpc /ctpservice/right_arm/rpc
     echo "ctpq time 0.5 off 0 pos (-60.0 44.0 -2.0 96.0 53.0 -17.0 -11.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0)" | yarp rpc /ctpservice/right_arm/rpc
     echo "ctpq time 0.5 off 0 pos (-60.0 44.0 -2.0 96.0 53.0 -17.0  25.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0)" | yarp rpc /ctpservice/right_arm/rpc
     echo "ctpq time 0.5 off 0 pos (-60.0 44.0 -2.0 96.0 53.0 -17.0 -11.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0)" | yarp rpc /ctpservice/right_arm/rpc
     go_home_helper 2.0
-    sleep 5 && speak "Ciao Nina!"
+    sleep 5.0 && speak "Ciao Nina!"    
     echo "ctpq time 2.0 off 0 pos (-60.0 44.0 -2.0 96.0 53.0 -17.0 -11.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0)" | yarp rpc /ctpservice/left_arm/rpc
     echo "ctpq time 0.5 off 0 pos (-60.0 44.0 -2.0 96.0 53.0 -17.0  25.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0)" | yarp rpc /ctpservice/left_arm/rpc
     echo "ctpq time 0.5 off 0 pos (-60.0 44.0 -2.0 96.0 53.0 -17.0 -11.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0)" | yarp rpc /ctpservice/left_arm/rpc
     echo "ctpq time 0.5 off 0 pos (-60.0 44.0 -2.0 96.0 53.0 -17.0  25.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0)" | yarp rpc /ctpservice/left_arm/rpc
     echo "ctpq time 0.5 off 0 pos (-60.0 44.0 -2.0 96.0 53.0 -17.0 -11.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0)" | yarp rpc /ctpservice/left_arm/rpc
     go_home_helper 2.0    
-    sleep 5 && speak "Ciao frenc? bella camicia!"
-    cun    
+    sleep 5.0 && speak "Ciao frenc? bella camicia!"
+    cun
     greet_with_right_thumb_up
+    cun
     go_home_helper 2.0
-    smile
+    cun
+    head "start"
     sleep 2.5 && speak "Hey Biszio? Bella pettinatura! Sembra la mia"
     smile
-    sleep 3.2 && speak "ha-ha-ha-ha!"
+    sleep 3.2 && speak "ha-ha-ha-ha!"    
     breathers "start"
 }
 
@@ -241,25 +266,25 @@ scene_1() {
 scene_2() {
     speak "mi chiamo aicab"
     surprised
-    sleep 4.0 && smile
+    sleep 1.0 && smile
     go_home
 }
 
 scene_3() {
     smile    
-    sleep 1.0 && speak "sono di genova!"
+    speak "sono di genova!"
 }
 
 scene_4() {
     smile
-    sleep 1.0 && speak "Ho dieci anni" 
-    sleep 2.5  && speak "anche se dimostro di meno."
+    speak "Ho dieci anni, anche se dimostro di meno."
     cun
+    sleep 2.5  && smile
 }
 
 scene_5() {
-    speak "No, sono venuto con mio padre? e uolk-men!"
-    sleep 4
+    speak "No, sono venuto con mio padre, Giorgio Metta? E i miei zii, ricercatori!"
+    sleep 6.0
     smile
 }
 
@@ -269,6 +294,19 @@ scene_6() {
     sleep 2.0
     cun
     mostra_muscoli
+    smile
+    head "start"
+}
+
+scene_7() {
+    speak "le arti marziali!"
+    sleep 2.0
+    smile
+}
+
+scene_8() {
+    speak "una dimostrazione di quello che ho imparato!"
+    sleep 4.0
     smile
 }
 
@@ -286,5 +324,6 @@ if [[ $# -eq 0 ]] ; then
     usage
     exit 1
 fi
+
 
 
