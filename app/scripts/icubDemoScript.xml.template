@@ -4,60 +4,60 @@
     <module>
         <name>iCubBreather</name>
         <parameters>--name iCubBreatherRA --robot icub --part right_arm --autoStart</parameters>
-        <node>icub15</node>
+        <node>localhost</node>
         <stdio></stdio>
     </module>
     <module>
         <name>iCubBreather</name>
         <parameters>--name iCubBreatherLA --robot icub --part left_arm --autoStart</parameters>
-        <node>icub15</node>
+        <node>localhost</node>
         <stdio></stdio>
     </module>
     <module>
         <name>iCubBreather</name>
         <parameters>--name iCubBreatherT  --robot icub --part torso --autoStart</parameters>
-        <node>icub15</node>
+        <node>localhost</node>
         <stdio></stdio>
     </module>
     <module>
         <name>iCubBreather</name>
         <parameters>--name iCubBreatherH --robot icub --part head --autoStart --rate 1500</parameters>
-        <node>icub15</node>
+        <node>localhost</node>
         <stdio></stdio>
     </module>
     <module>
         <name>ctpService</name>
         <parameters>--robot icub --part head</parameters>
-        <node>icub15</node>
+        <node>localhost</node>
         <stdio></stdio>
     </module>
     <module>
         <name>ctpService</name>
         <parameters>--robot icub --part left_arm</parameters>
-        <node>icub15</node>
+        <node>localhost</node>
         <stdio></stdio>
     </module>
     <module>
         <name>ctpService</name>
         <parameters>--robot icub --part right_arm</parameters>
-        <node>icub15</node>
+        <node>localhost</node>
         <stdio></stdio>
     </module>
     <module>
         <name>ctpService</name>
         <parameters>--robot icub --part torso</parameters>
-        <node>icub15</node>
+        <node>localhost</node>
         <stdio></stdio>
     </module>
     <module>
         <name>iCubBlinker</name>
         <parameters>--autoStart --robot icub</parameters>
-        <node>icub15</node>
+        <node>localhost</node>
         <stdio></stdio>
     </module>
     <module>
         <name>iSpeak</name>
-        <parameters>--package acapelacmd --robot icub --package_options icub_ita</parameters>
+        <parameters>--package acapela-tts --package_options icub_ita</parameters>
         <node>icub-win1</node>
         <stdio></stdio>
     </module>
