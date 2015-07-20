@@ -610,7 +610,7 @@ int main(int argc, char *argv[])
     if (!yarp.checkNetwork())
     {
         yError()<<"YARP server not available!";
-        return -1;
+        return 1;
     }
 
     ResourceFinder rf;
@@ -628,6 +628,5 @@ int main(int argc, char *argv[])
     WriterModule mod;
     return mod.runModule(rf);
 }
-
 
 

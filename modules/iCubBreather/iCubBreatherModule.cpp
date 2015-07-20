@@ -301,7 +301,7 @@ int main(int argc, char * argv[])
     if (!yarp.checkNetwork())
     {
         yInfo("No Network!!!\n");
-        return -1;
+        return 1;
     }
 
     iCubBreather icubBrthr;

@@ -18,5 +18,5 @@ int main(int argc, char *argv[])
     MainWindow w(rf);
     w.show();
 
-    return a.exec();
+    return (a.exec()!=0?1:0);
 }
