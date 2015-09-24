@@ -67,6 +67,13 @@
         <node>localhost</node>
         <stdio></stdio>
     </module>
+    <module>
+        <name>simFaceExpression</name>
+        <parameters></parameters>
+        <node>localhost</node>
+        <stdio></stdio>
+    </module>
+
 
     <connection>
         <from>/iCubBlinker/emotions/raw</from>
@@ -77,6 +84,21 @@
         <from>/iSpeak/emotions:o</from>
         <to>/icubSim/face/emotions/in</to>
         <protocol>tcp</protocol>
-    </connection>    
+    </connection>
+    <connection>
+        <from>/face/eyelids</from>
+        <to> /icubSim/face/eyelids</to>
+        <protocol>tcp</protocol>
+    </connection>
+    <connection>
+        <from>/face/image/out</from>
+        <to>/icubSim/texture/face</to>
+        <protocol>tcp</protocol>
+    </connection>
+     <connection>
+        <from>/emotion/out</from>
+        <to>/icubSim/face/raw/in</to>
+        <protocol>tcp</protocol>
+    </connection>
 
 </application>
