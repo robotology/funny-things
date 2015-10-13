@@ -67,7 +67,7 @@ public:
   virtual std::string load();
   /**
    * Sets the interaction mode in which the module will go.
-   * @param val specifies the new interaction mode
+   * @param val string that specifies the new interaction mode
    *            (either idle or conversation for now).
    * @return true/false on success/failure.
    */
@@ -78,8 +78,20 @@ public:
    */
   virtual std::string get_interaction_mode();
   /**
+   * Sets the blinking behavior.
+   * @param val string that specifies the new blinking behavior
+   *            (either naturalistic or fast).
+   * @return true/false on success/failure.
+   */
+  virtual bool set_blinking_behavior(const std::string& val);
+  /**
+   * Gets the blinking behavior used by the module.
+   * @return a string with the current blinking behavior.
+   */
+  virtual std::string get_blinking_behavior();
+  /**
    * Calibrate the servo of the eyelids.
-   * NOT YET IMPLEMENTED
+   * NOT IMPLEMENTED
    * @return true/false on success/failure.
    */
   virtual bool calib();

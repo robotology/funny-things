@@ -70,7 +70,7 @@ service iCubBlinker_IDL
 
   /**
   * Sets the interaction mode in which the module will go.
-  * @param val specifies the new interaction mode
+  * @param val string that specifies the new interaction mode
   *            (either idle or conversation for now).
   * @return true/false on success/failure.
   */
@@ -83,8 +83,22 @@ service iCubBlinker_IDL
   string get_interaction_mode();
 
   /**
+  * Sets the blinking behavior.
+  * @param val string that specifies the new blinking behavior
+  *            (either naturalistic or fast).
+  * @return true/false on success/failure.
+  */
+  bool set_blinking_behavior(1:string val);
+
+  /**
+  * Gets the blinking behavior used by the module.
+  * @return a string with the current blinking behavior.
+  */
+  string get_blinking_behavior();
+
+  /**
   * Calibrate the servo of the eyelids.
-  * NOT YET IMPLEMENTED
+  * NOT IMPLEMENTED
   * @return true/false on success/failure.
   */
   bool calib();
