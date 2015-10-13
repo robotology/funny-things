@@ -94,7 +94,7 @@ private:
     }
 
     /***************************************************************/
-    bool doSingleBlink()
+    bool doBlinkFast()
     {
         bool res = true;
         yDebug("Sending raw value: %i",sMin);
@@ -336,14 +336,14 @@ public:
     {
     	t0=Time::now();
         // return doBlinkTimed();
-        return doSingleBlink();
+        return doBlinkFast();
     }
 
     bool dblink()
     {
     	t0=Time::now();
         // return doBlinkTimed() && doBlinkTimed();
-        return doSingleBlink() && doSingleBlink();
+        return doBlinkFast() && doBlinkFast();
     }
 
     /***************************************************************/
@@ -484,20 +484,20 @@ public:
                 if (int_mode == INTERACTION_MODE_CONVERSATION)
                 {
                     doBlinkTimed();
-                    // doSingleBlink();
+                    // doBlinkFast();
                     if ((++doubleBlinkCnt)%5==0)
                     {
                         doBlinkTimed();
-                        // doSingleBlink();
+                        // doBlinkFast();
                         doubleBlinkCnt=0;
                     }
                 }
                 else
                 {
-                    doSingleBlink();
+                    doBlinkFast();
                     if ((++doubleBlinkCnt)%5==0)
                     {
-                        doSingleBlink();
+                        doBlinkFast();
                         doubleBlinkCnt=0;
                     }
                 }
