@@ -343,11 +343,11 @@ public:
         NormRand::init();
         doubleBlinkCnt=0;
         
-        computeNextBlinkPeriod();
-        t0=Time::now();
-
         int_mode = INTERACTION_MODE_IDLE;
         set_interaction_mode("idle");
+
+        computeNextBlinkPeriod();
+        t0=Time::now();
 
         return true;
     }
