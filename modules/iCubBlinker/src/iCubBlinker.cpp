@@ -49,6 +49,13 @@ string int2string(const int _a)
     return ss.str();
 }
 
+string double2string(const double _a)
+{
+    std::ostringstream ss;
+    ss << _a;
+    return ss.str();
+}
+
 /***************************************************************/
 class Blinker: public RFModule, public iCubBlinker_IDL
 {
@@ -61,6 +68,7 @@ private:
 
     bool doubleBlink;
     string blinkingBehavior;
+    string blinkingPeriod;
 
     Port emotionsPort;
     RpcServer rpcPort;
@@ -68,12 +76,16 @@ private:
     Mutex mutex;
     bool blinking;
 
-    double dt,t0;
+    double dt;
+    double t0;
     int doubleBlinkCnt;
 
-    int sMin, sMax;
+    int sMin;
+    int sMax;
 
     InteractionMode int_mode;
+    double fixed_blinkper;
+
     double blinkper_nrm, blinkper_sgm;  // period of the blinking
     double closure_nrm,   closure_sgm;  // closure statistics
     double sustain_nrm,   sustain_sgm;  // sustain statistics
@@ -151,7 +163,7 @@ private:
             t_op = NormRand::scalar(opening_nrm,opening_sgm);
         }
 
-        yDebug("Starting a timed blink. T_cl %g \t T_su %g \t T_op %g Total %g",
+        yDebug("Starting a naturalistic blink. T_cl %g \t T_su %g \t T_op %g Total %g",
                 t_cl,t_su,t_op,t_cl+t_su+t_op);
 
         for (int i = 0; i < 11; i++)
@@ -206,7 +218,7 @@ private:
         return true;
     }
 
-    /***************************************************************/    
+    /***************************************************************/
     bool setInteractionMode_CONVERSATION()
     {
         Bottle conversation_mode=(rf->findGroup("conversation_mode"));
@@ -229,6 +241,7 @@ private:
         return true;
     }
 
+    /***************************************************************/
     bool retrieveInteractionMode_params(Bottle &int_mode)
     {
         // If the parameters are not found, it will default to the idle mode
@@ -247,12 +260,43 @@ private:
         return true;
     }
 
+    /***************************************************************/
     bool printInteractionMode_params()
     {
         yInfo("[iCubBlinker] blinker period\t( nrm %g\tsgm %g )",blinkper_nrm,blinkper_sgm);
         yInfo("[iCubBlinker] closure speed \t( nrm %g\tsgm %g )",closure_nrm,closure_sgm);
         yInfo("[iCubBlinker] sustain speed \t( nrm %g\tsgm %g )",sustain_nrm,sustain_sgm);
         yInfo("[iCubBlinker] opening speed \t( nrm %g\tsgm %g )",opening_nrm,opening_sgm);
+    }
+
+    /***************************************************************/
+    bool computeNextBlinkPeriod()
+    {
+        if (blinkingPeriod=="fixed")
+        {
+            dt=fixed_blinkper;
+            yInfo("[iCubBlinker] Next blink in %g [s]",dt);
+            return true;
+        }
+        else if (blinkingPeriod=="gaussian")
+        {
+            dt=1e9;
+            int i=0;
+
+            // Cut the normal distribution to its first sigma
+            while (dt<blinkper_nrm-blinkper_sgm || dt>blinkper_nrm+blinkper_sgm)
+            {
+                dt = NormRand::scalar(blinkper_nrm,blinkper_sgm);
+                yDebug("[iCubBlinker] Computing next blink.. %g %g %g %i",dt,blinkper_nrm-blinkper_sgm,blinkper_nrm+blinkper_sgm,i); i++;
+            }
+            yInfo("[iCubBlinker] Next blink in %g [s]",dt);
+            return true;
+        }
+        else
+        {
+            yError("blinkingPeriod was neither gaussian nor fixed!");
+            return false;
+        }
     }
 
 public:
@@ -264,6 +308,8 @@ public:
         name =rf->check("name", Value("iCubBlinker")).asString().c_str();
         robot=rf->check("robot",Value("icub")).asString().c_str();
         blinkingBehavior=rf->check("blinkingBehavior",Value("fast")).asString().c_str();
+        blinkingPeriod=rf->check("blinkingPeriod",Value("fixed")).asString().c_str();
+        fixed_blinkper=rf->check("fixedBlinkPer",Value(5.0)).asDouble();
 
         blinking=rf->check("autoStart");
 
@@ -297,13 +343,7 @@ public:
         NormRand::init();
         doubleBlinkCnt=0;
         
-        dt = NormRand::scalar(blinkper_nrm,blinkper_sgm);
-        // Cut the normal distribution to its first sigma
-        while (dt<blinkper_nrm-blinkper_sgm || dt>blinkper_nrm+blinkper_sgm)
-        {
-            dt = NormRand::scalar(blinkper_nrm,blinkper_sgm);
-        }
-        // dt=5.0;
+        computeNextBlinkPeriod();
         t0=Time::now();
 
         int_mode = INTERACTION_MODE_IDLE;
@@ -528,6 +568,39 @@ public:
     }
 
     /***************************************************************/
+    bool set_blinking_period(const std::string& val)
+    {
+        bool res=false;
+
+        if (val=="gaussian" || val=="fixed")
+        {
+            blinkingPeriod=val;
+            res=true;
+        }
+        else
+        {
+            yError("Invalid blinking period requested! %s",val.c_str());
+        }
+
+        yInfo("Blinking period set to %s",get_blinking_period().c_str());
+
+        return res;
+    }
+
+    /***************************************************************/
+    string get_blinking_period()
+    {
+        if (blinkingPeriod=="gaussian")
+        {
+            return blinkingPeriod;
+        }
+        else 
+        {
+            return blinkingPeriod + " (" + double2string(fixed_blinkper) + " [s])";
+        }
+    }
+
+    /***************************************************************/
     bool updateModule()
     {
         // LockGuard lg(mutex);
@@ -543,18 +616,7 @@ public:
                     doubleBlinkCnt=0;
                 }
 
-	            dt = NormRand::scalar(blinkper_nrm,blinkper_sgm);
-	            int i=0;
-	            yInfo("[iCubBlinker] Next blink in %g %g %g %i",dt,blinkper_nrm-blinkper_sgm,blinkper_nrm+blinkper_sgm,i); i++;
-	            // Cut the normal distribution to its first sigma
-	            while (dt<blinkper_nrm-blinkper_sgm || dt>blinkper_nrm+blinkper_sgm)
-	            {
-	                dt = NormRand::scalar(blinkper_nrm,blinkper_sgm);
-	                yInfo("[iCubBlinker] Next blink in %g %g %g %i",dt,blinkper_nrm-blinkper_sgm,blinkper_nrm+blinkper_sgm,i); i++;
-	            }
-	            // dt = 5.0;
-	            yInfo("[iCubBlinker] Next blink in %g %g %g %i",dt,blinkper_nrm-blinkper_sgm,blinkper_nrm+blinkper_sgm,i);
-
+                computeNextBlinkPeriod();
 	            t0=Time::now();
             }
         }
@@ -581,6 +643,9 @@ int main(int argc, char *argv[])
         yInfo("  --robot             robot:  the name of the robot. Default icub.");
         yInfo("  --autoStart         flag:   If the module should autostart the blinking behavior. Default no.");
         yInfo("  --autoConnect       flag:   If the module should autoconnect itself to the face expression port. Default no.");
+        yInfo("  --blinkingBehavior  string: String that specifies the desired blinking behavior (either naturalistic or fast).");
+        yInfo("  --blinkingPeriod    string: String that specifies the desired blinking period   (either gaussian or fixed).");
+        yInfo("  --fixedBlinkPer     double: the blinking period in case of fixed blinkingPeriod (default 5.0).");
         yInfo("  --calibration::sMin int:    Manually set the minimum value for the blinking behavior (default 00).");
         yInfo("  --calibration::sMax int:    Manually set the maximum value for the blinking behavior (default 70).");
         printf("\n");
