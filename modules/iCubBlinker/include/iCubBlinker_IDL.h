@@ -90,6 +90,18 @@ public:
    */
   virtual std::string get_blinking_behavior();
   /**
+   * Sets the blinking period.
+   * @param val string that specifies the new blinking period
+   *            (either gaussian or fixed).
+   * @return true/false on success/failure.
+   */
+  virtual bool set_blinking_period(const std::string& val);
+  /**
+   * Gets the blinking period used by the module.
+   * @return a string with the current blinking period.
+   */
+  virtual std::string get_blinking_period();
+  /**
    * Calibrate the servo of the eyelids.
    * NOT IMPLEMENTED
    * @return true/false on success/failure.

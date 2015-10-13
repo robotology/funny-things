@@ -112,6 +112,23 @@ public:
   virtual bool read(yarp::os::ConnectionReader& connection);
 };
 
+class iCubBlinker_IDL_set_blinking_period : public yarp::os::Portable {
+public:
+  std::string val;
+  bool _return;
+  void init(const std::string& val);
+  virtual bool write(yarp::os::ConnectionWriter& connection);
+  virtual bool read(yarp::os::ConnectionReader& connection);
+};
+
+class iCubBlinker_IDL_get_blinking_period : public yarp::os::Portable {
+public:
+  std::string _return;
+  void init();
+  virtual bool write(yarp::os::ConnectionWriter& connection);
+  virtual bool read(yarp::os::ConnectionReader& connection);
+};
+
 class iCubBlinker_IDL_calib : public yarp::os::Portable {
 public:
   bool _return;
@@ -397,6 +414,50 @@ void iCubBlinker_IDL_get_blinking_behavior::init() {
   _return = "";
 }
 
+bool iCubBlinker_IDL_set_blinking_period::write(yarp::os::ConnectionWriter& connection) {
+  yarp::os::idl::WireWriter writer(connection);
+  if (!writer.writeListHeader(4)) return false;
+  if (!writer.writeTag("set_blinking_period",1,3)) return false;
+  if (!writer.writeString(val)) return false;
+  return true;
+}
+
+bool iCubBlinker_IDL_set_blinking_period::read(yarp::os::ConnectionReader& connection) {
+  yarp::os::idl::WireReader reader(connection);
+  if (!reader.readListReturn()) return false;
+  if (!reader.readBool(_return)) {
+    reader.fail();
+    return false;
+  }
+  return true;
+}
+
+void iCubBlinker_IDL_set_blinking_period::init(const std::string& val) {
+  _return = false;
+  this->val = val;
+}
+
+bool iCubBlinker_IDL_get_blinking_period::write(yarp::os::ConnectionWriter& connection) {
+  yarp::os::idl::WireWriter writer(connection);
+  if (!writer.writeListHeader(3)) return false;
+  if (!writer.writeTag("get_blinking_period",1,3)) return false;
+  return true;
+}
+
+bool iCubBlinker_IDL_get_blinking_period::read(yarp::os::ConnectionReader& connection) {
+  yarp::os::idl::WireReader reader(connection);
+  if (!reader.readListReturn()) return false;
+  if (!reader.readString(_return)) {
+    reader.fail();
+    return false;
+  }
+  return true;
+}
+
+void iCubBlinker_IDL_get_blinking_period::init() {
+  _return = "";
+}
+
 bool iCubBlinker_IDL_calib::write(yarp::os::ConnectionWriter& connection) {
   yarp::os::idl::WireWriter writer(connection);
   if (!writer.writeListHeader(1)) return false;
@@ -547,6 +608,26 @@ std::string iCubBlinker_IDL::get_blinking_behavior() {
   helper.init();
   if (!yarp().canWrite()) {
     yError("Missing server method '%s'?","std::string iCubBlinker_IDL::get_blinking_behavior()");
+  }
+  bool ok = yarp().write(helper,helper);
+  return ok?helper._return:_return;
+}
+bool iCubBlinker_IDL::set_blinking_period(const std::string& val) {
+  bool _return = false;
+  iCubBlinker_IDL_set_blinking_period helper;
+  helper.init(val);
+  if (!yarp().canWrite()) {
+    yError("Missing server method '%s'?","bool iCubBlinker_IDL::set_blinking_period(const std::string& val)");
+  }
+  bool ok = yarp().write(helper,helper);
+  return ok?helper._return:_return;
+}
+std::string iCubBlinker_IDL::get_blinking_period() {
+  std::string _return = "";
+  iCubBlinker_IDL_get_blinking_period helper;
+  helper.init();
+  if (!yarp().canWrite()) {
+    yError("Missing server method '%s'?","std::string iCubBlinker_IDL::get_blinking_period()");
   }
   bool ok = yarp().write(helper,helper);
   return ok?helper._return:_return;
@@ -724,6 +805,33 @@ bool iCubBlinker_IDL::read(yarp::os::ConnectionReader& connection) {
       reader.accept();
       return true;
     }
+    if (tag == "set_blinking_period") {
+      std::string val;
+      if (!reader.readString(val)) {
+        reader.fail();
+        return false;
+      }
+      bool _return;
+      _return = set_blinking_period(val);
+      yarp::os::idl::WireWriter writer(reader);
+      if (!writer.isNull()) {
+        if (!writer.writeListHeader(1)) return false;
+        if (!writer.writeBool(_return)) return false;
+      }
+      reader.accept();
+      return true;
+    }
+    if (tag == "get_blinking_period") {
+      std::string _return;
+      _return = get_blinking_period();
+      yarp::os::idl::WireWriter writer(reader);
+      if (!writer.isNull()) {
+        if (!writer.writeListHeader(1)) return false;
+        if (!writer.writeString(_return)) return false;
+      }
+      reader.accept();
+      return true;
+    }
     if (tag == "calib") {
       bool _return;
       _return = calib();
@@ -782,6 +890,8 @@ std::vector<std::string> iCubBlinker_IDL::help(const std::string& functionName) 
     helpString.push_back("get_interaction_mode");
     helpString.push_back("set_blinking_behavior");
     helpString.push_back("get_blinking_behavior");
+    helpString.push_back("set_blinking_period");
+    helpString.push_back("get_blinking_period");
     helpString.push_back("calib");
     helpString.push_back("help");
   }
@@ -857,6 +967,18 @@ std::vector<std::string> iCubBlinker_IDL::help(const std::string& functionName) 
       helpString.push_back("std::string get_blinking_behavior() ");
       helpString.push_back("Gets the blinking behavior used by the module. ");
       helpString.push_back("@return a string with the current blinking behavior. ");
+    }
+    if (functionName=="set_blinking_period") {
+      helpString.push_back("bool set_blinking_period(const std::string& val) ");
+      helpString.push_back("Sets the blinking period. ");
+      helpString.push_back("@param val string that specifies the new blinking period ");
+      helpString.push_back("           (either gaussian or fixed). ");
+      helpString.push_back("@return true/false on success/failure. ");
+    }
+    if (functionName=="get_blinking_period") {
+      helpString.push_back("std::string get_blinking_period() ");
+      helpString.push_back("Gets the blinking period used by the module. ");
+      helpString.push_back("@return a string with the current blinking period. ");
     }
     if (functionName=="calib") {
       helpString.push_back("bool calib() ");
