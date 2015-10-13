@@ -60,6 +60,7 @@ private:
     string robot;
 
     bool doubleBlink;
+    string blinkingBehavior;
 
     Port emotionsPort;
     RpcServer rpcPort;
@@ -94,6 +95,24 @@ private:
     }
 
     /***************************************************************/
+    bool doBlink()
+    {
+        if (blinkingBehavior=="naturalistic")
+        {
+            return doBlinkNaturalistic();
+        }
+        else if (blinkingBehavior=="fast")
+        {
+            return doBlinkFast();
+        }
+        else
+        {
+            yError("Blinking behavior is neither naturalistic or fast!");
+            return false;
+        }
+    }
+
+    /***************************************************************/
     bool doBlinkFast()
     {
         bool res = true;
@@ -109,7 +128,7 @@ private:
     }
 
     /***************************************************************/
-    bool doBlinkTimed()
+    bool doBlinkNaturalistic()
     {
         double t_cl = NormRand::scalar(closure_nrm,closure_sgm);
         // Cut the normal distribution to its first sigma
@@ -225,8 +244,6 @@ private:
         opening_nrm = int_mode.check("opening_nrm",Value(0.300)).asDouble();
         opening_sgm = int_mode.check("opening_sgm",Value(0.123)).asDouble();
 
-        printInteractionMode_params();
-
         return true;
     }
 
@@ -246,6 +263,7 @@ public:
 
         name =rf->check("name", Value("iCubBlinker")).asString().c_str();
         robot=rf->check("robot",Value("icub")).asString().c_str();
+        blinkingBehavior=rf->check("blinkingBehavior",Value("fast")).asString().c_str();
 
         blinking=rf->check("autoStart");
 
@@ -334,16 +352,26 @@ public:
 
     bool blink()
     {
-    	t0=Time::now();
-        // return doBlinkTimed();
+        t0=Time::now();
+        return doBlink();
+    }
+
+    bool blink_fast()
+    {
+        t0=Time::now();
         return doBlinkFast();
+    }
+
+    bool blink_naturalistic()
+    {
+        t0=Time::now();
+        return doBlinkNaturalistic();
     }
 
     bool dblink()
     {
     	t0=Time::now();
-        // return doBlinkTimed() && doBlinkTimed();
-        return doBlinkFast() && doBlinkFast();
+        return doBlink() && doBlink();
     }
 
     /***************************************************************/
@@ -419,6 +447,7 @@ public:
         }
 
         yInfo("Interaction mode set to %s",get_interaction_mode().c_str());
+        printInteractionMode_params();
 
         return res;
     }
@@ -473,6 +502,32 @@ public:
     }
 
     /***************************************************************/
+    bool set_blinking_behavior(const std::string& val)
+    {
+        bool res=false;
+
+        if (val=="naturalistic" || val=="fast")
+        {
+            blinkingBehavior=val;
+            res=true;
+        }
+        else
+        {
+            yError("Invalid blinking behavior requested! %s",val.c_str());
+        }
+
+        yInfo("Blinking behavior set to %s",get_blinking_behavior().c_str());
+
+        return res;
+    }
+
+    /***************************************************************/
+    string get_blinking_behavior()
+    {
+        return blinkingBehavior;
+    }
+
+    /***************************************************************/
     bool updateModule()
     {
         // LockGuard lg(mutex);
@@ -481,25 +536,11 @@ public:
         {
             if (blinking)
             {
-                if (int_mode == INTERACTION_MODE_CONVERSATION)
+                doBlink();
+                if ((++doubleBlinkCnt)%5==0)
                 {
-                    doBlinkTimed();
-                    // doBlinkFast();
-                    if ((++doubleBlinkCnt)%5==0)
-                    {
-                        doBlinkTimed();
-                        // doBlinkFast();
-                        doubleBlinkCnt=0;
-                    }
-                }
-                else
-                {
-                    doBlinkFast();
-                    if ((++doubleBlinkCnt)%5==0)
-                    {
-                        doBlinkFast();
-                        doubleBlinkCnt=0;
-                    }
+                    doBlink();
+                    doubleBlinkCnt=0;
                 }
 
 	            dt = NormRand::scalar(blinkper_nrm,blinkper_sgm);
