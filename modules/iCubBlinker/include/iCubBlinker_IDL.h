@@ -45,28 +45,16 @@ public:
   virtual bool dblink();
   /**
    * Saves the module configuration into a .ini file (default context is
-   * funnyThings, default file is iCubBreather.ini)
+   * funnyThings, default file is iCubBlinker.ini)
    * @return a string with the full path of the file it saved on.
    */
   virtual std::string save();
   /**
    * Loads the calib configuration from a .ini file (default context is
-   * funnyThings, default file is iCubBreather.ini)
+   * funnyThings, default file is iCubBlinker.ini)
    * @return a string with the full path of the file it loaded from.
    */
   virtual std::string load();
-  /**
-   * Sets the minimum delta T between consecutive blinks.
-   * @param val specifies the new value of min_dt
-   * @return true/false on success/failure.
-   */
-  virtual bool set_min_dt(const double val);
-  /**
-   * Sets the maximum delta T between consecutive blinks.
-   * @param val specifies the new value of max_dt
-   * @return true/false on success/failure.
-   */
-  virtual bool set_max_dt(const double val);
   /**
    * Sets the interaction mode in which the module will go.
    * @param val specifies the new interaction mode
@@ -74,16 +62,6 @@ public:
    * @return true/false on success/failure.
    */
   virtual bool set_interaction_mode(const std::string& val);
-  /**
-   * Gets the minimum delta T between consecutive blinks.
-   * @return the current value of min_dt.
-   */
-  virtual double get_min_dt();
-  /**
-   * Gets the maximum delta T between consecutive blinks.
-   * @return the current value of max_dt.
-   */
-  virtual double get_max_dt();
   /**
    * Gets the interaction mode in which the module is.
    * @return a string with the current interaction mode.

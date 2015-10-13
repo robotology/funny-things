@@ -62,45 +62,11 @@ public:
   virtual bool read(yarp::os::ConnectionReader& connection);
 };
 
-class iCubBlinker_IDL_set_min_dt : public yarp::os::Portable {
-public:
-  double val;
-  bool _return;
-  void init(const double val);
-  virtual bool write(yarp::os::ConnectionWriter& connection);
-  virtual bool read(yarp::os::ConnectionReader& connection);
-};
-
-class iCubBlinker_IDL_set_max_dt : public yarp::os::Portable {
-public:
-  double val;
-  bool _return;
-  void init(const double val);
-  virtual bool write(yarp::os::ConnectionWriter& connection);
-  virtual bool read(yarp::os::ConnectionReader& connection);
-};
-
 class iCubBlinker_IDL_set_interaction_mode : public yarp::os::Portable {
 public:
   std::string val;
   bool _return;
   void init(const std::string& val);
-  virtual bool write(yarp::os::ConnectionWriter& connection);
-  virtual bool read(yarp::os::ConnectionReader& connection);
-};
-
-class iCubBlinker_IDL_get_min_dt : public yarp::os::Portable {
-public:
-  double _return;
-  void init();
-  virtual bool write(yarp::os::ConnectionWriter& connection);
-  virtual bool read(yarp::os::ConnectionReader& connection);
-};
-
-class iCubBlinker_IDL_get_max_dt : public yarp::os::Portable {
-public:
-  double _return;
-  void init();
   virtual bool write(yarp::os::ConnectionWriter& connection);
   virtual bool read(yarp::os::ConnectionReader& connection);
 };
@@ -268,52 +234,6 @@ void iCubBlinker_IDL_load::init() {
   _return = "";
 }
 
-bool iCubBlinker_IDL_set_min_dt::write(yarp::os::ConnectionWriter& connection) {
-  yarp::os::idl::WireWriter writer(connection);
-  if (!writer.writeListHeader(4)) return false;
-  if (!writer.writeTag("set_min_dt",1,3)) return false;
-  if (!writer.writeDouble(val)) return false;
-  return true;
-}
-
-bool iCubBlinker_IDL_set_min_dt::read(yarp::os::ConnectionReader& connection) {
-  yarp::os::idl::WireReader reader(connection);
-  if (!reader.readListReturn()) return false;
-  if (!reader.readBool(_return)) {
-    reader.fail();
-    return false;
-  }
-  return true;
-}
-
-void iCubBlinker_IDL_set_min_dt::init(const double val) {
-  _return = false;
-  this->val = val;
-}
-
-bool iCubBlinker_IDL_set_max_dt::write(yarp::os::ConnectionWriter& connection) {
-  yarp::os::idl::WireWriter writer(connection);
-  if (!writer.writeListHeader(4)) return false;
-  if (!writer.writeTag("set_max_dt",1,3)) return false;
-  if (!writer.writeDouble(val)) return false;
-  return true;
-}
-
-bool iCubBlinker_IDL_set_max_dt::read(yarp::os::ConnectionReader& connection) {
-  yarp::os::idl::WireReader reader(connection);
-  if (!reader.readListReturn()) return false;
-  if (!reader.readBool(_return)) {
-    reader.fail();
-    return false;
-  }
-  return true;
-}
-
-void iCubBlinker_IDL_set_max_dt::init(const double val) {
-  _return = false;
-  this->val = val;
-}
-
 bool iCubBlinker_IDL_set_interaction_mode::write(yarp::os::ConnectionWriter& connection) {
   yarp::os::idl::WireWriter writer(connection);
   if (!writer.writeListHeader(4)) return false;
@@ -335,48 +255,6 @@ bool iCubBlinker_IDL_set_interaction_mode::read(yarp::os::ConnectionReader& conn
 void iCubBlinker_IDL_set_interaction_mode::init(const std::string& val) {
   _return = false;
   this->val = val;
-}
-
-bool iCubBlinker_IDL_get_min_dt::write(yarp::os::ConnectionWriter& connection) {
-  yarp::os::idl::WireWriter writer(connection);
-  if (!writer.writeListHeader(3)) return false;
-  if (!writer.writeTag("get_min_dt",1,3)) return false;
-  return true;
-}
-
-bool iCubBlinker_IDL_get_min_dt::read(yarp::os::ConnectionReader& connection) {
-  yarp::os::idl::WireReader reader(connection);
-  if (!reader.readListReturn()) return false;
-  if (!reader.readDouble(_return)) {
-    reader.fail();
-    return false;
-  }
-  return true;
-}
-
-void iCubBlinker_IDL_get_min_dt::init() {
-  _return = (double)0;
-}
-
-bool iCubBlinker_IDL_get_max_dt::write(yarp::os::ConnectionWriter& connection) {
-  yarp::os::idl::WireWriter writer(connection);
-  if (!writer.writeListHeader(3)) return false;
-  if (!writer.writeTag("get_max_dt",1,3)) return false;
-  return true;
-}
-
-bool iCubBlinker_IDL_get_max_dt::read(yarp::os::ConnectionReader& connection) {
-  yarp::os::idl::WireReader reader(connection);
-  if (!reader.readListReturn()) return false;
-  if (!reader.readDouble(_return)) {
-    reader.fail();
-    return false;
-  }
-  return true;
-}
-
-void iCubBlinker_IDL_get_max_dt::init() {
-  _return = (double)0;
 }
 
 bool iCubBlinker_IDL_get_interaction_mode::write(yarp::os::ConnectionWriter& connection) {
@@ -494,52 +372,12 @@ std::string iCubBlinker_IDL::load() {
   bool ok = yarp().write(helper,helper);
   return ok?helper._return:_return;
 }
-bool iCubBlinker_IDL::set_min_dt(const double val) {
-  bool _return = false;
-  iCubBlinker_IDL_set_min_dt helper;
-  helper.init(val);
-  if (!yarp().canWrite()) {
-    yError("Missing server method '%s'?","bool iCubBlinker_IDL::set_min_dt(const double val)");
-  }
-  bool ok = yarp().write(helper,helper);
-  return ok?helper._return:_return;
-}
-bool iCubBlinker_IDL::set_max_dt(const double val) {
-  bool _return = false;
-  iCubBlinker_IDL_set_max_dt helper;
-  helper.init(val);
-  if (!yarp().canWrite()) {
-    yError("Missing server method '%s'?","bool iCubBlinker_IDL::set_max_dt(const double val)");
-  }
-  bool ok = yarp().write(helper,helper);
-  return ok?helper._return:_return;
-}
 bool iCubBlinker_IDL::set_interaction_mode(const std::string& val) {
   bool _return = false;
   iCubBlinker_IDL_set_interaction_mode helper;
   helper.init(val);
   if (!yarp().canWrite()) {
     yError("Missing server method '%s'?","bool iCubBlinker_IDL::set_interaction_mode(const std::string& val)");
-  }
-  bool ok = yarp().write(helper,helper);
-  return ok?helper._return:_return;
-}
-double iCubBlinker_IDL::get_min_dt() {
-  double _return = (double)0;
-  iCubBlinker_IDL_get_min_dt helper;
-  helper.init();
-  if (!yarp().canWrite()) {
-    yError("Missing server method '%s'?","double iCubBlinker_IDL::get_min_dt()");
-  }
-  bool ok = yarp().write(helper,helper);
-  return ok?helper._return:_return;
-}
-double iCubBlinker_IDL::get_max_dt() {
-  double _return = (double)0;
-  iCubBlinker_IDL_get_max_dt helper;
-  helper.init();
-  if (!yarp().canWrite()) {
-    yError("Missing server method '%s'?","double iCubBlinker_IDL::get_max_dt()");
   }
   bool ok = yarp().write(helper,helper);
   return ok?helper._return:_return;
@@ -651,38 +489,6 @@ bool iCubBlinker_IDL::read(yarp::os::ConnectionReader& connection) {
       reader.accept();
       return true;
     }
-    if (tag == "set_min_dt") {
-      double val;
-      if (!reader.readDouble(val)) {
-        reader.fail();
-        return false;
-      }
-      bool _return;
-      _return = set_min_dt(val);
-      yarp::os::idl::WireWriter writer(reader);
-      if (!writer.isNull()) {
-        if (!writer.writeListHeader(1)) return false;
-        if (!writer.writeBool(_return)) return false;
-      }
-      reader.accept();
-      return true;
-    }
-    if (tag == "set_max_dt") {
-      double val;
-      if (!reader.readDouble(val)) {
-        reader.fail();
-        return false;
-      }
-      bool _return;
-      _return = set_max_dt(val);
-      yarp::os::idl::WireWriter writer(reader);
-      if (!writer.isNull()) {
-        if (!writer.writeListHeader(1)) return false;
-        if (!writer.writeBool(_return)) return false;
-      }
-      reader.accept();
-      return true;
-    }
     if (tag == "set_interaction_mode") {
       std::string val;
       if (!reader.readString(val)) {
@@ -695,28 +501,6 @@ bool iCubBlinker_IDL::read(yarp::os::ConnectionReader& connection) {
       if (!writer.isNull()) {
         if (!writer.writeListHeader(1)) return false;
         if (!writer.writeBool(_return)) return false;
-      }
-      reader.accept();
-      return true;
-    }
-    if (tag == "get_min_dt") {
-      double _return;
-      _return = get_min_dt();
-      yarp::os::idl::WireWriter writer(reader);
-      if (!writer.isNull()) {
-        if (!writer.writeListHeader(1)) return false;
-        if (!writer.writeDouble(_return)) return false;
-      }
-      reader.accept();
-      return true;
-    }
-    if (tag == "get_max_dt") {
-      double _return;
-      _return = get_max_dt();
-      yarp::os::idl::WireWriter writer(reader);
-      if (!writer.isNull()) {
-        if (!writer.writeListHeader(1)) return false;
-        if (!writer.writeDouble(_return)) return false;
       }
       reader.accept();
       return true;
@@ -784,11 +568,7 @@ std::vector<std::string> iCubBlinker_IDL::help(const std::string& functionName) 
     helpString.push_back("dblink");
     helpString.push_back("save");
     helpString.push_back("load");
-    helpString.push_back("set_min_dt");
-    helpString.push_back("set_max_dt");
     helpString.push_back("set_interaction_mode");
-    helpString.push_back("get_min_dt");
-    helpString.push_back("get_max_dt");
     helpString.push_back("get_interaction_mode");
     helpString.push_back("calib");
     helpString.push_back("help");
@@ -823,26 +603,14 @@ std::vector<std::string> iCubBlinker_IDL::help(const std::string& functionName) 
     if (functionName=="save") {
       helpString.push_back("std::string save() ");
       helpString.push_back("Saves the module configuration into a .ini file (default context is ");
-      helpString.push_back("funnyThings, default file is iCubBreather.ini) ");
+      helpString.push_back("funnyThings, default file is iCubBlinker.ini) ");
       helpString.push_back("@return a string with the full path of the file it saved on. ");
     }
     if (functionName=="load") {
       helpString.push_back("std::string load() ");
       helpString.push_back("Loads the calib configuration from a .ini file (default context is ");
-      helpString.push_back("funnyThings, default file is iCubBreather.ini) ");
+      helpString.push_back("funnyThings, default file is iCubBlinker.ini) ");
       helpString.push_back("@return a string with the full path of the file it loaded from. ");
-    }
-    if (functionName=="set_min_dt") {
-      helpString.push_back("bool set_min_dt(const double val) ");
-      helpString.push_back("Sets the minimum delta T between consecutive blinks. ");
-      helpString.push_back("@param val specifies the new value of min_dt ");
-      helpString.push_back("@return true/false on success/failure. ");
-    }
-    if (functionName=="set_max_dt") {
-      helpString.push_back("bool set_max_dt(const double val) ");
-      helpString.push_back("Sets the maximum delta T between consecutive blinks. ");
-      helpString.push_back("@param val specifies the new value of max_dt ");
-      helpString.push_back("@return true/false on success/failure. ");
     }
     if (functionName=="set_interaction_mode") {
       helpString.push_back("bool set_interaction_mode(const std::string& val) ");
@@ -850,16 +618,6 @@ std::vector<std::string> iCubBlinker_IDL::help(const std::string& functionName) 
       helpString.push_back("@param val specifies the new interaction mode ");
       helpString.push_back("           (either idle or conversation for now). ");
       helpString.push_back("@return true/false on success/failure. ");
-    }
-    if (functionName=="get_min_dt") {
-      helpString.push_back("double get_min_dt() ");
-      helpString.push_back("Gets the minimum delta T between consecutive blinks. ");
-      helpString.push_back("@return the current value of min_dt. ");
-    }
-    if (functionName=="get_max_dt") {
-      helpString.push_back("double get_max_dt() ");
-      helpString.push_back("Gets the maximum delta T between consecutive blinks. ");
-      helpString.push_back("@return the current value of max_dt. ");
     }
     if (functionName=="get_interaction_mode") {
       helpString.push_back("std::string get_interaction_mode() ");
