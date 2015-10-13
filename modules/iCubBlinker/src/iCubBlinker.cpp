@@ -56,15 +56,16 @@ private:
     // Resource finder used to find for files and configurations:
     ResourceFinder* rf;
 
-    string name,robot;
+    string name;
+    string robot;
+
+    bool doubleBlink;
 
     Port emotionsPort;
     RpcServer rpcPort;
 
     Mutex mutex;
     bool blinking;
-
-    double min_dt,max_dt;
 
     double dt,t0;
     int doubleBlinkCnt;
@@ -73,12 +74,9 @@ private:
 
     InteractionMode int_mode;
     double blinkper_nrm, blinkper_sgm;  // period of the blinking
-    double closure_nrm, closure_sgm;    // closure statistics
-    double sustain_nrm, sustain_sgm;    // sustain statistics
-    double opening_nrm, opening_sgm;    // opening statistics
-
-    string eyelids_open;    // it's the `E` command
-    string eyelids_closed;  // it's the `U` command
+    double closure_nrm,   closure_sgm;  // closure statistics
+    double sustain_nrm,   sustain_sgm;  // sustain statistics
+    double opening_nrm,   opening_sgm;  // opening statistics
 
     /***************************************************************/
     bool sendRawValue(const string &_value)
@@ -162,36 +160,29 @@ private:
     bool set_calib_values()
     {
     	yWarning("[iCubBlinker] Sending calib values does nothing currently!");
-        // bool res = true;
-        // res = res && sendRawValue(eyelids_closed); // close eyelids
-        // res = res && sendRawValue(eyelids_open);   // open  eyelids
 
-        // return res;
         return false;
     }
 
     /***************************************************************/
     bool setInteractionMode_IDLE()
     {
-        // we should set:
-        //   1. the frequency of multiple blinks
-        //   2. the speed with which the icub closes its eyes
-        //   3. the time the icub stays with the eyes closed
-        //   4. the speed with which the icub opens its eyes
+        Bottle idle_mode=(rf->findGroup("idle_mode"));
 
-        blinkper_nrm = 5.2;             blinkper_sgm = 3.7;
-        
-        // These would be the "slow" settings:
-        closure_nrm = 0.111;            closure_sgm = 0.031;
-        sustain_nrm = 0.020;            sustain_sgm = 0.005;
-        opening_nrm = 0.300;            opening_sgm = 0.123;
-
-        // // These would be the "fast" settings:
-        // closure_nrm = 0.111-0.031;            closure_sgm = 0.031;
-        // sustain_nrm = 0.020-0.005;            sustain_sgm = 0.005;
-        // opening_nrm = 0.300-0.123;            opening_sgm = 0.123;
-
-        int_mode = INTERACTION_MODE_IDLE;
+        if (idle_mode.size()>0)
+        {
+            bool res = retrieveInteractionMode_params(idle_mode);
+            if (res)
+            {
+                int_mode = INTERACTION_MODE_IDLE;
+            }
+            return res;
+        }
+        else
+        {
+            yError("[iCubBlinker] no idle_mode group found in .ini file!");
+            return false;
+        }
 
         return true;
     }
@@ -199,27 +190,52 @@ private:
     /***************************************************************/    
     bool setInteractionMode_CONVERSATION()
     {
-        // we should set:
-        //   1. the frequency of multiple blinks
-        //   2. the speed with which the icub closes its eyes
-        //   3. the time the icub stays with the eyes closed
-        //   4. the speed with which the icub opens its eyes
+        Bottle conversation_mode=(rf->findGroup("conversation_mode"));
 
-        blinkper_nrm = 4.6;             blinkper_sgm = 2.0;
-
-        // These would be the "slow" settings:
-        closure_nrm = 0.111;            closure_sgm = 0.031;
-        sustain_nrm = 0.020;            sustain_sgm = 0.005;
-        opening_nrm = 0.300;            opening_sgm = 0.123;
-
-        // // These would be the "fast" settings:
-        // closure_nrm = 0.111-0.031;            closure_sgm = 0.031;
-        // sustain_nrm = 0.020-0.005;            sustain_sgm = 0.005;
-        // opening_nrm = 0.300-0.123;            opening_sgm = 0.123;
-
-        int_mode = INTERACTION_MODE_CONVERSATION;
+        if (conversation_mode.size()>0)
+        {
+            bool res = retrieveInteractionMode_params(conversation_mode);
+            if (res)
+            {
+                int_mode = INTERACTION_MODE_CONVERSATION;
+            }
+            return res;
+        }
+        else
+        {
+            yError("[iCubBlinker] no conversation_mode group found in ini file!");
+            return false;
+        }
 
         return true;
+    }
+
+    bool retrieveInteractionMode_params(Bottle &int_mode)
+    {
+        // If the parameters are not found, it will default to the idle mode
+        blinkper_nrm = int_mode.check("blinkper_nrm",Value(5.2)).asDouble();
+        blinkper_sgm = int_mode.check("blinkper_sgm",Value(3.7)).asDouble();
+
+        closure_nrm = int_mode.check("closure_nrm",Value(0.111)).asDouble();
+        closure_sgm = int_mode.check("closure_sgm",Value(0.031)).asDouble();
+
+        sustain_nrm = int_mode.check("sustain_nrm",Value(0.020)).asDouble();
+        sustain_sgm = int_mode.check("sustain_sgm",Value(0.005)).asDouble();
+
+        opening_nrm = int_mode.check("opening_nrm",Value(0.300)).asDouble();
+        opening_sgm = int_mode.check("opening_sgm",Value(0.123)).asDouble();
+
+        printInteractionMode_params();
+
+        return true;
+    }
+
+    bool printInteractionMode_params()
+    {
+        yInfo("[iCubBlinker] blinker period\t( nrm %g\tsgm %g )",blinkper_nrm,blinkper_sgm);
+        yInfo("[iCubBlinker] closure speed \t( nrm %g\tsgm %g )",closure_nrm,closure_sgm);
+        yInfo("[iCubBlinker] sustain speed \t( nrm %g\tsgm %g )",sustain_nrm,sustain_sgm);
+        yInfo("[iCubBlinker] opening speed \t( nrm %g\tsgm %g )",opening_nrm,opening_sgm);
     }
 
 public:
@@ -231,9 +247,6 @@ public:
         name =rf->check("name", Value("iCubBlinker")).asString().c_str();
         robot=rf->check("robot",Value("icub")).asString().c_str();
 
-        // min_dt=rf->check("min_dt",Value(3.0)).asDouble();
-        // max_dt=rf->check("max_dt",Value(10.0)).asDouble();
-
         blinking=rf->check("autoStart");
 
         emotionsPort.open(("/"+name+"/emotions/raw").c_str());
@@ -241,6 +254,8 @@ public:
         {
             Network::connect(emotionsPort.getName().c_str(),"/"+robot+"/face/raw/in");
         }
+
+        doubleBlink=rf->check("doubleBlink");
 
         rpcPort.open(("/"+name+"/rpc").c_str());
         attach(rpcPort);
@@ -346,8 +361,6 @@ public:
         {
             myfile << "name  \t"  << name   << endl;
             myfile << "robot \t"  << robot  << endl;
-            myfile << "min_dt\t"  << min_dt << endl;
-            myfile << "max_dt\t"  << max_dt << endl;
             if (rf->check("autoStart"))
             {
                 myfile << "autoStart" << endl;
@@ -405,25 +418,10 @@ public:
             res = setInteractionMode(INTERACTION_MODE_CONVERSATION);
         }
 
-        yInfo("Setting interaction mode to %s",get_interaction_mode().c_str());
+        yInfo("Interaction mode set to %s",get_interaction_mode().c_str());
 
         return res;
     }
-
-    bool  set_min_dt(const double val)
-    {
-        min_dt = val;
-        return true;
-    }
-
-    bool  set_max_dt(const double val)
-    {
-        max_dt = val;
-        return true;
-    }
-
-    double get_min_dt() { return min_dt; }
-    double get_max_dt() { return max_dt; }
 
     /***************************************************************/
     bool setInteractionMode(InteractionMode _int_mode)
@@ -540,8 +538,6 @@ int main(int argc, char *argv[])
         yInfo("  --from              from:   the name of the .ini file (default iCubBlinker.ini).");
         yInfo("  --name              name:   the name of the module (default iCubBlinker).");
         yInfo("  --robot             robot:  the name of the robot. Default icub.");
-        // yInfo("  --min_dt     double: the default minimum delta T between consecutive blinks. Default  3.0[s].");
-        // yInfo("  --max_dt     double: the default maximum delta T between consecutive blinks. Default 10.0[s].");
         yInfo("  --autoStart         flag:   If the module should autostart the blinking behavior. Default no.");
         yInfo("  --autoConnect       flag:   If the module should autoconnect itself to the face expression port. Default no.");
         yInfo("  --calibration::sMin int:    Manually set the minimum value for the blinking behavior (default 00).");
