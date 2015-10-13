@@ -39,6 +39,16 @@ public:
    */
   virtual bool blink();
   /**
+   * Performs a fast blink.
+   * @return true/false on success/failure.
+   */
+  virtual bool blink_fast();
+  /**
+   * Performs a naturalistic blink.
+   * @return true/false on success/failure.
+   */
+  virtual bool blink_naturalistic();
+  /**
    * Performs a double blink.
    * @return true/false on success/failure.
    */

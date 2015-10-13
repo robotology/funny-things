@@ -38,6 +38,22 @@ public:
   virtual bool read(yarp::os::ConnectionReader& connection);
 };
 
+class iCubBlinker_IDL_blink_fast : public yarp::os::Portable {
+public:
+  bool _return;
+  void init();
+  virtual bool write(yarp::os::ConnectionWriter& connection);
+  virtual bool read(yarp::os::ConnectionReader& connection);
+};
+
+class iCubBlinker_IDL_blink_naturalistic : public yarp::os::Portable {
+public:
+  bool _return;
+  void init();
+  virtual bool write(yarp::os::ConnectionWriter& connection);
+  virtual bool read(yarp::os::ConnectionReader& connection);
+};
+
 class iCubBlinker_IDL_dblink : public yarp::os::Portable {
 public:
   bool _return;
@@ -168,6 +184,48 @@ bool iCubBlinker_IDL_blink::read(yarp::os::ConnectionReader& connection) {
 }
 
 void iCubBlinker_IDL_blink::init() {
+  _return = false;
+}
+
+bool iCubBlinker_IDL_blink_fast::write(yarp::os::ConnectionWriter& connection) {
+  yarp::os::idl::WireWriter writer(connection);
+  if (!writer.writeListHeader(2)) return false;
+  if (!writer.writeTag("blink_fast",1,2)) return false;
+  return true;
+}
+
+bool iCubBlinker_IDL_blink_fast::read(yarp::os::ConnectionReader& connection) {
+  yarp::os::idl::WireReader reader(connection);
+  if (!reader.readListReturn()) return false;
+  if (!reader.readBool(_return)) {
+    reader.fail();
+    return false;
+  }
+  return true;
+}
+
+void iCubBlinker_IDL_blink_fast::init() {
+  _return = false;
+}
+
+bool iCubBlinker_IDL_blink_naturalistic::write(yarp::os::ConnectionWriter& connection) {
+  yarp::os::idl::WireWriter writer(connection);
+  if (!writer.writeListHeader(2)) return false;
+  if (!writer.writeTag("blink_naturalistic",1,2)) return false;
+  return true;
+}
+
+bool iCubBlinker_IDL_blink_naturalistic::read(yarp::os::ConnectionReader& connection) {
+  yarp::os::idl::WireReader reader(connection);
+  if (!reader.readListReturn()) return false;
+  if (!reader.readBool(_return)) {
+    reader.fail();
+    return false;
+  }
+  return true;
+}
+
+void iCubBlinker_IDL_blink_naturalistic::init() {
   _return = false;
 }
 
@@ -342,6 +400,26 @@ bool iCubBlinker_IDL::blink() {
   bool ok = yarp().write(helper,helper);
   return ok?helper._return:_return;
 }
+bool iCubBlinker_IDL::blink_fast() {
+  bool _return = false;
+  iCubBlinker_IDL_blink_fast helper;
+  helper.init();
+  if (!yarp().canWrite()) {
+    yError("Missing server method '%s'?","bool iCubBlinker_IDL::blink_fast()");
+  }
+  bool ok = yarp().write(helper,helper);
+  return ok?helper._return:_return;
+}
+bool iCubBlinker_IDL::blink_naturalistic() {
+  bool _return = false;
+  iCubBlinker_IDL_blink_naturalistic helper;
+  helper.init();
+  if (!yarp().canWrite()) {
+    yError("Missing server method '%s'?","bool iCubBlinker_IDL::blink_naturalistic()");
+  }
+  bool ok = yarp().write(helper,helper);
+  return ok?helper._return:_return;
+}
 bool iCubBlinker_IDL::dblink() {
   bool _return = false;
   iCubBlinker_IDL_dblink helper;
@@ -448,6 +526,28 @@ bool iCubBlinker_IDL::read(yarp::os::ConnectionReader& connection) {
     if (tag == "blink") {
       bool _return;
       _return = blink();
+      yarp::os::idl::WireWriter writer(reader);
+      if (!writer.isNull()) {
+        if (!writer.writeListHeader(1)) return false;
+        if (!writer.writeBool(_return)) return false;
+      }
+      reader.accept();
+      return true;
+    }
+    if (tag == "blink_fast") {
+      bool _return;
+      _return = blink_fast();
+      yarp::os::idl::WireWriter writer(reader);
+      if (!writer.isNull()) {
+        if (!writer.writeListHeader(1)) return false;
+        if (!writer.writeBool(_return)) return false;
+      }
+      reader.accept();
+      return true;
+    }
+    if (tag == "blink_naturalistic") {
+      bool _return;
+      _return = blink_naturalistic();
       yarp::os::idl::WireWriter writer(reader);
       if (!writer.isNull()) {
         if (!writer.writeListHeader(1)) return false;
@@ -565,6 +665,8 @@ std::vector<std::string> iCubBlinker_IDL::help(const std::string& functionName) 
     helpString.push_back("stop");
     helpString.push_back("status");
     helpString.push_back("blink");
+    helpString.push_back("blink_fast");
+    helpString.push_back("blink_naturalistic");
     helpString.push_back("dblink");
     helpString.push_back("save");
     helpString.push_back("load");
@@ -593,6 +695,16 @@ std::vector<std::string> iCubBlinker_IDL::help(const std::string& functionName) 
     if (functionName=="blink") {
       helpString.push_back("bool blink() ");
       helpString.push_back("Performs a single blink. ");
+      helpString.push_back("@return true/false on success/failure. ");
+    }
+    if (functionName=="blink_fast") {
+      helpString.push_back("bool blink_fast() ");
+      helpString.push_back("Performs a fast blink. ");
+      helpString.push_back("@return true/false on success/failure. ");
+    }
+    if (functionName=="blink_naturalistic") {
+      helpString.push_back("bool blink_naturalistic() ");
+      helpString.push_back("Performs a naturalistic blink. ");
       helpString.push_back("@return true/false on success/failure. ");
     }
     if (functionName=="dblink") {
