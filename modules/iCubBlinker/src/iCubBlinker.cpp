@@ -603,17 +603,20 @@ public:
     /***************************************************************/
     bool updateModule()
     {
-        // LockGuard lg(mutex);
+        LockGuard lg(mutex);
 
         if (Time::now()-t0>=dt)
         {
             if (isBlinking)
             {
                 doBlink();
-                if ((++doubleBlinkCnt)%5==0)
+                if (doubleBlink)
                 {
-                    doBlink();
-                    doubleBlinkCnt=0;
+                    if ((++doubleBlinkCnt)%5==0)
+                    {
+                        doBlink();
+                        doubleBlinkCnt=0;
+                    }
                 }
 
                 computeNextBlinkPeriod();
