@@ -74,7 +74,7 @@ private:
     RpcServer rpcPort;
 
     Mutex mutex;
-    bool blinking;
+    bool isBlinking;
 
     double dt;
     double t0;
@@ -311,7 +311,7 @@ public:
         blinkingPeriod=rf->check("blinkingPeriod",Value("fixed")).asString().c_str();
         fixed_blinkper=rf->check("fixedBlinkPer",Value(5.0)).asDouble();
 
-        blinking=rf->check("autoStart");
+        isBlinking=rf->check("autoStart");
 
         emotionsPort.open(("/"+name+"/emotions/raw").c_str());
         if (rf->check("autoConnect"))
@@ -372,20 +372,20 @@ public:
     bool start()
     {
     	yInfo("[iCubBlinker] start command received");
-        blinking=true;
+        isBlinking=true;
         return true;
     }
 
     bool stop()
     {
     	yInfo("[iCubBlinker] stop  command received");
-        blinking=false;
+        isBlinking=false;
         return true;
     }
 
     string status()
     {
-        string res=blinking?"on":"off";
+        string res=isBlinking?"on":"off";
         res=res+"_"+get_interaction_mode();
         return res;
     }
@@ -607,7 +607,7 @@ public:
 
         if (Time::now()-t0>=dt)
         {
-            if (blinking)
+            if (isBlinking)
             {
                 doBlink();
                 if ((++doubleBlinkCnt)%5==0)
