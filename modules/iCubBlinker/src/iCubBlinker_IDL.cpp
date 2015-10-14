@@ -129,6 +129,31 @@ public:
   virtual bool read(yarp::os::ConnectionReader& connection);
 };
 
+class iCubBlinker_IDL_set_double_blink : public yarp::os::Portable {
+public:
+  std::string val;
+  bool _return;
+  void init(const std::string& val);
+  virtual bool write(yarp::os::ConnectionWriter& connection);
+  virtual bool read(yarp::os::ConnectionReader& connection);
+};
+
+class iCubBlinker_IDL_get_double_blink : public yarp::os::Portable {
+public:
+  std::string _return;
+  void init();
+  virtual bool write(yarp::os::ConnectionWriter& connection);
+  virtual bool read(yarp::os::ConnectionReader& connection);
+};
+
+class iCubBlinker_IDL_print_params : public yarp::os::Portable {
+public:
+  std::string _return;
+  void init();
+  virtual bool write(yarp::os::ConnectionWriter& connection);
+  virtual bool read(yarp::os::ConnectionReader& connection);
+};
+
 class iCubBlinker_IDL_calib : public yarp::os::Portable {
 public:
   bool _return;
@@ -458,6 +483,71 @@ void iCubBlinker_IDL_get_blinking_period::init() {
   _return = "";
 }
 
+bool iCubBlinker_IDL_set_double_blink::write(yarp::os::ConnectionWriter& connection) {
+  yarp::os::idl::WireWriter writer(connection);
+  if (!writer.writeListHeader(4)) return false;
+  if (!writer.writeTag("set_double_blink",1,3)) return false;
+  if (!writer.writeString(val)) return false;
+  return true;
+}
+
+bool iCubBlinker_IDL_set_double_blink::read(yarp::os::ConnectionReader& connection) {
+  yarp::os::idl::WireReader reader(connection);
+  if (!reader.readListReturn()) return false;
+  if (!reader.readBool(_return)) {
+    reader.fail();
+    return false;
+  }
+  return true;
+}
+
+void iCubBlinker_IDL_set_double_blink::init(const std::string& val) {
+  _return = false;
+  this->val = val;
+}
+
+bool iCubBlinker_IDL_get_double_blink::write(yarp::os::ConnectionWriter& connection) {
+  yarp::os::idl::WireWriter writer(connection);
+  if (!writer.writeListHeader(3)) return false;
+  if (!writer.writeTag("get_double_blink",1,3)) return false;
+  return true;
+}
+
+bool iCubBlinker_IDL_get_double_blink::read(yarp::os::ConnectionReader& connection) {
+  yarp::os::idl::WireReader reader(connection);
+  if (!reader.readListReturn()) return false;
+  if (!reader.readString(_return)) {
+    reader.fail();
+    return false;
+  }
+  return true;
+}
+
+void iCubBlinker_IDL_get_double_blink::init() {
+  _return = "";
+}
+
+bool iCubBlinker_IDL_print_params::write(yarp::os::ConnectionWriter& connection) {
+  yarp::os::idl::WireWriter writer(connection);
+  if (!writer.writeListHeader(2)) return false;
+  if (!writer.writeTag("print_params",1,2)) return false;
+  return true;
+}
+
+bool iCubBlinker_IDL_print_params::read(yarp::os::ConnectionReader& connection) {
+  yarp::os::idl::WireReader reader(connection);
+  if (!reader.readListReturn()) return false;
+  if (!reader.readString(_return)) {
+    reader.fail();
+    return false;
+  }
+  return true;
+}
+
+void iCubBlinker_IDL_print_params::init() {
+  _return = "";
+}
+
 bool iCubBlinker_IDL_calib::write(yarp::os::ConnectionWriter& connection) {
   yarp::os::idl::WireWriter writer(connection);
   if (!writer.writeListHeader(1)) return false;
@@ -628,6 +718,36 @@ std::string iCubBlinker_IDL::get_blinking_period() {
   helper.init();
   if (!yarp().canWrite()) {
     yError("Missing server method '%s'?","std::string iCubBlinker_IDL::get_blinking_period()");
+  }
+  bool ok = yarp().write(helper,helper);
+  return ok?helper._return:_return;
+}
+bool iCubBlinker_IDL::set_double_blink(const std::string& val) {
+  bool _return = false;
+  iCubBlinker_IDL_set_double_blink helper;
+  helper.init(val);
+  if (!yarp().canWrite()) {
+    yError("Missing server method '%s'?","bool iCubBlinker_IDL::set_double_blink(const std::string& val)");
+  }
+  bool ok = yarp().write(helper,helper);
+  return ok?helper._return:_return;
+}
+std::string iCubBlinker_IDL::get_double_blink() {
+  std::string _return = "";
+  iCubBlinker_IDL_get_double_blink helper;
+  helper.init();
+  if (!yarp().canWrite()) {
+    yError("Missing server method '%s'?","std::string iCubBlinker_IDL::get_double_blink()");
+  }
+  bool ok = yarp().write(helper,helper);
+  return ok?helper._return:_return;
+}
+std::string iCubBlinker_IDL::print_params() {
+  std::string _return = "";
+  iCubBlinker_IDL_print_params helper;
+  helper.init();
+  if (!yarp().canWrite()) {
+    yError("Missing server method '%s'?","std::string iCubBlinker_IDL::print_params()");
   }
   bool ok = yarp().write(helper,helper);
   return ok?helper._return:_return;
@@ -832,6 +952,44 @@ bool iCubBlinker_IDL::read(yarp::os::ConnectionReader& connection) {
       reader.accept();
       return true;
     }
+    if (tag == "set_double_blink") {
+      std::string val;
+      if (!reader.readString(val)) {
+        reader.fail();
+        return false;
+      }
+      bool _return;
+      _return = set_double_blink(val);
+      yarp::os::idl::WireWriter writer(reader);
+      if (!writer.isNull()) {
+        if (!writer.writeListHeader(1)) return false;
+        if (!writer.writeBool(_return)) return false;
+      }
+      reader.accept();
+      return true;
+    }
+    if (tag == "get_double_blink") {
+      std::string _return;
+      _return = get_double_blink();
+      yarp::os::idl::WireWriter writer(reader);
+      if (!writer.isNull()) {
+        if (!writer.writeListHeader(1)) return false;
+        if (!writer.writeString(_return)) return false;
+      }
+      reader.accept();
+      return true;
+    }
+    if (tag == "print_params") {
+      std::string _return;
+      _return = print_params();
+      yarp::os::idl::WireWriter writer(reader);
+      if (!writer.isNull()) {
+        if (!writer.writeListHeader(1)) return false;
+        if (!writer.writeString(_return)) return false;
+      }
+      reader.accept();
+      return true;
+    }
     if (tag == "calib") {
       bool _return;
       _return = calib();
@@ -892,6 +1050,9 @@ std::vector<std::string> iCubBlinker_IDL::help(const std::string& functionName) 
     helpString.push_back("get_blinking_behavior");
     helpString.push_back("set_blinking_period");
     helpString.push_back("get_blinking_period");
+    helpString.push_back("set_double_blink");
+    helpString.push_back("get_double_blink");
+    helpString.push_back("print_params");
     helpString.push_back("calib");
     helpString.push_back("help");
   }
@@ -979,6 +1140,22 @@ std::vector<std::string> iCubBlinker_IDL::help(const std::string& functionName) 
       helpString.push_back("std::string get_blinking_period() ");
       helpString.push_back("Gets the blinking period used by the module. ");
       helpString.push_back("@return a string with the current blinking period. ");
+    }
+    if (functionName=="set_double_blink") {
+      helpString.push_back("bool set_double_blink(const std::string& val) ");
+      helpString.push_back("Sets the double blink to either on or off. ");
+      helpString.push_back("@param val string that can be either on or off. ");
+      helpString.push_back("@return true/false on success/failure. ");
+    }
+    if (functionName=="get_double_blink") {
+      helpString.push_back("std::string get_double_blink() ");
+      helpString.push_back("Gets the double blink used by the module. ");
+      helpString.push_back("@return a string that is either on or off. ");
+    }
+    if (functionName=="print_params") {
+      helpString.push_back("std::string print_params() ");
+      helpString.push_back("Prints out the parameters that the iCubBlinker is currently using ");
+      helpString.push_back("@return the same string that has been printed out on the terminal window. ");
     }
     if (functionName=="calib") {
       helpString.push_back("bool calib() ");

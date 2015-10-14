@@ -111,6 +111,25 @@ service iCubBlinker_IDL
   string get_blinking_period();
 
   /**
+  * Sets the double blink to either on or off.
+  * @param val string that can be either on or off.
+  * @return true/false on success/failure.
+  */
+  bool set_double_blink(1:string val);
+
+  /**
+  * Gets the double blink used by the module.
+  * @return a string that is either on or off.
+  */
+  string get_double_blink();
+
+  /**
+  * Prints out the parameters that the iCubBlinker is currently using
+  * @return the same string that has been printed out on the terminal window.
+  */
+  string print_params();
+
+  /**
   * Calibrate the servo of the eyelids.
   * NOT IMPLEMENTED
   * @return true/false on success/failure.

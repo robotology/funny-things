@@ -261,12 +261,16 @@ private:
     }
 
     /***************************************************************/
-    bool printInteractionMode_params()
+    string InteractionMode_params_toString()
     {
-        yInfo("[iCubBlinker] blinker period\t( nrm %g\tsgm %g )",blinkper_nrm,blinkper_sgm);
-        yInfo("[iCubBlinker] closure speed \t( nrm %g\tsgm %g )",closure_nrm,closure_sgm);
-        yInfo("[iCubBlinker] sustain speed \t( nrm %g\tsgm %g )",sustain_nrm,sustain_sgm);
-        yInfo("[iCubBlinker] opening speed \t( nrm %g\tsgm %g )",opening_nrm,opening_sgm);
+        stringstream res;
+
+        res << "[" << name << "] blinker period:\t[ nrm " << blinkper_nrm << "\tsgm " << blinkper_sgm << " ]" << endl;
+        res << "[" << name << "] closure speed: \t[ nrm " << closure_nrm  << "\tsgm " << closure_sgm  << " ]" << endl;
+        res << "[" << name << "] sustain speed: \t[ nrm " << sustain_nrm  << "\tsgm " << sustain_sgm  << " ]" << endl;
+        res << "[" << name << "] opening speed: \t[ nrm " << opening_nrm  << "\tsgm " << opening_sgm  << " ]" << endl;
+
+        return res.str();
     }
 
     /***************************************************************/
@@ -349,6 +353,8 @@ public:
         computeNextBlinkPeriod();
         t0=Time::now();
 
+        print_params();
+
         return true;
     }
 
@@ -415,6 +421,25 @@ public:
     }
 
     /***************************************************************/
+    string print_params()
+    {
+        stringstream res;
+
+        res << endl;
+        res << "[" << name << "] robot: " << robot << endl;
+        res << "[" << name << "] blinkingBehavior: " << blinkingBehavior;
+        res << "\tblinkingPeriod: " << blinkingPeriod << "\tFixed Blink period: " << fixed_blinkper << endl;
+        res << "[" << name << "] isBlinking: " << (isBlinking?"true":"false") << "\tdoubleBlink: " << get_double_blink() << endl;
+        res << "[" << name << "] calibration [sMin sMax]: [" << sMin << " " << sMax << "]" << endl;
+        res << "[" << name << "] InteractionMode: " << get_interaction_mode() << endl;
+        res << InteractionMode_params_toString();
+
+        printf("%s\n", res.str().c_str());
+
+        return res.str();
+    }
+
+    /***************************************************************/
     string save()
     {
         // LockGuard lg(mutex);
@@ -473,6 +498,7 @@ public:
         return string("");
     }
 
+    /***************************************************************/
     bool set_interaction_mode(const std::string& val)
     {
         bool res = false;
@@ -486,8 +512,8 @@ public:
             res = setInteractionMode(INTERACTION_MODE_CONVERSATION);
         }
 
-        yInfo("Interaction mode set to %s",get_interaction_mode().c_str());
-        printInteractionMode_params();
+        yInfo("[iCubBlinker] Interaction mode set to %s",get_interaction_mode().c_str());
+        printf("%s\n",InteractionMode_params_toString().c_str());
 
         return res;
     }
@@ -598,6 +624,31 @@ public:
         {
             return blinkingPeriod + " (" + double2string(fixed_blinkper) + " [s])";
         }
+    }
+
+    /***************************************************************/
+    bool set_double_blink(const string &val)
+    {
+        if (val=="on")
+        {
+            doubleBlink=true;
+        }
+        else if (val=="off")
+        {
+            doubleBlink=false;
+        }
+        else
+        {
+            return false;
+        }
+        
+        return true;
+    }
+
+    /***************************************************************/
+    string get_double_blink()
+    {
+        return (doubleBlink?"on":"off");
     }
 
     /***************************************************************/
