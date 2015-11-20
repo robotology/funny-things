@@ -187,9 +187,55 @@ angry() {
     echo "set all ang" | yarp rpc /icub/face/emotions/in
 }
 
-ciao() {
-    speak "Ciao! Mi chiamo aicab."
+ciaoClaudio() {
+    speak "Ciao Claudio."
 }
+
+rispostaCalcolo() {
+    speak "Quattordici milioni cinquecentoquattordicimila e settecento" #14.514.700 - 14 514 700
+}
+
+nostreParti() {
+    speak "Dalle nostre parti si dice" 
+    sleep 3.0 
+    speak "Tutti attendono" 
+}
+
+ufo() {
+    speak "Oggetto non identificato" 
+}
+
+Oggetto non identificato
+
+cosaComune() {
+    speak "Si. E io e te abbiamo anche un altra cosa in comune!"
+}
+
+intuito() {
+    speak "Beh, l'avevo intuito"
+}
+
+rispostaAnni() {
+    speak "Dieci."
+}
+
+rispostaNome() {
+    speak "Aicab!"
+}
+
+laTesta() {
+    speak "Quasi ...  Abbiamo lo stesso taglio di capelli!"
+    breathers "stop"
+    echo "ctpq time 1.5 off 0 pos (-60.0 44.0 -2.0 96.0 53.0 -17.0 -11.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0)" | yarp rpc /ctpservice/left_arm/rpc
+    sleep 2.0 
+    echo "ctpq time 0.5 off 0 pos (-60.0 44.0 -2.0 96.0 53.0 -17.0  25.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0)" | yarp rpc /ctpservice/left_arm/rpc
+    echo "ctpq time 0.5 off 0 pos (-60.0 44.0 -2.0 96.0 53.0 -17.0 -11.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0)" | yarp rpc /ctpservice/left_arm/rpc
+    echo "ctpq time 0.5 off 0 pos (-60.0 44.0 -2.0 96.0 53.0 -17.0  25.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0)" | yarp rpc /ctpservice/left_arm/rpc
+    echo "ctpq time 0.5 off 0 pos (-60.0 44.0 -2.0 96.0 53.0 -17.0 -11.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0)" | yarp rpc /ctpservice/left_arm/rpc
+    smile
+    breathers "start"
+}
+
 
 saluta() {
     breathers "stop"
