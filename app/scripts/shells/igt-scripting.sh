@@ -187,8 +187,33 @@ angry() {
     echo "set all ang" | yarp rpc /icub/face/emotions/in
 }
 
+
+#######################################################################################################################################
+#######################################################################################################################################
+#######################################################################################################################################
+#######################################################################################################################################
+
 ciaoClaudio() {
     speak "Ciao Claudio."
+    go_home
+}
+
+cosaComune() {
+    speak "Si. E io e te abbiamo anche un altra cosa in comune!"
+}
+
+
+laTesta() {
+    speak "Quasi ...  Abbiamo lo stesso taglio di capelli!"
+    breathers "stop"
+    echo "ctpq time 1.5 off 0 pos (-17.0 77.0 -31.0 105.0 -33.0 30.0 -24.0 0.0 0.0 0.0 0.0 0.0 15.0 60.0 105.0 170.0)" | yarp rpc /ctpservice/left_arm/rpc
+    sleep 2.0      
+    smile
+    sleep 1.0      
+    go_home
+    sleep 1.0      
+    go_home
+    breathers "start"
 }
 
 rispostaCalcolo() {
@@ -205,11 +230,6 @@ ufo() {
     speak "Oggetto non identificato" 
 }
 
-Oggetto non identificato
-
-cosaComune() {
-    speak "Si. E io e te abbiamo anche un altra cosa in comune!"
-}
 
 intuito() {
     speak "Beh, l'avevo intuito"
@@ -223,18 +243,32 @@ rispostaNome() {
     speak "Aicab!"
 }
 
-laTesta() {
-    speak "Quasi ...  Abbiamo lo stesso taglio di capelli!"
-    breathers "stop"
-    echo "ctpq time 1.5 off 0 pos (-60.0 44.0 -2.0 96.0 53.0 -17.0 -11.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0)" | yarp rpc /ctpservice/left_arm/rpc
-    sleep 2.0 
-    echo "ctpq time 0.5 off 0 pos (-60.0 44.0 -2.0 96.0 53.0 -17.0  25.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0)" | yarp rpc /ctpservice/left_arm/rpc
-    echo "ctpq time 0.5 off 0 pos (-60.0 44.0 -2.0 96.0 53.0 -17.0 -11.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0)" | yarp rpc /ctpservice/left_arm/rpc
-    echo "ctpq time 0.5 off 0 pos (-60.0 44.0 -2.0 96.0 53.0 -17.0  25.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0)" | yarp rpc /ctpservice/left_arm/rpc
-    echo "ctpq time 0.5 off 0 pos (-60.0 44.0 -2.0 96.0 53.0 -17.0 -11.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0)" | yarp rpc /ctpservice/left_arm/rpc
-    smile
-    breathers "start"
+rispostaTalento() {
+    speak "Per dimostrare il mio talento!"
 }
+
+rispostaTaiChi() {
+    speak "No. Il Tai-ci! La mia passione!"
+}
+
+nonSoloTaiChi() {
+    speak "Ma questo non e' solo TAI CI, e' una posizione che permette di entrare in contatto con l'origine dell'Universo!!"
+}
+
+salite() {
+    speak "E allora salite ... perche'  fatti non foste a vivere come bruti, ma per seguir  virtute e canoscenza!!"
+}
+
+
+
+
+#######################################################################################################################################
+#######################################################################################################################################
+#######################################################################################################################################
+#######################################################################################################################################
+
+
+
 
 
 saluta() {
