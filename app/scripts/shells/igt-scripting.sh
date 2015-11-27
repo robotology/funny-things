@@ -222,8 +222,8 @@ rispostaCalcolo() {
 
 nostreParti() {
     speak "Dalle nostre parti si dice" 
-    sleep 3.0 
-    speak "Tutti attendono" 
+#    sleep 3.0 
+#    speak "Tutti attendono" 
 }
 
 ufo() {
@@ -288,6 +288,37 @@ saluta() {
 #######################################################################################
 # Story board                                                                       #
 #######################################################################################
+
+scene_pause() 
+{
+    read -p "waiting for enter"
+    ciaoClaudio
+    read -p "waiting for enter"
+    cosaComune
+    read -p "waiting for enter"
+    laTesta
+    read -p "waiting for enter"
+    rispostaCalcolo
+    read -p "waiting for enter"
+    nostreParti
+    read -p "waiting for enter"
+    ufo
+    read -p "waiting for enter"
+    intuito
+    read -p "waiting for enter"
+    rispostaAnni
+    read -p "waiting for enter"
+    rispostaNome
+    read -p "waiting for enter"
+    rispostaTalento
+    read -p "waiting for enter"
+    rispostaTaiChi
+    read -p "waiting for enter"
+    nonSoloTaiChi
+    read -p "waiting for enter"
+    salite
+}
+
 
 scene_all() 
 {
