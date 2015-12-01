@@ -68,9 +68,10 @@ tested_os_sec Tested OS Windows, Linux
 \author Ugo Pattacini
 */
 
-#include <stdio.h>
+#include <cstdio>
 #include <sstream>
 #include <string>
+#include <limits>
 #include <map>
 
 #include <yarp/os/all.h>
@@ -138,7 +139,7 @@ protected:
         for (int i=i0; i<nEncs; i++)
         {
             imode->setControlMode(i,VOCAB_CM_POSITION);
-            iposs->setRefAcceleration(i,1e9);
+            iposs->setRefAcceleration(i,std::numeric_limits<double>::max());
             iposs->setRefSpeed(i,vels[i-i0]);
             iposs->positionMove(i,poss[i-i0]);
         }
