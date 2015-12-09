@@ -390,12 +390,12 @@ public:
             segment_tag<<"writing_segment_"<<i;
             Bottle &bSegment=config.findGroup(segment_tag.str().c_str());
             if (!bSegment.isNull())
-            {            
+            {
                 if (Bottle *pB=bSegment.find("orientation").asList())
                 {
                     int len=std::min((int)orientation.length(),pB->size());
-                    for (int i=0; i<len; i++)
-                        segParams[i].orientation[i]=pB->get(i).asDouble();
+                    for (int j=0; j<len; j++)
+                        segParams[i].orientation[j]=pB->get(j).asDouble();
                 }
 
                 segParams[i].delta_z=bSegment.check("delta_z",Value(segParams[i].delta_z)).asDouble();
