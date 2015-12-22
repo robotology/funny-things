@@ -168,7 +168,7 @@ private:
 
         for (int i = 0; i < 11; i++)
         {
-        	int valueToSend = sMax-i*(sMax-sMin)/10;
+            int valueToSend = sMax-i*(sMax-sMin)/10;
             string rawvalue = "S" + int2string(valueToSend);
             yDebug("Sending raw value: %s %i",rawvalue.c_str(),100-i*10);
             sendRawValue(rawvalue);
@@ -179,18 +179,20 @@ private:
 
         for (int i = 0; i < 11; i++)
         {
-        	int valueToSend = sMin+i*(sMax-sMin)/10;
+            int valueToSend = sMin+i*(sMax-sMin)/10;
             string rawvalue = "S" + int2string(valueToSend);
             yDebug("Sending raw value: %s %i",rawvalue.c_str(),i*10);
             sendRawValue(rawvalue);
             Time::delay(t_op/10.0);
         }
+
+        return true;
     }
 
     /***************************************************************/
     bool set_calib_values()
     {
-    	yWarning("[iCubBlinker] Sending calib values does nothing currently!");
+        yWarning("[iCubBlinker] Sending calib values does nothing currently!");
 
         return false;
     }
@@ -339,8 +341,8 @@ public:
         }
         else
         {
-        	sMin = 00;
-        	sMax = 70;
+            sMin = 00;
+            sMax = 70;
         }
 
         Rand::init();
@@ -377,14 +379,14 @@ public:
 
     bool start()
     {
-    	yInfo("[iCubBlinker] start command received");
+        yInfo("[iCubBlinker] start command received");
         isBlinking=true;
         return true;
     }
 
     bool stop()
     {
-    	yInfo("[iCubBlinker] stop  command received");
+        yInfo("[iCubBlinker] stop  command received");
         isBlinking=false;
         return true;
     }
@@ -416,7 +418,7 @@ public:
 
     bool dblink()
     {
-    	t0=Time::now();
+        t0=Time::now();
         return doBlink() && doBlink();
     }
 
@@ -671,7 +673,7 @@ public:
                 }
 
                 computeNextBlinkPeriod();
-	            t0=Time::now();
+                t0=Time::now();
             }
         }
 
