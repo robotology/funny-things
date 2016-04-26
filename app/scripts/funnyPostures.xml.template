@@ -8,17 +8,14 @@
 		<name>objectsPropertiesCollector</name>
 		<parameters>--name OPC --no-load-db --no-save-db</parameters>
         <node>node1</node>
-		<tag>opcMod</tag>
 	</module>
 	<module>
 		<name>awareTouch</name>
         <node>node1</node>
-		<tag>touchMod</tag>
 	</module>
 	<module>
 		<name>funnyPostures</name>
         <node>node1</node>
-		<tag>postureMod</tag>
 	</module>
 
     <connection>
