@@ -1,0 +1,62 @@
+<application>
+    <name>TG2 Scripting</name>
+
+    <dependencies>
+        <port>/icub/yarprobotinterface<</port>
+        <port>/iKinGazeCtrl/rpc</port>
+    </dependencies>
+
+    <module>
+        <name>gaze.lua</name>
+        <parameters>--look-around</parameters>
+        <deployer>lua</deployer>
+        <node>icub21</node>
+        <dependencies>
+            <port timeout="10">/iKinGazeCtrl/angles:i</port>
+            <port timeout="10">/iKinGazeCtrl/angles:o</port>
+        </dependencies>
+    </module>
+    <module>
+        <name>ctpService</name>
+        <parameters>--robot icub --part left_arm</parameters>
+        <node>icub21</node>
+    </module>
+    <module>
+        <name>ctpService</name>
+        <parameters>--robot icub --part right_arm</parameters>
+        <node>icub21</node>
+    </module>
+    <module>
+        <name>iCubBlinker</name>
+        <parameters>--autoStart</parameters>
+        <node>icub21</node>
+    </module>
+    <module>
+        <name>iSpeak</name>
+        <parameters>--package acapela-tts --package_options icub_ita</parameters>
+        <node>icub-win1</node>
+    </module>
+
+    <connection>
+        <from>/gaze/tx</from>
+        <to>/iKinGazeCtrl/angles:i</to>
+        <protocol>tcp</protocol>
+    </connection>
+    <connection>
+        <from>/iKinGazeCtrl/angles:o</from>
+        <to>/gaze/rx</to>
+        <protocol>tcp</protocol>
+    </connection>
+
+    <connection>
+        <from>/iCubBlinker/emotions/raw</from>
+        <to>/icub/face/raw/in</to>
+        <protocol>tcp</protocol>
+    </connection>
+    <connection>
+        <from>/iSpeak/emotions:o</from>
+        <to>/icub/face/emotions/in</to>
+        <protocol>tcp</protocol>
+    </connection>
+
+</application>
