@@ -25,7 +25,7 @@ usage() {
 cat << EOF
 ***************************************************************************************
 DEA SCRIPTING
-Author:  Alessandro Roncone   <alessandro.roncone@iit.it> 
+Author:  Alessandro Roncone   <alessandro.roncone@iit.it>
 
 This script scripts through the commands available for the DeA Kids videos.
 
@@ -46,7 +46,7 @@ EOF
 # HELPER FUNCTIONS
 #######################################################################################
 gaze() {
-    echo "\"$1\"" | yarp write ... /gaze
+    echo "$1" | yarp write ... /gaze
 }
 
 speak() {
@@ -159,14 +159,14 @@ wait_till_quiet() {
     isSpeaking=$(echo "stat" | yarp rpc /iSpeak/rpc)
     while [ "$isSpeaking" == "Response: speaking" ]; do
         isSpeaking=$(echo "stat" | yarp rpc /iSpeak/rpc)
-        sleep 0.1        
+        sleep 0.1
         # echo $isSpeaking
     done
     echo "I'm not speaking any more :)"
     echo $isSpeaking
 }
 
-victory() {    
+victory() {
     echo "ctpq time 1.0 off 7 pos                                       (18.0 40.0 50.0 167.0 0.0 0.0 0.0 0.0 222.0)" | yarp rpc /ctpservice/$1/rpc
     echo "ctpq time 2.0 off 0 pos (-57.0 32.0 -1.0 88.0 56.0 -30.0 -11.0 18.0 40.0 50.0 167.0 0.0 0.0 0.0 0.0 222.0)" | yarp rpc /ctpservice/$1/rpc
 }
@@ -180,18 +180,18 @@ point_eye() {
 point_ears() {
     breathers "stop"
 
-    echo "ctpq time 1 off 0 pos (-10.0 8.0 -37.0 7.0 -21.0 1.0)" | yarp rpc /ctpservice/head/rpc 
+    echo "ctpq time 1 off 0 pos (-10.0 8.0 -37.0 7.0 -21.0 1.0)" | yarp rpc /ctpservice/head/rpc
     echo "ctpq time 2 off 0 pos (-18.0 59.0 -30.0 105.0 -22.0 28.0 -6.0 6.0 55.0 30.0 33.0 4.0 9.0 58.0 113.0 192.0)" | yarp rpc /ctpservice/left_arm/rpc
     sleep 2.0
 
-    echo "ctpq time 2 off 0 pos (-10.0 -8.0 37.0 7.0 -21.0 1.0)" | yarp rpc /ctpservice/head/rpc 
+    echo "ctpq time 2 off 0 pos (-10.0 -8.0 37.0 7.0 -21.0 1.0)" | yarp rpc /ctpservice/head/rpc
     echo "ctpq time 2 off 0 pos (-18.0 59.0 -30.0 105.0 -22.0 28.0 -6.0 6.0 55.0 30.0 33.0 4.0 9.0 58.0 113.0 192.0)" | yarp rpc /ctpservice/right_arm/rpc
 
-    echo "ctpq time 2 off 0 pos (-0.0 0.0 -0.0 0.0 -0.0 0.0)" | yarp rpc /ctpservice/head/rpc 
+    echo "ctpq time 2 off 0 pos (-0.0 0.0 -0.0 0.0 -0.0 0.0)" | yarp rpc /ctpservice/head/rpc
     go_home_helperL 2.0
     go_home_helperR 2.0
 
-    breathers "start" 
+    breathers "start"
 }
 
 point_arms() {
@@ -203,7 +203,7 @@ point_arms() {
     go_home_helperL 2.0
     go_home_helperR 2.0
 
-    breathers "start" 
+    breathers "start"
 }
 
 fonzie() {
@@ -255,7 +255,7 @@ hello_both() {
     echo "ctpq time 1.5 off 0 pos (-60.0 44.0 -2.0 96.0 53.0 -17.0 -11.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0)" | yarp rpc /ctpservice/left_arm/rpc
     echo "ctpq time 1.5 off 0 pos (-60.0 44.0 -2.0 96.0 53.0 -17.0 -11.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0)" | yarp rpc /ctpservice/right_arm/rpc
     sleep 2.0
-    
+
     echo "ctpq time 0.5 off 0 pos (-60.0 44.0 -2.0 96.0 53.0 -17.0  25.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0)" | yarp rpc /ctpservice/left_arm/rpc
     echo "ctpq time 0.5 off 0 pos (-60.0 44.0 -2.0 96.0 53.0 -17.0  25.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0)" | yarp rpc /ctpservice/right_arm/rpc
     echo "ctpq time 0.5 off 0 pos (-60.0 44.0 -2.0 96.0 53.0 -17.0 -11.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0)" | yarp rpc /ctpservice/left_arm/rpc
@@ -264,10 +264,10 @@ hello_both() {
     echo "ctpq time 0.5 off 0 pos (-60.0 44.0 -2.0 96.0 53.0 -17.0  25.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0)" | yarp rpc /ctpservice/right_arm/rpc
     echo "ctpq time 0.5 off 0 pos (-60.0 44.0 -2.0 96.0 53.0 -17.0 -11.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0)" | yarp rpc /ctpservice/left_arm/rpc
     echo "ctpq time 0.5 off 0 pos (-60.0 44.0 -2.0 96.0 53.0 -17.0 -11.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0)" | yarp rpc /ctpservice/right_arm/rpc
-    
+
     smile
     go_home
-    smile    
+    smile
     #breathers "start"
 }
 
@@ -298,7 +298,7 @@ show_iit() {
 
     sleep 3.0
     smile
-    
+
     go_home
     breathers "start"
 }
@@ -343,7 +343,7 @@ sequence_04() {
     speak "Posso riconoscere gli oggetti intorno a me ed afferrarli, e posso usarli per svolgere alcuni semplici compiti."
     wait_till_quiet
     speak "Da poco, ho imparato a stare in equilibrio senza cadere, e presto imparero' a camminare, proprio come voi."
-    wait_till_quiet 
+    wait_till_quiet
     speak "E poi sono l'unico robot al mondo dotato di una pelle sensibile, che mi permette di sentire quando vengo toccato, spinto o se mi fanno il solletico."
     wait_till_quiet
 }
@@ -395,11 +395,9 @@ echo ""
 
 $1 "$2"
 
-if [[ $# -eq 0 ]] ; then 
+if [[ $# -eq 0 ]] ; then
     echo "No options were passed!"
     echo ""
     usage
     exit 1
 fi
-
-
