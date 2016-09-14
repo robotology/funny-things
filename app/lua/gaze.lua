@@ -1,4 +1,4 @@
-#!/usr/bin/lua 
+#!/usr/bin/lua
 
 -- Copyright: (C) 2016 iCub Facility - Istituto Italiano di Tecnologia (IIT)
 -- Authors: Ugo Pattacini <ugo.pattacini@iit.it>
@@ -14,7 +14,7 @@
 -- Command line parameters
 -- --look-around to start in looking around mode
 
--- Available commands to be sent to /gaze/cmd
+-- Available commands to be sent to /gaze
 --
 -- #1: look azi ele ver
 -- #2: look-around
@@ -70,14 +70,14 @@ while state ~= "exit" do
     local cmd = port_cmd:read(false);
     if cmd ~= nil then
         local cmd_rx = cmd:get(0):asString()
-        
+
         if cmd_rx == "look-around" or cmd_rx == "look" or
            cmd_rx == "idle" or cmd_rx == "exit" then
 
             state = cmd_rx
 
             if state == "look" then
-                
+
                 azi = cmd:get(1):asDouble()
                 ele = cmd:get(2):asDouble()
                 ver = cmd:get(3):asDouble()
@@ -86,32 +86,32 @@ while state ~= "exit" do
             elseif state == "look-around" then
 
                 if cmd:size()>1 then
-                    
+
                     azi = cmd:get(1):asDouble()
                     ele = cmd:get(2):asDouble()
                     ver = cmd:get(3):asDouble()
-               
+
                 else
 
                     local fp = port_gaze_rx:read(true);
                     azi = fp:get(0):asDouble()
                     ele = fp:get(1):asDouble()
                     ver = fp:get(2):asDouble()
-                
+
                 end
                 print("received: look around ", azi,ele,ver)
-       
+
             end
-        
+
         elseif cmd_rx == "set-delta" then
 
             azi_delta = cmd:get(1):asDouble()
             ele_delta = cmd:get(2):asDouble()
             ver_delta = cmd:get(3):asDouble()
-            print("received: set delta ", azi_delta,ele_delta,ver_delta) 
+            print("received: set delta ", azi_delta,ele_delta,ver_delta)
 
         else
-        
+
             print("warning: unrecognized command")
 
         end
@@ -168,4 +168,3 @@ port_gaze_tx:close()
 port_gaze_rx:close()
 
 yarp.Network_fini()
-
