@@ -37,7 +37,7 @@ else
 end
 
 signal.signal(signal.SIGINT, function(signum)
-  state = "exit";
+  state = "exit"
 end)
 
 yarp.Network()
@@ -67,7 +67,7 @@ end
 
 while state ~= "exit" do
 
-    local cmd = port_cmd:read(false);
+    local cmd = port_cmd:read(false)
     if cmd ~= nil then
         local cmd_rx = cmd:get(0):asString()
 
@@ -93,7 +93,7 @@ while state ~= "exit" do
 
                 else
 
-                    local fp = port_gaze_rx:read(true);
+                    local fp = port_gaze_rx:read(true)
                     azi = fp:get(0):asDouble()
                     ele = fp:get(1):asDouble()
                     ver = fp:get(2):asDouble()
@@ -119,7 +119,7 @@ while state ~= "exit" do
 
     if state == "init" then
 
-        local fp = port_gaze_rx:read(true);
+        local fp = port_gaze_rx:read(true)
         azi = fp:get(0):asDouble()
         ele = fp:get(1):asDouble()
         ver = fp:get(2):asDouble()
