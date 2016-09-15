@@ -21,7 +21,7 @@
 -- #3: look-around azi ele ver
 -- #4: set-delta azi-delta ele-delta ver-delta
 -- #5: idle
--- #6: exit
+-- #6: quit
 
 local signal = require("posix.signal")
 require("yarp")
@@ -36,12 +36,13 @@ else
     state = "idle"
 end
 
+interrupting = false
 signal.signal(signal.SIGINT, function(signum)
-  state = "exit"
+  interrupting = true
 end)
 
 signal.signal(signal.SIGTERM, function(signum)
-  state = "exit"
+  interrupting = true
 end)
 
 yarp.Network()
@@ -54,7 +55,7 @@ port_cmd:open("/gaze")
 port_gaze_tx:open("/gaze/tx")
 port_gaze_rx:open("/gaze/rx")
 
-while state ~= "exit" and port_gaze_rx:getInputCount() == 0 do
+while not interrupting and port_gaze_rx:getInputCount() == 0 do
     print("checking yarp connection...")
     yarp.Time_delay(1.0)
 end
@@ -68,14 +69,14 @@ ver_delta = 2
 t0 = yarp.Time_now()
 
 
-while state ~= "exit" do
+while state ~= "quit" and not interrupting do
 
     local cmd = port_cmd:read(false)
     if cmd ~= nil then
         local cmd_rx = cmd:get(0):asString()
 
         if cmd_rx == "look-around" or cmd_rx == "look" or
-           cmd_rx == "idle" or cmd_rx == "exit" then
+           cmd_rx == "idle" or cmd_rx == "quit" then
 
             state = cmd_rx
 
