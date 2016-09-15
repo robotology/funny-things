@@ -50,6 +50,11 @@ port_cmd:open("/gaze")
 port_gaze_tx:open("/gaze/tx")
 port_gaze_rx:open("/gaze/rx")
 
+while state ~= "exit" and port_gaze_rx:getInputCount() == 0 do
+    print("checking yarp connection...")
+    yarp.Time_delay(1.0)
+end
+
 azi = 0.0
 ele = 0.0
 ver = 0.0
@@ -57,12 +62,6 @@ azi_delta = 5
 ele_delta = 5
 ver_delta = 2
 t0 = yarp.Time_now()
-
-
-while state ~= "exit" and port_gaze_rx:getInputCount() == 0 do
-    print("checking yarp connection...")
-    yarp.Time_delay(1.0)
-end
 
 
 while state ~= "exit" do
