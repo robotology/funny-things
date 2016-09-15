@@ -59,7 +59,7 @@ ver_delta = 2
 t0 = yarp.Time_now()
 
 
-while state ~= "exit" and not yarp.NetworkBase_isConnected("/iKinGazeCtrl/angles:o", port_gaze_rx:getName()) do
+while state ~= "exit" and port_gaze_rx:getInputCount() == 0 do
     print("checking yarp connection...")
     yarp.Time_delay(1.0)
 end
