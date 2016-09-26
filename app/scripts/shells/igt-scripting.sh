@@ -80,6 +80,16 @@ speak() {
 }
 
 
+guarda_bisio_on() {
+    stop_breathers
+    #guardare
+    echo "ctpq time 2.0 off 0 pos (0.0 0.0 10.0 0.0 0.0 5.0)" | yarp rpc /ctpservice/head/rpc
+}
+guarda_bisio_off() {
+    go_home_helperH 2.0
+    start_breathers
+}
+
 go_home_helper() {
     # This is with the arms close to the legs
     # echo "ctpq time $1 off 0 pos (-6.0 23.0 25.0 29.0 -24.0 -3.0 -3.0 19.0 29.0 8.0 30.0 32.0 42.0 50.0 50.0 114.0)" | yarp rpc /ctpservice/right_arm/rpc
@@ -89,6 +99,17 @@ go_home_helper() {
     go_home_helperL $1
     # echo "ctpq time 1.0 off 0 pos (0.0 0.0 10.0 0.0 0.0 5.0)" | yarp rpc /ctpservice/head/rpc
     go_home_helperH $1
+}
+
+go_home_helper_nohead() {
+    # This is with the arms close to the legs
+    # echo "ctpq time $1 off 0 pos (-6.0 23.0 25.0 29.0 -24.0 -3.0 -3.0 19.0 29.0 8.0 30.0 32.0 42.0 50.0 50.0 114.0)" | yarp rpc /ctpservice/right_arm/rpc
+    # echo "ctpq time $1 off 0 pos (-6.0 23.0 25.0 29.0 -24.0 -3.0 -3.0 19.0 29.0 8.0 30.0 32.0 42.0 50.0 50.0 114.0)" | yarp rpc /ctpservice/left_arm/rpc
+    # This is with the arms over the table
+    go_home_helperR $1
+    go_home_helperL $1
+    # echo "ctpq time 1.0 off 0 pos (0.0 0.0 10.0 0.0 0.0 5.0)" | yarp rpc /ctpservice/head/rpc
+    echo "ctpq time $1 off 0 pos (0.0 0.0 15.0 0.0 0.0 0.0)" | yarp rpc /ctpservice/head/rpc
 }
 
 go_home_helperL()
@@ -118,6 +139,13 @@ go_homeH() {
 go_home() {
     breathers "stop"
     go_home_helper 2.0
+    sleep 2.5
+    breathers "start"
+}
+
+go_home_nohead() {
+    breathers "stop"
+    go_home_helper_nohead 2.0
     sleep 2.5
     breathers "start"
 }
@@ -153,13 +181,15 @@ greet_like_god() {
 
 mostra_muscoli() {
     breathers "stop"
-    echo "ctpq time 1.5 off 0 pos (-27.0 78.0 -37.0 33.0 -79.0 0.0 -4.0 26.0 27.0 0.0 29.0 59.0 117.0 87.0 176.0 250.0)" | yarp rpc /ctpservice/right_arm/rpc
-    echo "ctpq time 1.5 off 0 pos (-27.0 78.0 -37.0 33.0 -79.0 0.0 -4.0 26.0 27.0 0.0 29.0 59.0 117.0 87.0 176.0 250.0)" | yarp rpc /ctpservice/left_arm/rpc
-    echo "ctpq time 1.0 off 0 pos (-27.0 78.0 -37.0 93.0 -79.0 0.0 -4.0 26.0 67.0 0.0 99.0 59.0 117.0 87.0 176.0 250.0)" | yarp rpc /ctpservice/right_arm/rpc
-    echo "ctpq time 1.0 off 0 pos (-27.0 78.0 -37.0 93.0 -79.0 0.0 -4.0 26.0 67.0 0.0 99.0 59.0 117.0 87.0 176.0 250.0)" | yarp rpc /ctpservice/left_arm/rpc
-    sleep 5.5
-    go_home_helper 2.0
-    sleep 2.5    
+    echo "ctpq time 3.5 off 0 pos (-27.0 75.0 -20.0 93.0 -79.0 0.0 -4.0 26.0 27.0 0.0 29.0 59.0 117.0 87.0 176.0 250.0)" | yarp rpc /ctpservice/right_arm/rpc
+   # echo "ctpq time 3.5 off 0 pos (-27.0 78.0 -37.0 33.0 -79.0 0.0 -4.0 26.0 27.0 0.0 29.0 59.0 117.0 87.0 176.0 250.0)" | yarp rpc /ctpservice/left_arm/rpc
+    read -p "waiting for enter"
+    speak "Bravo Claudio!" 
+    echo "ctpq time 2.0 off 0 pos (-27.0 75.0 -20.0 93.0 -79.0 0.0 -4.0 26.0 67.0 0.0 99.0 59.0 117.0 87.0 176.0 250.0)" | yarp rpc /ctpservice/right_arm/rpc
+ #   echo "ctpq time 4.0 off 0 pos (-27.0 78.0 -37.0 93.0 -79.0 0.0 -4.0 26.0 67.0 0.0 99.0 59.0 117.0 87.0 176.0 250.0)" | yarp rpc /ctpservice/left_arm/rpc
+    sleep 3.5
+    go_home_helper 2.5
+    sleep 3.0    
 }
 
 smile() {
@@ -192,33 +222,87 @@ angry() {
 #######################################################################################################################################
 #######################################################################################################################################
 #######################################################################################################################################
-
-ciaoClaudio() {
-    speak "Ciao Claudio."
+sieteArrivati() {
+    speak "Finalmente siete arrivati!"
     go_home
 }
 
+ciaoClaudio() {
+    breathers "stop"
+    sleep 0.5
+    echo "ctpq time 2.0 off 0 pos (0.0 0.0 15.0 0.0 0.0 0.0)" | yarp rpc /ctpservice/head/rpc
+    speak "Ciao Claudio."
+    #go_home
+    sleep 0.5
+    breathers "start"
+}
+
 cosaComune() {
-    speak "Si. E io e te abbiamo anche un altra cosa in comune!"
+    #speak "Si. E io e te abbiamo anche un altra cosa in comune!"
+    speak "Parlo con te, perche' abbiamo una cosa in comune!"
 }
 
 
 laTesta() {
-    speak "Quasi ...  Abbiamo lo stesso taglio di capelli!"
+    speak "No ...  Lo stesso taglio di capelli!"
     breathers "stop"
     echo "ctpq time 1.5 off 0 pos (-17.0 77.0 -31.0 105.0 -33.0 30.0 -24.0 0.0 0.0 0.0 0.0 0.0 15.0 60.0 105.0 170.0)" | yarp rpc /ctpservice/left_arm/rpc
     sleep 2.0      
     smile
-    sleep 1.0      
-    go_home
-    sleep 1.0      
-    go_home
+    sleep 1.0
+    go_home_nohead
     breathers "start"
+}
+
+rispostaNome() {
+    speak "Aicab!"
+}
+
+rispostaAnni() {
+    speak "Dieci."
+}
+
+soGiaTuttoAI() {
+    speak "Io so gia tutto. Sono un'intelligenza artificiale!"
 }
 
 rispostaCalcolo() {
     speak "Quattordici milioni cinquecentoquattordicimila e settecento" #14.514.700 - 14 514 700
 }
+
+pirla() {
+    speak "Mi hai preso per pirla?"
+}
+
+capitaleParaguay() {
+    speak "Asun sion'!"
+    go_home_nohead
+}
+
+daGenova() {
+    speak "Veramente io, vengo da Genova. Bel in!"
+}
+
+istituto() {
+    speak "No. dall'istituto italiano di tecnologia"
+}
+
+sfida() {
+    speak "Sono qui per sfidarti"
+}
+
+sfidaTaiChi() {
+    speak "No. sono qui per sfidarti, a  TAI CI!"
+}
+
+sali() {
+    speak "E allora, sali, se hai coraggio!"
+}
+
+seiPronto() {
+    speak "Sei pronto?"
+}
+
 
 nostreParti() {
     speak "Dalle nostre parti si dice" 
@@ -235,13 +319,7 @@ intuito() {
     speak "Beh, l'avevo intuito"
 }
 
-rispostaAnni() {
-    speak "Dieci."
-}
 
-rispostaNome() {
-    speak "Aicab!"
-}
 
 rispostaTalento() {
     speak "Per dimostrare il mio talento!"
@@ -273,13 +351,15 @@ salite() {
 
 saluta() {
     breathers "stop"
-    echo "ctpq time 1.5 off 0 pos (-60.0 44.0 -2.0 96.0 53.0 -17.0 -11.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0)" | yarp rpc /ctpservice/left_arm/rpc
-    sleep 2.0 && speak "Salve colleghi."
-    echo "ctpq time 0.5 off 0 pos (-60.0 44.0 -2.0 96.0 53.0 -17.0  25.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0)" | yarp rpc /ctpservice/left_arm/rpc
-    echo "ctpq time 0.5 off 0 pos (-60.0 44.0 -2.0 96.0 53.0 -17.0 -11.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0)" | yarp rpc /ctpservice/left_arm/rpc
-    echo "ctpq time 0.5 off 0 pos (-60.0 44.0 -2.0 96.0 53.0 -17.0  25.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0)" | yarp rpc /ctpservice/left_arm/rpc
-    echo "ctpq time 0.5 off 0 pos (-60.0 44.0 -2.0 96.0 53.0 -17.0 -11.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0)" | yarp rpc /ctpservice/left_arm/rpc
+    echo "ctpq time 2.5 off 0 pos (-60.0 44.0 -2.0 96.0 53.0 -17.0 -11.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0)" | yarp rpc /ctpservice/right_arm/rpc
+    sleep 2.0
+# && speak "Bravo Claudio!"
+    echo "ctpq time 0.5 off 0 pos (-60.0 44.0 -2.0 96.0 53.0 -17.0  25.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0)" | yarp rpc /ctpservice/right_arm/rpc
+    echo "ctpq time 0.5 off 0 pos (-60.0 44.0 -2.0 96.0 53.0 -17.0 -11.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0)" | yarp rpc /ctpservice/right_arm/rpc
+    echo "ctpq time 0.5 off 0 pos (-60.0 44.0 -2.0 96.0 53.0 -17.0  25.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0)" | yarp rpc /ctpservice/right_arm/rpc
+    echo "ctpq time 0.5 off 0 pos (-60.0 44.0 -2.0 96.0 53.0 -17.0 -11.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0)" | yarp rpc /ctpservice/right_arm/rpc
     smile
+    sleep 0.5
     go_home
     smile
 }
@@ -291,34 +371,47 @@ saluta() {
 
 scene_pause() 
 {
+
+    read -p "waiting for enter"
+    sieteArrivati
     read -p "waiting for enter"
     ciaoClaudio
     read -p "waiting for enter"
     cosaComune
     read -p "waiting for enter"
     laTesta
-    read -p "waiting for enter"
-    rispostaCalcolo
-    read -p "waiting for enter"
-    nostreParti
-    read -p "waiting for enter"
-    ufo
-    read -p "waiting for enter"
-    intuito
+    read -p "waiting for enter"    
+    rispostaNome
     read -p "waiting for enter"
     rispostaAnni
     read -p "waiting for enter"
-    rispostaNome
+    soGiaTuttoAI
     read -p "waiting for enter"
-    rispostaTalento
+    rispostaCalcolo
     read -p "waiting for enter"
-    rispostaTaiChi
+    pirla
     read -p "waiting for enter"
-    nonSoloTaiChi
+    capitaleParaguay
     read -p "waiting for enter"
-    salite
+    daGenova
+    read -p "waiting for enter"
+    istituto
+    read -p "waiting for enter"
+    sfida
+    read -p "waiting for enter"
+    sfidaTaiChi
+    read -p "waiting for enter"
+    sali
+    stop_breathers
+    #read -p "waiting for enter"
+    #seiPronto
 }
 
+
+scene_end() {
+    mostra_muscoli
+    saluta
+}
 
 scene_all() 
 {
