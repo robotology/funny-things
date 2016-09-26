@@ -1,6 +1,11 @@
 <application>
     <name>TG2 Scripting</name>
 
+    <dependencies>
+        <port>/icub/yarprobotinterface<</port>
+        <port>/iKinGazeCtrl/rpc</port>
+    </dependencies>
+
     <module>
         <name>gaze.lua</name>
         <parameters>--look-around</parameters>
