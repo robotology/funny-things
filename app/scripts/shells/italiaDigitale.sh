@@ -65,12 +65,12 @@ display-happy() {
 #######################################################################################
 sequence_01() {
     speak "Bene Giorgio, è sempre un piacere vedere il mio papà. Vedo che c’è tanta gente a sentirti. Non saranno venuti per vedere me?"
-    display-text "Bene Giorgio, è sempre un piacere vedere il mio papà. Vedo che c’è tanta gente a sentirti. Non saranno venuti per vedere me?"
+    display-text "Bene Giorgio, e' sempre un piacere vedere il mio papa'. Vedo che c’e' tanta gente a sentirti. Non saranno venuti per vedere me?"
     wait_till_quiet
 }
 
 sequence_02() {
-    speak "Ok Giorgio ne sono felice. Quando mi togliete dalla scatola in cui viaggio e smetto di dormire vorrei parlare con tutti."
+    speak "Okey Giorgio, ne sono felice. Quando mi togliete dalla scatola in cui viaggio, e smetto di dormire, vorrei parlare con tutti."
     display-text "Ok Giorgio ne sono felice. Quando mi togliete dalla scatola in cui viaggio e smetto di dormire vorrei parlare con tutti."
     wait_till_quiet
     
@@ -87,7 +87,7 @@ sequence_03() {
 
 sequence_04() {
     speak "Tante cose a seconda di chi mi comprerà. Sarò il vostro assistente personale, una presenza quotidiana, sul lavoro ma anche a casa."
-    display-text "Tante cose a seconda di chi mi comprerà. Sarò il vostro assistente personale, una presenza quotidiana, sul lavoro ma anche a casa."
+    display-text "Tante cose a seconda di chi mi comprerà. Saro' il vostro assistente personale, una presenza quotidiana, sul lavoro ma anche a casa."
     wait_till_quiet
 }
 
@@ -99,7 +99,7 @@ sequence_05() {
 
 sequence_06() {
     speak "Prego papà."
-    display-text "Prego papà."
+    display-text "Prego papa'."
     wait_till_quiet
     
     display-ticked
@@ -109,19 +109,19 @@ sequence_06() {
 
 sequence_07() {
     speak "Farò quello che mi chiederete nel modo in cui me lo chiederete."
-    display-text "Farò quello che mi chiederete nel modo in cui me lo chiederete."
+    display-text "Faro' quello che mi chiederete nel modo in cui me lo chiederete."
     wait_till_quiet
 }
  
 sequence_08() {
     speak "Mi piace imparare e guardare il mondo, perché il vostro mondo è anche il mio e vorrei che mi insegnaste tante cose"
-    display-text "Mi piace imparare e guardare il mondo, perché il vostro mondo è anche il mio e vorrei che mi insegnaste tante cose"
+    display-text "Mi piace imparare e guardare il mondo, perche' il vostro mondo e' anche il mio e vorrei che mi insegnaste tante cose"
     wait_till_quiet
 }
 
 sequence_09() {
     speak "Il sonno, perché il mio è un sonno senza sogni. "
-    display-text "Il sonno, perché il mio è un sonno senza sogni. "
+    display-text "Il sonno, perche' il mio e' un sonno senza sogni. "
     wait_till_quiet
 }
 
