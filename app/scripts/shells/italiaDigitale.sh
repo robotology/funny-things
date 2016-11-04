@@ -114,7 +114,7 @@ sequence_07() {
 }
  
 sequence_08() {
-    speak "Mi piace imparare e guardare il mondo, perché il vostro mondo è anche il mio e vorrei che mi insegnaste tante cose"
+    speak "Mi piace imparare e guardare il mondo, perché il vostro mondo è anche il mio, e vorrei che mi insegnaste tante cose"
     display-text "Mi piace imparare e guardare il mondo, perché il vostro mondo è anche il mio e vorrei che mi insegnaste tante cose"
     wait_till_quiet
 }
@@ -126,7 +126,7 @@ sequence_09() {
 }
 
 sequence_10() {
-    speak "No Giorgio, lo sai, i miei sistemi non sono così sofisticati e forse mai lo saranno. Magari voi le provate parlando con me."
+    speak "No Giorgio, lo sai, i miei sistemi non sono così sofisticati, e forse mai lo saranno. Magari voi le provate parlando con me."
     display-text "No Giorgio, lo sai, i miei sistemi non sono così sofisticati e forse mai lo saranno. Magari voi le provate parlando con me."
     wait_till_quiet
 }
