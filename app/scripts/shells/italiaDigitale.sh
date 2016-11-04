@@ -28,10 +28,6 @@ EOF
 # HELPER FUNCTIONS
 #######################################################################################
 
-speak() {
-    echo "\"$1\"" | yarp write ... /iSpeak
-}
-
 wait_till_quiet() {
     sleep 0.3
     isSpeaking=$(echo "stat" | yarp rpc /iSpeak/rpc)
@@ -42,6 +38,14 @@ wait_till_quiet() {
     done
     echo "I'm not speaking any more :)"
     echo $isSpeaking
+}
+
+speak() {
+    echo "\"$1\"" | yarp write ... /iSpeak
+}
+
+display-text() {
+    echo "\"$1\"" | yarp write ... /textimage/txt:i
 }
 
 display-sun() {
@@ -61,11 +65,13 @@ display-happy() {
 #######################################################################################
 sequence_01() {
     speak "Bene Giorgio, è sempre un piacere vedere il mio papà. Vedo che c’è tanta gente a sentirti. Non saranno venuti per vedere me?"
+    display-text "Bene Giorgio, è sempre un piacere vedere il mio papà. Vedo che c’è tanta gente a sentirti. Non saranno venuti per vedere me?"
     wait_till_quiet
 }
 
 sequence_02() {
     speak "Ok Giorgio ne sono felice. Quando mi togliete dalla scatola in cui viaggio e smetto di dormire vorrei parlare con tutti."
+    display-text "Ok Giorgio ne sono felice. Quando mi togliete dalla scatola in cui viaggio e smetto di dormire vorrei parlare con tutti."
     wait_till_quiet
     
     display-sun
@@ -75,21 +81,25 @@ sequence_02() {
 
 sequence_03() {
     speak "Per ora, come tu sai, posso riconoscere gli oggetti, spostarli, ricevere ordini, fare compiti elementari. Sto studiando, come direste voi."
+    display-text "Per ora, come tu sai, posso riconoscere gli oggetti, spostarli, ricevere ordini, fare compiti elementari. Sto studiando, come direste voi."
     wait_till_quiet
 }
 
 sequence_04() {
     speak "Tante cose a seconda di chi mi comprerà. Sarò il vostro assistente personale, una presenza quotidiana, sul lavoro ma anche a casa."
+    display-text "Tante cose a seconda di chi mi comprerà. Sarò il vostro assistente personale, una presenza quotidiana, sul lavoro ma anche a casa."
     wait_till_quiet
 }
 
 sequence_05() {
     speak "Come faccio a sostituire il mio creatore? Non arrivo lontanamente a fare quello che fate voi: posso aiutarvi ma non sostituirvi."
+    display-text "Come faccio a sostituire il mio creatore? Non arrivo lontanamente a fare quello che fate voi: posso aiutarvi ma non sostituirvi."
     wait_till_quiet
 }
 
 sequence_06() {
     speak "Prego papà."
+    display-text "Prego papà."
     wait_till_quiet
     
     display-ticked
@@ -99,26 +109,31 @@ sequence_06() {
 
 sequence_07() {
     speak "Farò quello che mi chiederete nel modo in cui me lo chiederete."
+    display-text "Farò quello che mi chiederete nel modo in cui me lo chiederete."
     wait_till_quiet
 }
  
 sequence_08() {
     speak "Mi piace imparare e guardare il mondo, perché il vostro mondo è anche il mio e vorrei che mi insegnaste tante cose"
+    display-text "Mi piace imparare e guardare il mondo, perché il vostro mondo è anche il mio e vorrei che mi insegnaste tante cose"
     wait_till_quiet
 }
 
 sequence_09() {
     speak "Il sonno, perché il mio è un sonno senza sogni. "
+    display-text "Il sonno, perché il mio è un sonno senza sogni. "
     wait_till_quiet
 }
 
 sequence_10() {
     speak "No Giorgio, lo sai, i miei sistemi non sono così sofisticati e forse mai lo saranno. Magari voi le provate parlando con me."
+    display-text "No Giorgio, lo sai, i miei sistemi non sono così sofisticati e forse mai lo saranno. Magari voi le provate parlando con me."
     wait_till_quiet
 }
 
 sequence_11() {
     speak "Ciao Giorgio, a presto."
+    display-text "Ciao Giorgio, a presto."
     wait_till_quiet
 }
 
