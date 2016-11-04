@@ -28,6 +28,10 @@ EOF
 # HELPER FUNCTIONS
 #######################################################################################
 
+speak() {
+    echo "\"$1\"" | yarp write ... /iSpeak
+}
+
 wait_till_quiet() {
     sleep 0.3
     isSpeaking=$(echo "stat" | yarp rpc /iSpeak/rpc)
