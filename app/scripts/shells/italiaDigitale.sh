@@ -49,15 +49,15 @@ display-text() {
 }
 
 display-sun() {
-    echo "set file /home/r1-user/AUXDISP/RobotE_PNG_80x32_16bit_Sole.bmp" | yarp write ... /robot/faceDisplay/rpc
+    echo "set file RobotE_PNG_80x32_16bit_Sole.bmp" | yarp write ... /robot/faceDisplay/rpc
 }
 
 display-ticked() {
-    echo "set file /home/r1-user/AUXDISP/RobotE_PNG_80x32_16bit_DA_conferma.bmp" | yarp write ... /robot/faceDisplay/rpc
+    echo "set file RobotE_PNG_80x32_16bit_spuntaVerse01.bmp" | yarp write ... /robot/faceDisplay/rpc
 }
 
 display-happy() {
-    echo "set file /home/r1-user/AUXDISP/runtime/happyEye.bmp" | yarp write ... /robot/faceDisplay/rpc
+    echo "set face hap" | yarp write ... /robot/faceDisplay/rpc
 }
 
 #######################################################################################
