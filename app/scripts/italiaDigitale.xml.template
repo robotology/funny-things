@@ -47,6 +47,24 @@
     </module>
 
     <connection>
+        <from>/iSpeak/speech-dev/rpc</from>
+        <to>/r1/speech:rpc</to>
+        <protocol>tcp</protocol>
+    </connection>
+
+    <connection>
+        <from>/textimage/img:o</from>
+        <to>/robot/faceDisplay/image:i</to>
+        <protocol>tcp</protocol>
+    </connection>
+
+    <connection>
+        <from>/textimage/cmd:o</from>
+        <to>/robot/faceDisplay/rpc</to>
+        <protocol>tcp</protocol>
+    </connection>
+
+    <connection>
         <from>/OpenNI2/imageFrame:o</from>
         <to>/view</to>
         <protocol>tcp</protocol>
