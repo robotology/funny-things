@@ -1,0 +1,61 @@
+<application>
+
+    <name>Italia Digitale</name>
+    <dependencies>
+    </dependencies>
+
+    <module>
+        <name>yarpdev</name>
+        <parameters>--device speech --lingware--context speech --default-language it-IT --robot r1 --pitch 80 --speed 100</parameters>
+        <node>r1-face</node>
+    </module>
+
+    <module>
+        <name>yarpdev</name>
+        <parameters>--device faceDisplayServer</parameters>
+        <node>r1-face</node>
+    </module>
+
+    <module>
+        <name>yarpdev</name>
+        <parameters>--device OpenNI2DeviceServer</parameters>
+        <node>r1-torso</node>
+    </module>
+
+    <module>
+        <name>textimage</name>
+        <parameters>--scroll_speed 80</parameters>
+        <node>r1-console-linux</node>
+    </module>
+
+    <module>
+        <name>iSpeak</name>
+        <parameters>--package speech-dev</parameters>
+        <node>r1-face</node>
+    </module>
+
+    <module>
+        <name>cer_gaze-controller</name>
+        <parameters>--T 0.8 --cameras::context cameraCalibration --cameras::file cerEyes_320x240.ini --joints-limits::pitch "(-20.0 20.0)" --joints-limits::yaw "(-40.0 40.0)"</parameters>
+        <node>r1-base</node>
+    </module>
+
+    <module>
+        <name>yarpview</name>
+        <parameters>--name /view --out /view/out</parameters>
+        <node>r1-console-linux</node>
+    </module>
+
+    <connection>
+        <from>/OpenNI2/imageFrame:o</from>
+        <to>/view</to>
+        <protocol>tcp</protocol>
+    </connection>
+
+    <connection>
+        <from>/view/out</from>
+        <to>/cer_gaze-controller/target:i</to>
+        <protocol>tcp+recv.portmonitor+context.funny-things+file.r1-look_pm.lua</protocol>
+    </connection>
+
+</application>
