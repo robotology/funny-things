@@ -24,7 +24,7 @@
 
     <module>
         <name>textimage</name>
-        <parameters>--scroll_speed 80</parameters>
+        <parameters>--scroll_speed 100</parameters>
         <node>r1-console-linux</node>
     </module>
 
