@@ -42,33 +42,18 @@ end
 -- update is called when the port receives new data
 -- @param thing The Things abstract data type
 -- @return Things
-
 PortMonitor.update = function(thing)
     
     bt = thing:asBottle()
+    u = bt:get(0):asInt()
+    v = bt:get(1):asInt()
+    bt:clear()
+    bt:addString("left")
+    bt:addInt(u)
+    bt:addInt(v)
+    bt:addDouble(1.0)
     
-    px = bt:get(0):asInt()
-    py = bt:get(1):asInt()
-    
-    local tx = yarp.Property()
-    th = yarp.Things()
-    tx:clear()
-    
-    tx:put("control-frame","depth")
-    tx:put("target-type","image")
-    tx:put("image","depth")
-
-    local location = yarp.Bottle()
-    local val = location:addList()
-    
-    val:addDouble(320-px)
-    val:addDouble(py)
-    
-    tx:put("target-location",location:get(0))
-    
-    print("look_at_pixel:", tx:toString())
-    
-    th:setPortWriter(tx)
-    return th
-    
+    return thing
 end
+
+
