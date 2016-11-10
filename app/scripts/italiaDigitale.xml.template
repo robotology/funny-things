@@ -67,7 +67,7 @@
     <connection>
         <from>/OpenNI2/imageFrame:o</from>
         <to>/view</to>
-        <protocol>tcp</protocol>
+        <protocol>mjpeg</protocol>
     </connection>
 
     <connection>
