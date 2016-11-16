@@ -476,6 +476,8 @@ sequence_12() {
 }
 
 sequence_13() { 
+    gaze "look-around 0.0 0.0 5.0"
+    go_home
     speak "Sono contento di esserti di aiuto!"
 }
 
@@ -575,16 +577,6 @@ sequence_17() {
     go_home_helperL 2.0
     wait_till_quiet
     speak "So gia' fare tantissime cose, persino tai-ci, Ora vi faccio vedere!"
-    wait_till_quiet
-}
-
-sequence_088() {
-    gaze "look 15.0 0.0 5.0"
-    speak "Grazie a te."
-    wait_till_quiet
-    speak "E un saluto a tutti i telespettatori del TG2!"
-    gaze "look-around 15.0 0.0 5.0"
-    hello_both
     wait_till_quiet
 }
 
