@@ -189,6 +189,12 @@ point_eye() {
     go_home
 }
 
+point_ear_right() {
+    echo "ctpq time 2 off 0 pos (-18.0 59.0 -30.0 105.0 -22.0 28.0 -6.0 6.0 55.0 30.0 33.0 4.0 9.0 58.0 113.0 192.0)" | yarp rpc /ctpservice/right_arm/rpc
+    sleep 3.0
+    go_home_helperR 2.0
+}
+
 point_ears() {
     breathers "stop"
 
@@ -254,6 +260,12 @@ hello_right_simple() {
     smile
 }
 
+interaction_right() {
+    echo "ctpq time 1.5 off 0 pos (-60.0 44.0 -2.0 96.0 53.0 -17.0 -11.0 0.0 55.0 30.0 33.0 4.0 9.0 58.0 113.0 192.0)" | yarp rpc /ctpservice/right_arm/rpc
+    sleep 2.0
+    go_home_helperR 2.0
+}
+
 hello_right() {
     #breathers "stop"
     echo "ctpq time 1.5 off 0 pos (-60.0 44.0 -2.0 96.0 53.0 -17.0 -11.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0)" | yarp rpc /ctpservice/right_arm/rpc
@@ -289,7 +301,7 @@ hello_both() {
     #breathers "start"
 }
 
-show_musles() {
+show_muscles() {
     #breathers "stop"
     echo "ctpq time 1.5 off 0 pos (-27.0 78.0 -37.0 33.0 -79.0 0.0 -4.0 26.0 27.0 0.0 29.0 59.0 117.0 87.0 176.0 250.0)" | yarp rpc /ctpservice/right_arm/rpc
     echo "ctpq time 1.5 off 0 pos (-27.0 78.0 -37.0 33.0 -79.0 0.0 -4.0 26.0 27.0 0.0 29.0 59.0 117.0 87.0 176.0 250.0)" | yarp rpc /ctpservice/left_arm/rpc
@@ -301,7 +313,7 @@ show_musles() {
     breathers "start"
 }
 
-show_musles_left() {
+show_muscles_left() {
     echo "ctpq time 1.5 off 0 pos (-27.0 78.0 -37.0 33.0 -79.0 0.0 -4.0 26.0 27.0 0.0 29.0 59.0 117.0 87.0 176.0 250.0)" | yarp rpc /ctpservice/left_arm/rpc
     echo "ctpq time 1.0 off 0 pos (-27.0 78.0 -37.0 93.0 -79.0 0.0 -4.0 26.0 67.0 0.0 99.0 59.0 117.0 87.0 176.0 250.0)" | yarp rpc /ctpservice/left_arm/rpc
     sleep 3.0
@@ -321,7 +333,7 @@ show_iit() {
     breathers "start"
 }
 
-    show_agitation() {
+show_agitation() {
 
     echo "ctpq time 1.0 off 0 pos (0.0 0.0 -12.0)" | yarp rpc /ctpservice/torso/rpc
 
@@ -349,6 +361,23 @@ show_iit() {
     sleep 0.2
     
     echo "ctpq time 1.0 off 0 pos (0.0 0.0 0.0)" | yarp rpc /ctpservice/torso/rpc
+}
+
+question() {
+    echo "ctpq time 1.5 off 0 pos (-39.0 37.0 -17.0 53.0 -47.0 14.0 -2.0 -1.0 8.0 45 3.4 2.4 2.2 0.0 6.8 17)" | yarp rpc /ctpservice/right_arm/rpc
+    echo "ctpq time 1.5 off 0 pos (-39.0 37.0 -17.0 53.0 -47.0 14.0 -2.0 -1.0 8.0 45 3.4 2.4 2.2 0.0 6.8 17)" | yarp rpc /ctpservice/left_arm/rpc
+    sleep 3.0
+    go_home
+}
+
+question_left() {
+    echo "ctpq time 1.5 off 0 pos (-39.0 37.0 -17.0 53.0 -47.0 14.0 -2.0 -1.0 8.0 45 3.4 2.4 2.2 0.0 6.8 17)" | yarp rpc /ctpservice/left_arm/rpc
+    go_home_helperL 1.5
+}
+
+question_right() {
+    echo "ctpq time 1.5 off 0 pos (-39.0 37.0 -17.0 53.0 -47.0 14.0 -2.0 -1.0 8.0 45 3.4 2.4 2.2 0.0 6.8 17)" | yarp rpc /ctpservice/right_arm/rpc
+    go_home_helperR 1.5
 }
 
 talk_mic() {
@@ -406,65 +435,69 @@ sequence_06() {
     go_home
 }
 
-sequence_07() {
-    gaze "look 15.0 0.0 3.0"
-    speak "Eccomi! sono qui, scusami... ma mi sono dovuto allontanare un momento."
-    sleep 1.0    
-    hello_right_simple
-    smile && blink
+sequence_07() {   
+    speak "Belli i felini! Saranno bravi genitori? Guardiamo, io vi aspetto dopo."
+    sleep 1.0
+    question
 }
 
 sequence_08() {
-    gaze "look 15.0 0.0 3.0"
-    speak "Hai raggione...ma avevo da fare!. Degli amici molto importanti mi hanno chiamato ... dovevo andare, non si possono far aspettare questo tipo di amici..."
+    speak "L'intelligenza artificiale viene studiata proprio per aiutare l'uomo."
+    point_ear_right
     smile && blink
 }
 
 sequence_09() {
-    gaze "look 15.0 0.0 3.0"
-    speak "Hai raggione..."
+    speak "Era ora!!"
+    greet_with_right_thumb_up
     smile && blink
 }
 
 sequence_10() {
-    gaze "look 15.0 0.0 3.0"
-    speak "No... la testa me l'hanno montata i miei papa' ingegneri, e pure i 53 motori..."
+    speak "Oltre 30, nati dopo di me, e sparsi per il mondo, dagli stati uniti al giappone"
+    sleep 3.5    
+    question_right
+    sleep 1.5
+    question_left
     smile && blink
 }
 
 sequence_11() {
-    gaze "look 15.0 0.0 3.0"
-    sleep 1.0
-    speak "Come sapete, io mi chiamo aicab"
+    speak "Ho tante mamme e papa'; all'Istituto Italiano di Tecnologia di Genova. Oggi mi ha accompagnato qui Vadiim "
+    sleep 2.0    
     hello_left_simple
-    sleep 1.0 && blink
-    wait_till_quiet
-    smile && blink
-    gaze "look-around 15.0 0.0 5.0"
     go_home_helper 2.0
 }
 
 sequence_12() {
-    gaze "look-around 15.0 0.0 5.0"
-    speak "Aicub vuol dire cucciolo di robot. Infatti, ho le dimensioni e la forma di un bambino, e come i bambini posso imparare cose nuove."
+    speak "Ma certo, sono un intelligenza artificiale!!"
+    victory_both
     wait_till_quiet
 }
 
-sequence_13() {
-    gaze "look-around 15.0 0.0 5.0"
-    speak "Sono nato a Genova, circa 10 anni fa, all'Istituto Italiano di Tecnologia."
+sequence_13() { 
+    speak "Sono contento di esserti di aiuto!"
+}
+
+sequence_14() { 
+    speak "Io restero' con i ricercatori, e continuero' a imparare e crescere. sara' R1 ad entrare nelle vostre case per aiutarvi"
+}
+
+sequence_15() { 
+    speak "16961, ti dice niente questo numero?"
+    interaction_right
+}
+
+sequence_16() { 
+    speak "Grazie Alessandro, e' ora che io vada a dormire. Mi e' piaciuta la TV."
     echo "ctpq time 1.0 off 0 pos (-12.0 37.0 6.0 67.0 -52.0 -14.0 9.0    12.0 -6.0 37.0 2.0 0.0 3.0 2.0 1.0 0.0)" | yarp rpc /ctpservice/left_arm/rpc
     sleep 2.0
-    go_home_helperL 2.0
-    wait_till_quiet
     echo "ctpq time 1.0 off 0 pos (-13.0 29.0 18.0 59.0 -59.0 -12.0 -6.0    0.0 9.0 42.0 2.0 0.0 1.0 0.0 8.0 4.0)" | yarp rpc /ctpservice/right_arm/rpc
-    speak "Gli ingegneri che mi hanno costruito mi hanno insegnato moltissimo in questi anni."
     sleep 2.0
-    go_home_helperR 2.0
-    wait_till_quiet
+    go_home
 }
 
-sequence_14() {
+sequence_14_() {
     gaze "look-around 15.0 0.0 5.0"
     speak "Sono fatto di cinquemilla pezzi, posso riconoscere gli oggetti intorno a me, ed afferrarli. e posso usarli per svolgere alcuni semplici compiti."
     sleep 1.5
@@ -504,13 +537,7 @@ sequence_14() {
     wait_till_quiet
 }
 
-sequence_15() {
-    gaze "look-around 15.0 0.0 5.0"
-    speak "grazie ai ricercatori dell'Istituto Italiano di Tecnologia, ho 30 fratelli sparsi per il mondo, dagli Stati Uniti al Giappone, su cui lavorano scienziati di tutte le nazionalita'."
-    wait_till_quiet
-}
-
-sequence_16() {
+sequence_16_() {
     gaze "look-around 15.0 0.0 5.0"
     speak "In futuro potro' aiutarvi nei lavori domestici, o in altre attivita' delicate per cui avrete bisogno di supporto."
     echo "ctpq time 1.0 off 0 pos (-12.0 37.0 6.0 67.0 -52.0 -14.0 9.0    12.0 -6.0 37.0 2.0 0.0 3.0 2.0 1.0 0.0)" | yarp rpc /ctpservice/left_arm/rpc
