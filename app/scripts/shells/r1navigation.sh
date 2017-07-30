@@ -10,7 +10,7 @@ cat << EOF
 Italia Digitale SCRIPTING
 Author:  Vaidm Tikhanoff   <vadim.tikhanoff@iit.it>
 
-This script scripts through the commands available for the show 118 
+This script scripts through the commands available for the navigation of R1
 
 USAGE:
         $0 options
@@ -71,23 +71,40 @@ go_home()
 
 livingRoom() {
     speak "I am in the living room"
-    echo "ctpq time 2.0 off 0 pos (50.0 11.0 8.5 90.0 -70.0 0.0 0.0 0.0)" | yarp rpc /ctpservice/left_arm/rpc
     go_home
 }
 
 corridors() {
    speak "I am going through the corridors"
-   echo "ctpq time 2.0 off 0 pos (35.0 9.0 -13.0 45.0 -54.0 0.0 -15.0 -1.0)" | yarp rpc /ctpservice/left_arm/rpc
+   echo "ctpq time 2.0 off 0 pos (-10.0 5.0 -6.0 45.0 -3.2 0.0 0.0 0.0)" | yarp rpc /ctpservice/left_arm/rpc
+   echo "ctpq time 2.0 off 0 pos (-10.0 5.0 -6.0 45.0 -3.2 0.0 0.0 0.0)" | yarp rpc /ctpservice/right_arm/rpc
+}
+
+corridors_full_left() {
+   speak "I am going through the corridors"
+   echo "ctpq time 2.0 off 0 pos (-8.8 5.4 -11.9 92.0 9.6 0.0 -13.0 11.0)" | yarp rpc /ctpservice/left_arm/rpc
+}
+
+corridors_full_right() {
+   speak "I am going through the corridors"
+   echo "ctpq time 2.0 off 0 pos (-8.8 5.4 -11.9 92.0 9.6 0.0 -13.0 11.0)" | yarp rpc /ctpservice/right_arm/rpc
 }
 
 kitchen() {
     speak "I am in the kitchen"
+    go_home
 }
 
-table() {
+table_right() {
    speak "getting ready to approach the table"
    echo "ctpq time 2.0 off 0 pos (8.0 16.0 6.7 94.0 14.0 0.0 -12.0 14.0)" | yarp rpc /ctpservice/right_arm/rpc
+   
+}
 
+table_left() {
+   speak "getting ready to approach the table"
+   echo "ctpq time 2.0 off 0 pos (8.0 16.0 6.7 94.0 14.0 0.0 -12.0 14.0)" | yarp rpc /ctpservice/left_arm/rpc
+   
 }
 
 #######################################################################################
