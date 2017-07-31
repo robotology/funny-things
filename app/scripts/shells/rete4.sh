@@ -103,6 +103,7 @@ go_home_helper() {
 
 go_home() {
     #breathers "stop"
+    gaze "look-around 0.0 0.0 5.0"
     sleep 1.0
     go_home_helper 2.0
     sleep 3.0
@@ -348,10 +349,10 @@ show_agitation() {
     sleep 1.5
     gaze "look 30.0 0.0 5.0"
     sleep 1.5
-    gaze "look -30.0 0.0 5.0"
-    sleep 1.5
-    gaze "look 30.0 0.0 5.0"
-    sleep 1.5
+    #gaze "look -30.0 0.0 5.0"
+    #sleep 1.5
+    #gaze "look 30.0 0.0 5.0"
+    #sleep 1.5
 
     echo "clear pitch" | yarp rpc /iKinGazeCtrl/rpc
     sleep 0.2
@@ -372,11 +373,13 @@ question() {
 
 question_left() {
     echo "ctpq time 1.5 off 0 pos (-39.0 37.0 -17.0 53.0 -47.0 14.0 -2.0 -1.0 8.0 45 3.4 2.4 2.2 0.0 6.8 17)" | yarp rpc /ctpservice/left_arm/rpc
+    gaze "look -30.0 0.0 5.0"
     go_home_helperL 1.5
 }
 
 question_right() {
     echo "ctpq time 1.5 off 0 pos (-39.0 37.0 -17.0 53.0 -47.0 14.0 -2.0 -1.0 8.0 45 3.4 2.4 2.2 0.0 6.8 17)" | yarp rpc /ctpservice/right_arm/rpc
+    gaze "look 30.0 0.0 5.0"
     go_home_helperR 1.5
 }
 
@@ -410,22 +413,25 @@ sequence_02() {
     smile && blink
 }
 
-sequence_03() {
+sequence_03_() {
     surprised
     show_agitation
     gaze "look-around 0.0 0.0 5.0"
     smile
+    sleep 1.0
+    sequence_04
 }
 
 sequence_04() {    
     speak "Si, sono creature bellissime, e ci sono tanti cuccioli come me! Ma, morderanno??"
-    greet_with_right_thumb_up
+    sleep 1.5
+    #greet_with_right_thumb_up
 }
 
 sequence_05() {  
     surprised  
     sleep 1.0
-    speak "Questi sono davvero tanti!...Vai avanti tu, ACP, che devi presentarli. io ti seguo...da qui."
+    speak "Questi sono davvero tanti!...Vai avanti tu, ACP, che devi presentarli. io ti seguo...da qua."
     smile
 }
 
@@ -454,11 +460,13 @@ sequence_09() {
 }
 
 sequence_10() {
-    speak "Oltre 30, nati dopo di me, e sparsi per il mondo, dagli stati uniti al giappone"
+    speak "Oltre 30, nati dopo di me, e sparsi per il mondo, dagli stati uniti al giappone."
     sleep 3.5    
     question_right
     sleep 1.5
     question_left
+    sleep 1.0
+    gaze "look-around 0.0 0.0 5.0"
     smile && blink
 }
 
@@ -475,15 +483,27 @@ sequence_12() {
     wait_till_quiet
 }
 
-sequence_13() { 
-    gaze "look-around 0.0 0.0 5.0"
-    go_home
+# Red ball DEMO.
+# IOL DEMO.
+
+#yarp rpc /iolStateMachineHandler/human:rpc
+#where Octopus
+#ack
+#hold Octopus
+#drop
+
+sequence_13() {
+    # Back from IOL to here
+    #gaze "look-around 0.0 0.0 5.0"
     speak "Sono contento di esserti di aiuto!"
+    #go_home
 }
 
 sequence_14() { 
     speak "Io restero' con i ricercatori, e continuero' a imparare e crescere. sara' R1 ad entrare nelle vostre case per aiutarvi"
 }
+
+# Skin DEMO.
 
 sequence_15() { 
     speak "16961, ti dice niente questo numero?"
@@ -497,6 +517,11 @@ sequence_16() {
     echo "ctpq time 1.0 off 0 pos (-13.0 29.0 18.0 59.0 -59.0 -12.0 -6.0    0.0 9.0 42.0 2.0 0.0 1.0 0.0 8.0 4.0)" | yarp rpc /ctpservice/right_arm/rpc
     sleep 2.0
     go_home
+}
+
+sequence_17() {
+    speak "Ciao sono aicab, e vi aspetto Mercoledi' a La Settima Porta su Rete 4!"
+    hello_both
 }
 
 sequence_14_() {
@@ -553,7 +578,7 @@ sequence_16_() {
     wait_till_quiet
 }
 
-sequence_17() {
+sequence_17_() {
     gaze "look-around 15.0 0.0 5.0"
     speak "In questo momento, costo 250 mila euro, ma il mio progetto e' disponibile per tutti."
     wait_till_quiet
@@ -578,6 +603,22 @@ sequence_17() {
     wait_till_quiet
     speak "So gia' fare tantissime cose, persino tai-ci, Ora vi faccio vedere!"
     wait_till_quiet
+}
+
+are_home() {
+    echo "home all" | yarp rpc /actionsRenderingEngine/cmd:io
+}
+
+are_point() {
+    speak "Penso che sia questo il piccolo polpo"
+    echo "point (-0.3 -0.2 -0.03) left" | yarp rpc /actionsRenderingEngine/cmd:io
+}
+
+are_take() {
+    speak "Ok, ora lo prendo!"
+    echo "take (-0.3 -0.17 -0.05) left" | yarp rpc /actionsRenderingEngine/cmd:io
+    speak "Ecco il piccolo polpo, Vadiim"
+    echo "drop away" | yarp rpc /actionsRenderingEngine/cmd:io
 }
 
 #######################################################################################
