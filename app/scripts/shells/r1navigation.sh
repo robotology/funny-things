@@ -46,7 +46,7 @@ speak() {
 }
 
 go_home_helper() {
-    #go_home_helperR $1
+    go_home_helperR $1
     go_home_helperL $1
 }
 
