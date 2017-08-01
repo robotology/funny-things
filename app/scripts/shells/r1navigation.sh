@@ -8,7 +8,7 @@ usage() {
 cat << EOF
 ***************************************************************************************
 Italia Digitale SCRIPTING
-Author:  Vaidm Tikhanoff   <vadim.tikhanoff@iit.it>
+Author:  Vadim Tikhanoff   <vadim.tikhanoff@iit.it>
 
 This script scripts through the commands available for the navigation of R1
 
@@ -90,9 +90,8 @@ corridors_full_right() {
    echo "ctpq time 2.0 off 0 pos (-8.8 5.4 -11.9 92.0 9.6 0.0 -13.0 11.0)" | yarp rpc /ctpservice/right_arm/rpc
 }
 
-kitchen() {
-    speak "I am in the kitchen"
-    go_home
+test() {
+    speak "this is a test"
 }
 
 table_right() {
