@@ -101,21 +101,21 @@ torso_up() {
 }
 
 torso_down() {
-    echo "ctpq time 4.0 off 0 pos (0.0 0.0 0.0 0.0)" | yarp rpc /ctpservice/torso/rpc
+    echo "ctpq time 4.0 off 0 pos (0.01 0.0 0.0 0.0)" | yarp rpc /ctpservice/torso/rpc
 }
 
 table_right() {
    speak "getting ready to approach the table"
    #echo "ctpq time 2.0 off 0 pos (8.0 16.0 6.7 94.0 14.0 0.0 0.0 0.0)" | yarp rpc /ctpservice/right_arm/rpc
    #echo "ctpq time 2.0 off 0 pos (0.0 0.0 0.0)" | yarp rpc /ctpservice/right_wrist_tripod/rpc
-   echo "(target (0.376637 -0.277564 0.907717 -0.982174 -0.187205 -0.016979 1.662991))" | yarp write .... /cer_reaching-controller/right/target:i
+   echo "(parameters ((mode full_pose+no_torso_no_heave)) ) (target (0.376637 -0.277564 0.907717 -0.982174 -0.187205 -0.016979 1.662991))" | yarp write .... /cer_reaching-controller/right/target:i
 }
 
 table_left() {
    speak "getting ready to approach the table"
    #echo "ctpq time 2.0 off 0 pos (8.0 16.0 6.7 94.0 14.0 0.0 0.0 0.0)" | yarp rpc /ctpservice/left_arm/rpc
    #echo "ctpq time 2.0 off 0 pos (0.0 0.0 0.0)" | yarp rpc /ctpservice/left_wrist_tripod/rpc
-   echo "(target (0.377518 0.273386 0.900667 -0.97539 -0.014684 -0.219999 1.515129))" | yarp write .... /cer_reaching-controller/left/target:i
+   echo "(parameters ((mode full_pose+no_torso_no_heave)) ) (target (0.377518 0.273386 0.900667 -0.97539 -0.014684 -0.219999 1.515129))" | yarp write .... /cer_reaching-controller/left/target:i
 }
 
 #######################################################################################
