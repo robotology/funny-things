@@ -94,6 +94,14 @@ test() {
     speak "this is a test"
 }
 
+torso_up() {
+    echo "ctpq time 4.0 off 0 pos (0.17 0.0 0.0 0.0)" | yarp rpc /ctpservice/torso/rpc
+}
+
+torso_down() {
+    echo "ctpq time 4.0 off 0 pos (0.0 0.0 0.0 0.0)" | yarp rpc /ctpservice/torso/rpc
+}
+
 table_right() {
    speak "getting ready to approach the table"
    #echo "ctpq time 2.0 off 0 pos (8.0 16.0 6.7 94.0 14.0 0.0 0.0 0.0)" | yarp rpc /ctpservice/right_arm/rpc
