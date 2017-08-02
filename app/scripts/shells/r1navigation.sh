@@ -96,12 +96,14 @@ test() {
 
 table_right() {
    speak "getting ready to approach the table"
-   echo "ctpq time 2.0 off 0 pos (8.0 16.0 6.7 94.0 14.0 0.0 -12.0 14.0)" | yarp rpc /ctpservice/right_arm/rpc
+   echo "ctpq time 2.0 off 0 pos (8.0 16.0 6.7 94.0 14.0 0.0 0.0 0.0)" | yarp rpc /ctpservice/right_arm/rpc
+   echo "ctpq time 2.0 off 0 pos (0.0 0.0 0.0)" | yarp rpc /ctpservice/right_wrist_tripod/rpc
 }
 
 table_left() {
    speak "getting ready to approach the table"
-   echo "ctpq time 2.0 off 0 pos (8.0 16.0 6.7 94.0 14.0 0.0 -12.0 14.0)" | yarp rpc /ctpservice/left_arm/rpc
+   echo "ctpq time 2.0 off 0 pos (8.0 16.0 6.7 94.0 14.0 0.0 0.0 0.0)" | yarp rpc /ctpservice/left_arm/rpc
+   echo "ctpq time 2.0 off 0 pos (0.0 0.0 0.0)" | yarp rpc /ctpservice/left_wrist_tripod/rpc
 
 }
 
