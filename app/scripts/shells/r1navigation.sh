@@ -83,11 +83,13 @@ corridors() {
 corridors_full_left() {
    speak "I am going through the corridors"
    echo "ctpq time 2.0 off 0 pos (-8.8 5.4 -11.9 92.0 9.6 0.0 -13.0 11.0)" | yarp rpc /ctpservice/left_arm/rpc
+   echo "ctpq time 2.0 off 0 pos (-10.0 5.0 -6.0 45.0 -3.2 0.0 0.0 0.0)" | yarp rpc /ctpservice/right_arm/rpc
 }
 
 corridors_full_right() {
    speak "I am going through the corridors"
    echo "ctpq time 2.0 off 0 pos (-8.8 5.4 -11.9 92.0 9.6 0.0 -13.0 11.0)" | yarp rpc /ctpservice/right_arm/rpc
+   echo "ctpq time 2.0 off 0 pos (-10.0 5.0 -6.0 45.0 -3.2 0.0 0.0 0.0)" | yarp rpc /ctpservice/left_arm/rpc
 }
 
 test() {
