@@ -118,6 +118,26 @@ table_left() {
    echo "(parameters ((mode full_pose+no_torso_no_heave)) ) (target (0.377518 0.273386 0.900667 -0.97539 -0.014684 -0.219999 1.515129))" | yarp write .... /cer_reaching-controller/left/target:i
 }
 
+provide_object_left() {
+ 
+    echo "(parameters ((mode full_pose+no_torso_no_heave)) ) (target (0.5 0.203386 0.750667 -0.996393 0.065846 0.053525 1.47289))" | yarp write .... /cer_reaching-controller/left/target:i    
+}
+
+provide_object_right() {
+ 
+    echo "(parameters ((mode full_pose+no_torso_no_heave)) ) (target (0.5 -0.203386 0.750667 -0.996393 0.065846 0.053525 1.47289))" | yarp write .... /cer_reaching-controller/right/target:i    
+}
+
+provide_torso_up() {
+    echo "ctpq time 4.0 off 0 pos (0.10 0.0 0.0 0.0)" | yarp rpc /ctpservice/torso/rpc
+}
+
+provide_stop() {
+    echo "stop" | yarp rpc /cer_reaching-controller/left/rpc
+    echo "stop" | yarp rpc /cer_reaching-controller/right/rpc
+}
+
+
 #######################################################################################
 # "MAIN" FUNCTION:                                                                    #
 #######################################################################################
