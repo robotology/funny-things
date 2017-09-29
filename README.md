@@ -1,7 +1,7 @@
 Funny Things
 ============
 
-`funny-things` is a repository which contains, among other funny things, a set of modules for easy scripting and execution of non-interactive (pre-programmed) demos. These modules (`funnyPostures`, `iCubBlinker` and `iCubBreather`) are devised to perform a set of actions, including moving, "breathing",  blinking, face expressions, etc, which can be easily handled through `rpc` commands. It might be useful to automatize the management of these modules not directly from such `rpc` commands, but through the use of bash (`.sh`) scripts, which allow easy synchronization, ordering and test of these calls so that they can be predefined for particular demos. 
+`funny-things` is a repository which contains, among other funny things, a set of modules for easy scripting and execution of non-interactive (pre-programmed) demos. These modules (`funnyPostures`, `iCubBlinker` and `gaze.lua`) are devised to perform a set of actions, including moving, gazing,  blinking, face expressions, etc, which can be easily handled through `rpc` commands. Moreover, these calls can be managed directly through the use of bash (`.sh`) scripts, which allow easy synchronization, ordering and test of these calls so that they can be predefined for particular demos. Several examples are available in the repo.
 
 Step-by-step guide 
 ------------
@@ -15,9 +15,14 @@ Step-by-step guide
   * Open `icubDemoScripts` (or `icubDemoScriptsSIM` to work on the simulator) template, adapt them and save as apps.
   * Open or create a new script file (`.sh`) and modify or add any commands to suit your demo needs.
   * Set robot environment (start robot or run `yarpserver` and `iCub_SIM` on simulator). 
-  * Open the `icubDemoScripts` (or `icubDemoScriptsSIM` ) app and launch and connect modules.
-  * On the terminal, go to the `./funny-things/app/scripts/shells` folder.
-  * Run any desired command from the command line as `./<scriptname>.sh <command>` - eg `./isp-movements welcome`
+  * If they are not running yet, open the emotions and speech applications:
+    * `Face_Expressions`
+    * `iCubSpeech`
+  * Open the `icubDemoScripts` (or `icubDemoScriptsSIM` ) app and launch and connect modules.
+  * On the terminal, go to the `./funny-things/app/scripts/shells` folder.
+  * Run any desired command from the command line as `./<scriptname>.sh <command>` - eg `./isp-movements welcome`.
+  * If new functionality is required, the easiest procedure is to copy an existing `.sh` with another name (`tg2.sh` can be a good starting point), and modify it to suit your needs.
+ 
 
 For more info, see:
 
