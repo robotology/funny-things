@@ -16,12 +16,12 @@ Step-by-step guide
   * Open or create a new script file (`.sh`) and modify or add any commands to suit your demo needs.
   * Set robot environment (start robot or run `yarpserver` and `iCub_SIM` on simulator). 
   * If they are not running yet, open the emotions and speech applications:
-    * `Face_Expressions`
-    * `iCubSpeech`
+    * `Face_Expressions`
+    * `iCubSpeech`
   * Open the `icubDemoScripts` (or `icubDemoScriptsSIM` ) app and launch and connect modules.
   * On the terminal, go to the `./funny-things/app/scripts/shells` folder.
   * Run any desired command from the command line as `./<scriptname>.sh <command>` - eg `./isp-movements welcome`.
-  * If new functionality is required, the easiest procedure is to copy an existing `.sh` with another name (`tg2.sh` can be a good starting point), and modify it to suit your needs.
+  * If new functionality is required, the easiest procedure is to copy an existing `.sh` with another name (`tg2.sh` can be a good starting point), and modify it to suit your needs.
  
 
 For more info, see:
