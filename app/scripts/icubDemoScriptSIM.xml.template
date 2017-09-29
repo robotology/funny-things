@@ -1,72 +1,42 @@
 <application>
-    <name>icubDemoScriptSIM</name>
+    <name>iCubDemoScriptSIM</name>
+
+    <dependencies>
+        <port>/icub/yarprobotinterface</port>
+        <port>/iKinGazeCtrl/rpc</port>
+    </dependencies>
 
     <module>
-        <name>iCubBreather</name>
-        <parameters>--name iCubBreatherRA --robot icubSim --part right_arm --autoStart</parameters>
-        <node>localhost</node>
-        <stdio></stdio>
-    </module>
-    <module>
-        <name>iCubBreather</name>
-        <parameters>--name iCubBreatherLA --robot icubSim --part left_arm --autoStart</parameters>
-        <node>localhost</node>
-        <stdio></stdio>
-    </module>
-    <module>
-        <name>iCubBreather</name>
-        <parameters>--name iCubBreatherT  --robot icubSim--part torso --autoStart</parameters>
-        <node>localhost</node>
-        <stdio></stdio>
-    </module>
-    <module>
-        <name>iCubBreather</name>
-        <parameters>--name iCubBreatherH --robot icubSim --part head --autoStart --rate 1500</parameters>
-        <node>localhost</node>
-        <stdio></stdio>
-    </module>
-    <module>
-        <name>ctpService</name>
-        <parameters>--robot icubSim --part head</parameters>
-        <node>localhost</node>
-        <stdio></stdio>
+        <name>gaze.lua</name>
+        <parameters>--look-around</parameters>
+        <deployer>lua</deployer>
+        <node>terminal</node>
+        <dependencies>
+            <port timeout="10">/iKinGazeCtrl/angles:i</port>
+            <port timeout="10">/iKinGazeCtrl/angles:o</port>
+        </dependencies>
     </module>
     <module>
         <name>ctpService</name>
         <parameters>--robot icubSim --part left_arm</parameters>
-        <node>localhost</node>
-        <stdio></stdio>
+        <node>terminal</node>
     </module>
     <module>
         <name>ctpService</name>
         <parameters>--robot icubSim --part right_arm</parameters>
-        <node>localhost</node>
-        <stdio></stdio>
+        <node>terminal</node>
     </module>
     <module>
         <name>ctpService</name>
         <parameters>--robot icubSim --part torso</parameters>
-        <node>localhost</node>
-        <stdio></stdio>
+        <node>terminal</node>
     </module>
     <module>
         <name>iCubBlinker</name>
         <parameters>--autoStart --robot icubSim</parameters>
-        <node>localhost</node>
-        <stdio></stdio>
+        <node>terminal</node>
     </module>
-    <module>
-        <name>iSpeak</name>
-        <parameters>--package acapela-tts --package_options icub_ita</parameters>
-        <node>icub-win1</node>
-        <stdio></stdio>
-    </module>
-        <module>
-        <name>simFaceExpression</name>
-        <parameters></parameters>
-        <node>localhost</node>
-        <stdio></stdio>
-    </module>
+
     <module>
         <name>simFaceExpression</name>
         <parameters></parameters>
@@ -74,17 +44,24 @@
         <stdio></stdio>
     </module>
 
+    <connection>
+        <from>/gaze/tx</from>
+        <to>/iKinGazeCtrl/angles:i</to>
+        <protocol>tcp</protocol>
+    </connection>
+    <connection>
+        <from>/iKinGazeCtrl/angles:o</from>
+        <to>/gaze/rx</to>
+        <protocol>tcp</protocol>
+    </connection>
 
     <connection>
         <from>/iCubBlinker/emotions/raw</from>
-        <to>/icubSim/face/raw/in</to>
-        <protocol>tcp</protocol>
-    </connection>  
-    <connection>
-        <from>/iSpeak/emotions:o</from>
-        <to>/icubSim/face/emotions/in</to>
+        <to>/icub/face/raw/in</to>
         <protocol>tcp</protocol>
     </connection>
+
+
     <connection>
         <from>/face/eyelids</from>
         <to> /icubSim/face/eyelids</to>

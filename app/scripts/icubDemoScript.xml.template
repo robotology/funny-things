@@ -1,76 +1,57 @@
 <application>
-    <name>icubDemoScript</name>
+    <name>iCubDemoScript</name>
+
+    <dependencies>
+        <port>/icub/yarprobotinterface</port>
+        <port>/iKinGazeCtrl/rpc</port>
+    </dependencies>
 
     <module>
-        <name>iCubBreather</name>
-        <parameters>--name iCubBreatherRA --robot icub --part right_arm --autoStart</parameters>
-        <node>localhost</node>
-        <stdio></stdio>
-    </module>
-    <module>
-        <name>iCubBreather</name>
-        <parameters>--name iCubBreatherLA --robot icub --part left_arm --autoStart</parameters>
-        <node>localhost</node>
-        <stdio></stdio>
-    </module>
-    <module>
-        <name>iCubBreather</name>
-        <parameters>--name iCubBreatherT  --robot icub --part torso --autoStart</parameters>
-        <node>localhost</node>
-        <stdio></stdio>
-    </module>
-    <module>
-        <name>iCubBreather</name>
-        <parameters>--name iCubBreatherH --robot icub --part head --autoStart --rate 1500</parameters>
-        <node>localhost</node>
-        <stdio></stdio>
-    </module>
-    <module>
-        <name>ctpService</name>
-        <parameters>--robot icub --part head</parameters>
-        <node>localhost</node>
-        <stdio></stdio>
+        <name>gaze.lua</name>
+        <parameters>--look-around</parameters>
+        <deployer>lua</deployer>
+        <node>terminal</node>
+        <dependencies>
+            <port timeout="10">/iKinGazeCtrl/angles:i</port>
+            <port timeout="10">/iKinGazeCtrl/angles:o</port>
+        </dependencies>
     </module>
     <module>
         <name>ctpService</name>
         <parameters>--robot icub --part left_arm</parameters>
-        <node>localhost</node>
-        <stdio></stdio>
+        <node>terminal</node>
     </module>
     <module>
         <name>ctpService</name>
         <parameters>--robot icub --part right_arm</parameters>
-        <node>localhost</node>
-        <stdio></stdio>
+        <node>terminal</node>
     </module>
     <module>
         <name>ctpService</name>
         <parameters>--robot icub --part torso</parameters>
-        <node>localhost</node>
-        <stdio></stdio>
+        <node>terminal</node>
     </module>
     <module>
         <name>iCubBlinker</name>
-        <parameters>--autoStart --robot icub</parameters>
-        <node>localhost</node>
-        <stdio></stdio>
+        <parameters>--autoStart</parameters>
+        <node>terminal</node>
     </module>
-    <module>
-        <name>iSpeak</name>
-        <parameters>--package acapela-tts --package_options icub_ita</parameters>
-        <node>icub-win1</node>
-        <stdio></stdio>
-    </module>
-    
+
+    <connection>
+        <from>/gaze/tx</from>
+        <to>/iKinGazeCtrl/angles:i</to>
+        <protocol>tcp</protocol>
+    </connection>
+    <connection>
+        <from>/iKinGazeCtrl/angles:o</from>
+        <to>/gaze/rx</to>
+        <protocol>tcp</protocol>
+    </connection>
+
     <connection>
         <from>/iCubBlinker/emotions/raw</from>
         <to>/icub/face/raw/in</to>
         <protocol>tcp</protocol>
-    </connection>  
-    <connection>
-        <from>/iSpeak/emotions:o</from>
-        <to>/icub/face/emotions/in</to>
-        <protocol>tcp</protocol>
-    </connection>    
+    </connection>
 
 </application>

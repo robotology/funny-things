@@ -63,9 +63,9 @@ end
 azi = 0.0
 ele = 0.0
 ver = 0.0
-azi_delta = 5
-ele_delta = 5
-ver_delta = 2
+azi_delta = 2
+ele_delta = 2
+ver_delta = 1
 t0 = yarp.Time_now()
 
 
