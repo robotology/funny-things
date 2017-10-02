@@ -223,12 +223,30 @@ point_arms() {
     breathers "start"
 }
 
+boh() {
+    echo "ctpq time 1.0 off 0 pos ( -24.7962 39.5564 -18.3967 85.3255 -59.98 -43.4126 -13.4693 9.24502 9.89871 11.2995 0.0 0.0 2.86195 0.0 4.94386 0.0)" | yarp rpc /ctpservice/right_arm/rpc
+    echo "ctpq time 1.0 off 0 pos ( -24.7962 39.5564 -18.3967 85.3255 -59.98 -43.4126 -13.4693 9.24502 9.89871 11.2995 0.0 0.0 2.86195 0.0 4.94386 0.0)" | yarp rpc /ctpservice/left_arm/rpc
+    sleep 1.0
+    surprised
+    sleep 1.0
+    go_home_helper 2.0
+}
+
 fonzie() {
-    echo "ctpq time 2.0 off 0 pos ( -3.0 57.0   3.0 106.0 -9.0 -8.0 -10.0 22.0 0.0 0.0 20.0 62.0 146.0 90.0 130.0 250.0)" | yarp rpc /ctpservice/right_arm/rpc
-    echo "ctpq time 2.0 off 0 pos ( -3.0 57.0   3.0 106.0 -9.0 -8.0 -10.0 22.0 0.0 0.0 20.0 62.0 146.0 90.0 130.0 250.0)" | yarp rpc /ctpservice/left_arm/rpc
+    echo "ctpq time 1.0 off 0 pos ( -3.0 57.0   3.0 106.0 -9.0 -8.0 -10.0 0.0 10.0 10.0 0.0 62.0 146.0 90.0 130.0 250.0)" | yarp rpc /ctpservice/right_arm/rpc
+    echo "ctpq time 1.0 off 0 pos ( -3.0 57.0   3.0 106.0 -9.0 -8.0 -10.0 0.0 10.0 10.0 0.0 62.0 146.0 90.0 130.0 250.0)" | yarp rpc /ctpservice/left_arm/rpc
     sleep 1.0
     smile
+    sleep 1.0
     go_home_helper 2.0
+}
+
+fonzie_L() {
+    echo "ctpq time 1.0 off 0 pos ( -3.0 57.0   3.0 106.0 -9.0 -8.0 -10.0 0.0 10.0 10.0 0.0 62.0 146.0 90.0 130.0 250.0)" | yarp rpc /ctpservice/left_arm/rpc
+}
+
+point_R() {
+    echo "ctpq time 1.5 off 0 pos ( -95.2847 28.7458 7.44326 19.5832 59.9251 3.87269 3.84522 9.7449 9.86575 42.7095 52.3665 0.0 6.80055 47.8511 135.094 269.534)" | yarp rpc /ctpservice/right_arm/rpc
 }
 
 hello_left() {
@@ -301,7 +319,6 @@ hello_both() {
 }
 
 show_muscles() {
-    #breathers "stop"
     echo "ctpq time 1.5 off 0 pos (-27.0 78.0 -37.0 33.0 -79.0 0.0 -4.0 26.0 27.0 0.0 29.0 59.0 117.0 87.0 176.0 250.0)" | yarp rpc /ctpservice/right_arm/rpc
     echo "ctpq time 1.5 off 0 pos (-27.0 78.0 -37.0 33.0 -79.0 0.0 -4.0 26.0 27.0 0.0 29.0 59.0 117.0 87.0 176.0 250.0)" | yarp rpc /ctpservice/left_arm/rpc
     echo "ctpq time 1.0 off 0 pos (-27.0 78.0 -37.0 93.0 -79.0 0.0 -4.0 26.0 67.0 0.0 99.0 59.0 117.0 87.0 176.0 250.0)" | yarp rpc /ctpservice/right_arm/rpc
@@ -309,7 +326,6 @@ show_muscles() {
     sleep 3.0
     smile
     go_home_helper 2.0
-    breathers "start"
 }
 
 show_muscles_left() {
@@ -391,15 +407,63 @@ talk_mic() {
 # SEQUENCE FUNCTIONS
 #######################################################################################
 sequence_01() {
+    echo "bind roll 0.0 0.0" | yarp rpc /iKinGazeCtrl/rpc
     speak "Ma allora, visto che io sono uno dei robot piu avanzati al mondo, perche non usate quelli come me?"
+    sleep 0.1
+    boh
+    sleep 3.0
+    fonzie
     wait_till_quiet
-    speak "che differenza c'e fra noi e i robot industriali?"
+    sleep 1.1
+    speak "che differenza c'e? fra noi"
+    sleep 0.5
+    fonzie_L
+    sleep 1.0
+    wait_till_quiet
+    gaze "look 10.0 20.0 3.0"
+    speak "e i robot industriali?"
+    point_R
+    wait_till_quiet
+    go_home_helper 2.0
+    gaze "look-around 0.0 0.0 5.0"
+    echo "clear roll" | yarp rpc /iKinGazeCtrl/rpc
 }
 
 sequence_02() {
-    speak "Senti Corsini, adesso basta parole, andiamo a lavorare assieme nel gioint lab appena creato"
+    echo "bind roll 0.0 0.0" | yarp rpc /iKinGazeCtrl/rpc
+    speak "Senti Corsini!"
+    echo "ctpq time 1.2 off 0 pos (30.0 0.0 0.0)" | yarp rpc /ctpservice/torso/rpc    
+    gaze "look 60.0 0.0 3.0"
+    sleep 1.0
     wait_till_quiet
+
+    speak "Adesso basta parole!"
+    echo "ctpq time 1.0 off 0 pos (-35.6947 42.281 -14.7052 69.2415 60.0185 -29.35 -1.42823 8.74514 9.93166 39.886 0.0 0.0 1.78528 0.384522 4.94386 -0.46692)" | yarp rpc /ctpservice/right_arm/rpc
+    sleep 2.0
+    wait_till_quiet
+
+    speak "Andiamo a lavorare assieme nel gioint lab appena creato"
+    echo "ctpq time 1.0 off 0 pos (0.0 0.0 0.0)" | yarp rpc /ctpservice/torso/rpc        
+    gaze "look 0.0 0.0 3.0"
+    echo "ctpq time 1.5 off 0 pos (-48.1752 17.8473 47.082 82.1615 -34.2005 9.58559 25.5543 14.4965 40.0 70.0 3.0 10.0 15.0 20.0 25.0 50.0)" | yarp rpc /ctpservice/right_arm/rpc 
+    sleep 2.0
+    go_home_helper 2.0
+    wait_till_quiet
+
     speak "dopo tanti anni che mi dici che sono ancora troppo immaturo, non vedo l'ora di andare in impianto, e farti vedere di cosa sono capace."
+    sad
+    gaze "look 0.0 -30.0 3.0"
+    echo "ctpq time 1.5 off 0 pos (-29.3665 24.0876 10.2558 101.937 -60.0459 25.1423 0.505372 30.4981 62.3201 0.0 5.09218 0.0 0.0 0.0 0.0 0.928347)" | yarp rpc /ctpservice/right_arm/rpc 
+    echo "ctpq time 1.5 off 0 pos (-29.3665 24.0876 10.2558 101.937 -60.0459 25.1423 0.505372 30.4981 62.3201 0.0 5.09218 0.0 0.0 0.0 0.0 0.928347)" | yarp rpc /ctpservice/left_arm/rpc 
+    sleep 2.0
+    gaze "look-around 0.0 0.0 3.0"
+    smile
+    go_home_helper 2.0
+    sleep 3.0
+    show_muscles
+
+    wait_till_quiet
+    echo "clear roll" | yarp rpc /iKinGazeCtrl/rpc
 }
 
 
