@@ -7,7 +7,7 @@ cmake_minimum_required(VERSION 2.8)
 file(GLOB scripts  ${CMAKE_CURRENT_SOURCE_DIR}/scripts/*.template)
 file(GLOB conf_ini ${CMAKE_CURRENT_SOURCE_DIR}/conf/*.ini ${CMAKE_CURRENT_SOURCE_DIR}/conf/*.lua)
 file(GLOB conf_svg ${CMAKE_CURRENT_SOURCE_DIR}/conf/drawings/*.svg)
-file(GLOB lua_bin  ${CMAKE_CURRENT_SOURCE_DIR}/lua/*.lua)
+file(GLOB lua_bin  ${CMAKE_CURRENT_SOURCE_DIR}/scripts/lua/*.lua)
 
 yarp_install(FILES ${conf_ini} DESTINATION ${ICUBCONTRIB_CONTEXTS_INSTALL_DIR}/${PROJECTNAME})
 yarp_install(FILES ${conf_svg} DESTINATION ${ICUBCONTRIB_CONTEXTS_INSTALL_DIR}/${PROJECTNAME}/drawings)
