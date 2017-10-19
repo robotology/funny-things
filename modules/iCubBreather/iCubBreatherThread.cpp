@@ -98,7 +98,7 @@ bool iCubBreatherThread::threadInit()
 
     double t0   = yarp::os::Time::now();
     double seed = 1000.0 * (t0 -(long)t0);
-    yarp::os::Random::seed(int(seed));
+    randngen.init();
 
     return true;
 }
@@ -130,7 +130,7 @@ void iCubBreatherThread::run()
     }
 
     // modulate period
-    double nextRate=rate+yarp::os::Random::normal(0,500.0);
+    double nextRate=rate+randngen.get(0,500.0);
     setRate((int)nextRate);
 }
 
@@ -140,7 +140,7 @@ Vector iCubBreatherThread::computeNewTarget()
     Vector noise(jnts,0.0);
     for (int i = 0; i < jnts; i++)
     {
-        noise[i] = yarp::os::Random::normal(0,noiseStDvtns[i]);
+        noise[i] = randngen.get(0,noiseStDvtns[i]);
     }
 
     Vector result(jnts,0.0);

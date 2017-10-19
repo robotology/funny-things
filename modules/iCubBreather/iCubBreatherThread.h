@@ -27,7 +27,7 @@
 #include <yarp/dev/Drivers.h>
 #include <yarp/dev/all.h>
 
-#include <yarp/math/Rand.h> 
+#include <yarp/math/RandnScalar.h> 
 
 #include <iostream>
 #include <string>
@@ -70,6 +70,7 @@ protected:
     std::vector <double> refSpeeds;
 
     yarp::os::Mutex mutex;
+    yarp::math::RandnScalar randngen;
 
     /**
      * Changes the control modes of the torso to either position or velocity
