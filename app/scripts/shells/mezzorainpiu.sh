@@ -149,7 +149,7 @@ wait_till_quiet() {
 }
 
 victory() {
-    echo "ctpq time 1.0 off 7 pos                                       (18.0 40.0 50.0 167.0 0.0 0.0 0.0 0.0 222.0)" | yarp rpc /ctpservice/$1/rpc
+    #echo "ctpq time 1.0 off 7 pos                                       (18.0 40.0 50.0 167.0 0.0 0.0 0.0 0.0 222.0)" | yarp rpc /ctpservice/$1/rpc
     echo "ctpq time 2.0 off 0 pos (-57.0 32.0 -1.0 88.0 56.0 -30.0 -11.0 18.0 40.0 50.0 167.0 0.0 0.0 0.0 0.0 222.0)" | yarp rpc /ctpservice/$1/rpc
 }
 
@@ -191,6 +191,13 @@ point_arms() {
 fonzie() {
     echo "ctpq time 2.0 off 0 pos ( -3.0 57.0   3.0 106.0 -9.0 -8.0 -10.0 22.0 0.0 0.0 20.0 62.0 146.0 90.0 130.0 250.0)" | yarp rpc /ctpservice/right_arm/rpc
     echo "ctpq time 2.0 off 0 pos ( -3.0 57.0   3.0 106.0 -9.0 -8.0 -10.0 22.0 0.0 0.0 20.0 62.0 146.0 90.0 130.0 250.0)" | yarp rpc /ctpservice/left_arm/rpc
+    sleep 1.0
+    smile
+    go_home_helper 2.0
+}
+
+fonzie_right() {
+    echo "ctpq time 2.0 off 0 pos ( -3.0 57.0   3.0 106.0 -9.0 -8.0 -10.0 22.0 0.0 0.0 20.0 62.0 146.0 90.0 130.0 250.0)" | yarp rpc /ctpservice/right_arm/rpc
     sleep 1.0
     smile
     go_home_helper 2.0
@@ -279,6 +286,14 @@ show_musles_left() {
     go_home_helperL 2.0
 }
 
+show_musles_right() {
+    echo "ctpq time 1.5 off 0 pos (-27.0 78.0 -37.0 33.0 -79.0 0.0 -4.0 26.0 27.0 0.0 29.0 59.0 117.0 87.0 176.0 250.0)" | yarp rpc /ctpservice/right_arm/rpc
+    echo "ctpq time 1.0 off 0 pos (-27.0 78.0 -37.0 93.0 -79.0 0.0 -4.0 26.0 67.0 0.0 99.0 59.0 117.0 87.0 176.0 250.0)" | yarp rpc /ctpservice/right_arm/rpc
+    sleep 3.0
+    smile
+    go_home_helperR 2.0
+}
+
 show_iit() {
     breathers "stop"
     echo "ctpq time 1.5 off 0 pos (-27.0 64.0 -30.0 62.0 -58.0 -32.0 4.0 17.0 11.0 21.0 29.0 8.0 9.0 5.0 11.0 1.0)" | yarp rpc /ctpservice/right_arm/rpc
@@ -308,26 +323,22 @@ question() {
 
 question_left() {
     echo "ctpq time 1.5 off 0 pos (-39.0 37.0 -17.0 53.0 -47.0 14.0 -2.0 -1.0 8.0 45 3.4 2.4 2.2 0.0 6.8 17)" | yarp rpc /ctpservice/left_arm/rpc
-    gaze "look -30.0 0.0 5.0"
-    go_home_helperL 1.5
 }
 
 question_right() {
     echo "ctpq time 1.5 off 0 pos (-39.0 37.0 -17.0 53.0 -47.0 14.0 -2.0 -1.0 8.0 45 3.4 2.4 2.2 0.0 6.8 17)" | yarp rpc /ctpservice/right_arm/rpc
-    gaze "look 30.0 0.0 5.0"
-    go_home_helperR 1.5
 }
 
 #######################################################################################
 # SEQUENCE FUNCTIONS
 #######################################################################################
 sequence_01() {
-    gaze "look 15.0 0.0 3.0"
+    gaze "look-around 15.0 0.0 3.0"
     sleep 1.0
-    speak "molto bene, grazie Lucia e grazie di avermi invitato in trasmissione"
+    speak "molto bene. grazie Luci a, e grazie di avermi invitato in trasmissione"
     hello_left_simple
     sleep 2.0 && blink
-    go_home_helperL 2.0
+    go_home_helperL 1.5
     victory right_arm
     wait_till_quiet
     smile && blink
@@ -337,37 +348,45 @@ sequence_01() {
 sequence_02() {
     gaze "look-around 15.0 0.0 5.0"
     sleep 1.0
-    speak "Quando io e i miei fratelli cresceremo, potremo aiutarvi nei lavori domestici o in altre attivita' delicate per cui avrete bisogno di supporto"
-    speak "Come ad esempio l'assistenza agli anziani o a persone disabili"
+    speak "Quando io e i miei fratelli cresceremo, potremo aiutarvi nei lavori domestici, o in altre attività delicate, per cui avrete bisogno di supporto"
+    speak "Come ad esempio l'assistenza agli anziani, o a persone disabili"
     sleep 1.0
-    show_musles
-    sleep 2.0
+    show_musles_right
+    sleep 6.0
+    question_left
+    sleep 3.0
+    go_home_helper 2.0
     wait_till_quiet
     smile && blink
-    go_home_helper 2.0
+   
 }
 
 sequence_03() {
     gaze "look-around 15.0 0.0 5.0"
     sleep 1.0
-    speak "No, preferisco rimanere un robot e affiancere gli umani nella vita di tutti i giorni, cercando di svolgere al meglio le mansioni che mi verranno affidate."
-    sleep 2.0
-    question 
+    speak "No, preferisco rimanere un robot, e affiancare gli umani nella vita di tutti i giorni, cercando di svolgere al meglio le mansioni che mi verranno affidate."
     sleep 1.0
+    fonzie_right 
+    sleep 2.0
     go_home_helper 2.0
-    sleep 1.0 && blink
-    fonzie
+    sleep 2.0 && blink
+    question
     wait_till_quiet
     smile && blink
-    gaze "look-around 15.0 0.0 5.0"
     go_home_helper 2.0
 }
 
 sequence_04() {
     gaze "look-around 15.0 0.0 5.0"
     sleep 1.0
-    speak "Perche' i robot e le tecnologie sviluppate grazie a me potranno aiutarvi nella cura e nel supporto alla disabilita', a casa come pure al lavoro"
-    speak "farvi correre meno rischi e risparmiare le risorse del nostro pianeta che inizia ad essere un po' sovraffollato."
+    speak "Perchè, i robot, e le tecnologie sviluppate grazie a me, potranno aiutarvi nella cura e nel supporto alla disabilità, a casa come pure al lavoro"
+    sleep 2.0    
+    fonzie_right    
+    speak "farvi correre meno rischi e risparmiare le risorse del nostro pianeta, che inizia ad essere un po' sovraffollato."
+    sleep 10.0
+    gaze "look -15.0 0.0 5.0"    
+    show_iit
+    gaze "look-around 15.0 0.0 5.0"
     wait_till_quiet
     smile
     sleep 2.0
