@@ -6,6 +6,10 @@ cmake_minimum_required(VERSION 2.8)
 set(PROJECTNAME funny-things)
 project(${PROJECTNAME})
 
+set(CMAKE_CXX_EXTENSIONS OFF)
+set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD_REQUIRED 11)
+
 find_package(YARP REQUIRED)
 find_package(ICUB REQUIRED)
 find_package(ICUBcontrib REQUIRED)

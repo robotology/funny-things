@@ -85,7 +85,7 @@ protected:
      * @param  _s mode to set. It can be either "position" or "velocity"
      * @return             true/false if success/failure
      */
-    bool areJointsHealthyAndSet(VectorOf<int> &jointsToSet,const string &_s);
+    bool areJointsHealthyAndSet(vector<int> &jointsToSet,const string &_s);
 
     /**
      * goes into home configuration (i.e. 0 0 0)

@@ -155,7 +155,7 @@ Vector iCubBreatherThread::computeNewTarget()
 
 bool iCubBreatherThread::goToTarget(const Vector &nT)
 {
-    VectorOf<int> jointsToSet;
+    vector<int> jointsToSet;
     if (!areJointsHealthyAndSet(jointsToSet,"position"))
     {
         stopBreathing();
@@ -177,10 +177,10 @@ bool iCubBreatherThread::goToTarget(const Vector &nT)
     return true;
 }
 
-bool iCubBreatherThread::areJointsHealthyAndSet(VectorOf<int> &jointsToSet,const string &_s)
+bool iCubBreatherThread::areJointsHealthyAndSet(vector<int> &jointsToSet,const string &_s)
 {
-    VectorOf<int> modes(jnts);
-    imod->getControlModes(modes.getFirst());
+    vector<int> modes(jnts);
+    imod->getControlModes(modes.data());
 
     for (size_t i=0; i<modes.size(); i++)
     {
@@ -210,7 +210,7 @@ bool iCubBreatherThread::setCtrlModes(const string &_s)
     if (_s!="position" && _s!="velocity")
         return false;
 
-    VectorOf<int> modes;
+    vector<int> modes;
 
     if (_s=="position")
     {
@@ -227,7 +227,7 @@ bool iCubBreatherThread::setCtrlModes(const string &_s)
         }
     }
 
-    imod -> setControlModes(modes.getFirst());
+    imod -> setControlModes(modes.data());
 
     Time::delay(0.1);
 
