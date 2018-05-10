@@ -1,44 +1,22 @@
 <application>
     <name>President Scripting</name>
 
-    <dependencies>
-        <port>/iKinGazeCtrl/rpc</port>
-        <port>/icub/cartesianController/left_arm/state:o</port>
-        <port>/icub/cartesianController/right_arm/state:o</port>
-        <port>/icub/cartesianController/torso/state:o</port>
-    </dependencies>
-
-    <!-- Breathers and Blinkers -->
+    <!-- Blinkers -->
     <module>
         <name>iCubBlinker</name>
         <parameters>--autoStart</parameters>
         <node>icub29</node>
     </module>
-    <module>
-        <name>iCubBreather</name>
-        <parameters>--name iCubBreatherH --part head --rate 1500</parameters>
-        <node>icub29</node>
-    </module>
-        <module>
-        <name>iCubBreather</name>
-        <parameters>--name iCubBreatherT --part torso --rate 1500</parameters>
-        <node>icub29</node>
-    </module>
-        <module>
-        <name>iCubBreather</name>
-        <parameters>--name iCubBreatherL --part left_arm --rate 1500</parameters>
-        <node>icub29</node>
-    </module>
-        <module>
-        <name>iCubBreather</name>
-        <parameters>--name iCubBreatherR --part right_arm --rate 1500</parameters>
-        <node>icub29</node>
-    </module>
-    
+ 
     <!-- Speakers -->
     <module>
+        <name>yarpdev</name>
+        <parameters>--device speech --lingware-context speech --robot icub --default-language it-IT --pitch 90 --speed 100</parameters>
+        <node>icub29</node>
+    </module>    
+    <module>
         <name>iSpeak</name>
-        <parameters>--name iSpeak_ita --package acapelacmd --package_options iCub_ita</parameters>
+        <parameters>--package speech-dev</parameters>
         <node>icub29</node>
     </module>
     
@@ -64,36 +42,19 @@
         <node>icub29</node>
     </module>
 
-    <!-- Gaze Control -->
-    <module>
-        <name>gaze.lua</name>
-        <parameters>--look-around</parameters>
-        <deployer>lua</deployer>
-        <node>icub21</node>
-        <dependencies>
-            <port timeout="10">/iKinGazeCtrl/angles:i</port>
-            <port timeout="10">/iKinGazeCtrl/angles:o</port>
-        </dependencies>
-    </module>
-
     <!-- Connections -->
-    <connection>
-        <from>/gaze/tx</from>
-        <to>/iKinGazeCtrl/angles:i</to>
-        <protocol>tcp</protocol>
-    </connection>
-    <connection>
-        <from>/iKinGazeCtrl/angles:o</from>
-        <to>/gaze/rx</to>
-        <protocol>tcp</protocol>
-    </connection>
     <connection>
         <from>/iCubBlinker/emotions/raw</from>
         <to>/icub/face/raw/in</to>
         <protocol>tcp</protocol>
     </connection>
+        <connection>
+       <from>/iSpeak/speech-dev/rpc</from>
+       <to>/icub/speech:rpc</to>
+       <protocol>tcp</protocol>
+    </connection>
     <connection>
-        <from>/iSpeak_ita/emotions:o</from>
+        <from>/iSpeak/emotions:o</from>
         <to>/icub/face/emotions/in</to>
         <protocol>tcp</protocol>
     </connection>

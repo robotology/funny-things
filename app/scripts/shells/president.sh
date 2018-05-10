@@ -50,7 +50,7 @@ gaze() {
 }
 
 speak() {
-    echo "\"$1\"" | yarp write ... /iSpeak_ita
+    echo "\"$1\"" | yarp write ... /iSpeak
 }
 
 blink() {
