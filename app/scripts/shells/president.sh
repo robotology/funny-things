@@ -58,41 +58,6 @@ blink() {
     sleep 0.5
 }
 
-breathers() {
-    echo "$1" | yarp rpc /iCubBreatherR/rpc:i
-    sleep 0.4
-    echo "$1" | yarp rpc /iCubBreatherL/rpc:i
-    sleep 0.4
-    echo "$1" | yarp rpc /iCubBreatherT/rpc:i
-    sleep 0.4
-    echo "$1" | yarp rpc /iCubBreatherH/rpc:i
-}
-
-breathersL() {
-   echo "$1" | yarp rpc /iCubBreatherL/rpc:i
-}
-
-breathersR() {
-   echo "$1" | yarp rpc /iCubBreatherR/rpc:i
-}
-
-breathersH() {
-   echo "$1" | yarp rpc /iCubBreatherH/rpc:i
-}
-
-breathersT() {
-   echo "$1" | yarp rpc /iCubBreatherT/rpc:i
-}
-
-
-stop_breathers() {
-    breathers "stop"
-}
-
-start_breathers() {
-    breathers "start"
-}
-
 ## TODO: extend to torso (assuming legs are not moving) and modif the home positons
 
 go_home_helper_yoga() {
@@ -190,7 +155,6 @@ point_eye() {
 }
 
 point_ears() {
-    breathers "stop"
 
     echo "ctpq time 1 off 0 pos (-10.0 8.0 -37.0 7.0 -21.0 1.0)" | yarp rpc /ctpservice/head/rpc
     echo "ctpq time 2 off 0 pos (-18.0 59.0 -30.0 105.0 -22.0 28.0 -6.0 6.0 55.0 30.0 33.0 4.0 9.0 58.0 113.0 192.0)" | yarp rpc /ctpservice/left_arm/rpc
@@ -203,11 +167,9 @@ point_ears() {
     go_home_helperL 2.0
     go_home_helperR 2.0
 
-    breathers "start"
 }
 
 point_arms() {
-    breathers "stop"
 
     echo "ctpq time 2 off 0 pos (-60.0 32.0 80.0 85.0 -13.0 -3.0 -8.0 15.0 37.0 47.0 52.0 9.0 1.0 42.0 106.0 250.0)" | yarp rpc /ctpservice/right_arm/rpc
     echo "ctpq time 2 off 0 pos (-64.0 43.0 6.0 52.0 -28.0 -0.0 -7.0 15.0 30.0 7.0 0.0 4.0 0.0 2.0 8.0 43.0)" | yarp rpc /ctpservice/left_arm/rpc
@@ -215,7 +177,6 @@ point_arms() {
     go_home_helperL 2.0
     go_home_helperR 2.0
 
-    breathers "start"
 }
 
 fonzie() {
@@ -247,7 +208,7 @@ hello_left_simple() {
 }
 
 hello_right() {
-    breathers "stop"
+
     echo "ctpq time 1.5 off 0 pos (-60.0 44.0 -2.0 96.0 53.0 -17.0 -11.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0)" | yarp rpc /ctpservice/right_arm/rpc
     sleep 2.0
     echo "ctpq time 0.5 off 0 pos (-60.0 44.0 -2.0 96.0 53.0 -17.0  25.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0)" | yarp rpc /ctpservice/right_arm/rpc
@@ -257,11 +218,10 @@ hello_right() {
     smile
     go_home
     smile
-    breathers "start"
 }
 
 hello_both() {
-    breathers "stop"
+
     echo "ctpq time 1.5 off 0 pos (-60.0 44.0 -2.0 96.0 53.0 -17.0 -11.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0)" | yarp rpc /ctpservice/left_arm/rpc
     echo "ctpq time 1.5 off 0 pos (-60.0 44.0 -2.0 96.0 53.0 -17.0 -11.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0)" | yarp rpc /ctpservice/right_arm/rpc
     sleep 2.0
@@ -278,11 +238,10 @@ hello_both() {
     smile
     go_home_helper 2.0
     smile
-    breathers "start"
 }
 
 show_muscles() {
-    breathers "stop"
+
     echo "ctpq time 1.5 off 0 pos (-27.0 78.0 -37.0 33.0 -79.0 0.0 -4.0 26.0 27.0 0.0 29.0 59.0 117.0 87.0 176.0 250.0)" | yarp rpc /ctpservice/right_arm/rpc
     echo "ctpq time 1.5 off 0 pos (-27.0 78.0 -37.0 33.0 -79.0 0.0 -4.0 26.0 27.0 0.0 29.0 59.0 117.0 87.0 176.0 250.0)" | yarp rpc /ctpservice/left_arm/rpc
     echo "ctpq time 1.0 off 0 pos (-27.0 78.0 -37.0 93.0 -79.0 0.0 -4.0 26.0 67.0 0.0 99.0 59.0 117.0 87.0 176.0 250.0)" | yarp rpc /ctpservice/right_arm/rpc
@@ -290,7 +249,6 @@ show_muscles() {
     sleep 3.0
     smile
     go_home_helper 2.0
-    breathers "start"
 }
 
 show_muscles_left() {
@@ -302,7 +260,6 @@ show_muscles_left() {
 }
 
 show_iit() {
-    breathers "stop"
     echo "ctpq time 1.5 off 0 pos (-27.0 64.0 -30.0 62.0 -58.0 -32.0 4.0 17.0 11.0 21.0 29.0 8.0 9.0 5.0 11.0 1.0)" | yarp rpc /ctpservice/right_arm/rpc
     echo "ctpq time 1.5 off 0 pos (-27.0 64.0 -30.0 62.0 -58.0 -32.0 4.0 17.0 11.0 21.0 29.0 8.0 9.0 5.0 11.0 1.0)" | yarp rpc /ctpservice/left_arm/rpc
 
@@ -310,15 +267,12 @@ show_iit() {
     smile
 
     go_home
-    breathers "start"
 }
 
 talk_mic() {
-    breathers "stop"
     sleep 1.0
     echo "ctpq time $1 off 0 pos (-47.582418 37.967033 62.062198 107.868132 -32.921661 -12.791209 -0.571429 0.696953 44.352648 14.550271 86.091537 52.4 64.79118 65.749353 62.754529 130.184865)" | yarp rpc /ctpservice/right_arm/rpc
     sleep 1.0
-    breathers "start"
 }
 
 urbi_et_orbi(){
