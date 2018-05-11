@@ -58,28 +58,31 @@ blink() {
     sleep 0.5
 }
 
+dblink() {
+    echo "dblink" | yarp rpc /iCubBlinker/rpc
+    sleep 0.5
+}
+
 ## TODO: extend to torso (assuming legs are not moving) and modif the home positons
 
 go_home_helper_yoga() {
     # This is for putting the robot in the Yoga home position
-    echo "ctpq time $1 off 0 pos (-6.0 23.0 25.0 29.0 -24.0 -3.0 -3.0 19.0 29.0 8.0 30.0 32.0 42.0 50.0 50.0 114.0)" | yarp rpc /ctpservice/left_arm/rpc
+    echo "ctpq time $1 off 0 pos (-35.0 30.0 0.0 50.0 0.0 0.0 0.0 0.0 29.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0)" | yarp rpc /ctpservice/left_arm/rpc
+    echo "ctpq time $1 off 0 pos (-35.0 30.0 0.0 50.0 0.0 0.0 0.0 0.0 29.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0)" | yarp rpc /ctpservice/right_arm/rpc
 }
 
 go_home_helper_walking() {
     # This is for putting the robot in the walking home position
-    echo "ctpq time $1 off 0 pos (-6.0 23.0 25.0 29.0 -24.0 -3.0 -3.0 19.0 29.0 8.0 30.0 32.0 42.0 50.0 50.0 114.0)" | yarp rpc /ctpservice/right_arm/rpc
+    echo "ctpq time $1 off 0 pos (-6.0 23.0 25.0 29.0  0.0 0.0 0.0 0.0 29.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0)" | yarp rpc /ctpservice/left_arm/rpc
+    echo "ctpq time $1 off 0 pos (-6.0 23.0 25.0 29.0  0.0 0.0 0.0 0.0 29.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0)" | yarp rpc /ctpservice/right_arm/rpc
 }
 
 go_home_yoga() {
-    
-    breathers "stop"
     sleep 1.0
     go_home_helper_yoga 2.0
 }
 
 go_home_walking() {
-    
-    breathers "stop"
     sleep 1.0
     go_home_helper_walking 2.0
 }
@@ -195,8 +198,6 @@ hello_left() {
     echo "ctpq time 0.5 off 0 pos (-60.0 44.0 -2.0 96.0 53.0 -17.0  25.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0)" | yarp rpc /ctpservice/left_arm/rpc
     echo "ctpq time 0.5 off 0 pos (-60.0 44.0 -2.0 96.0 53.0 -17.0 -11.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0)" | yarp rpc /ctpservice/left_arm/rpc
     smile
-    go_home 2.0
-    smile
 }
 
 hello_left_simple() {
@@ -265,8 +266,6 @@ show_iit() {
 
     sleep 3.0
     smile
-
-    go_home
 }
 
 talk_mic() {
@@ -325,6 +324,46 @@ sequence_03() {
     speak "Vorrei proporle la mia candidatura a primo ministro."
     wait_till_quiet
 }
+
+sequence_welcome_1() {
+		smile && blink
+    speak "Buongiorno Presidente!" && hello_left
+    sleep 2.0 && blink
+    go_home_walking
+}
+
+sequence_welcome_2() {
+		smile && dblink
+    speak "Benvenuto a casa mia!" && show_iit && blink
+    sleep 2.0
+    go_home_walking
+}
+
+sequence_yoga() {
+		smile && blink
+    speak "Le faccio vedere cosa mi hanno insegnato a fare!"
+    sleep 2.0 && dblink
+    speak "Sono un robot equilibrista!"
+    dblink
+    go_home_yoga
+}
+
+sequence_walking() {
+		smile && blink
+    speak "Ho appena imparato anche a camminare!"
+    sleep 2.0 && dblink
+		go_home_walking
+}
+
+sequence_goodbye() {
+		smile && blink
+    speak "Arrivederci Presidente! è stato un piacere!" && hello_left
+    sleep 2.0 && dblink
+    speak "Le auguro buona giornata!" && hello_left
+    sleep 2.0 && blink
+    go_home_walking
+}
+
 
 #######################################################################################
 # "MAIN" FUNCTION:                                                                    #
