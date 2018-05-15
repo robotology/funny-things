@@ -366,9 +366,17 @@ sequence_walking() {
 sequence_goodbye() {
 		smile && blink
     speak "è stato un piacere conoscerla!" && hello_left
-    speak "Le àuguro buon proseguimento! Arrivederci!" && hello_left && dblink
+    speak "Le àuguro buon proseguimento! Arrivederci presidente!" && hello_left && dblink
     sleep 2.0 && blink
     go_home_walking
+}
+
+speech_ops() {
+		speak "Ops! Sto ancora imparando!"
+}
+
+speech_ops_walking() {
+		speak "Ops! c'è qualcosa che non va! Meglio camminare."
 }
 
 
