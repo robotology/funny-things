@@ -68,13 +68,13 @@ dblink() {
 go_home_helper_yoga() {
     # This is for putting the robot in the Yoga home position
     echo "ctpq time $1 off 0 pos (-35.0 30.0 0.0 50.0 0.0 0.0 0.0 0.0 29.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0)" | yarp rpc /ctpservice/left_arm/rpc
-    echo "ctpq time $1 off 0 pos (-35.0 30.0 0.0 50.0 0.0 0.0 0.0 0.0 29.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0)" | yarp rpc /ctpservice/right_arm/rpc
+    echo "ctpq time $1 off 0 pos (-35.0 30.0 0.0 50.0 0.0 0.0 0.0 0.0 29.0 0.0 0.0 0.0 20.0 0.0 0.0 0.0)" | yarp rpc /ctpservice/right_arm/rpc
 }
 
 go_home_helper_walking() {
     # This is for putting the robot in the walking home position
     echo "ctpq time $1 off 0 pos (-6.0 23.0 25.0 29.0  0.0 0.0 0.0 0.0 29.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0)" | yarp rpc /ctpservice/left_arm/rpc
-    echo "ctpq time $1 off 0 pos (-6.0 23.0 25.0 29.0  0.0 0.0 0.0 0.0 29.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0)" | yarp rpc /ctpservice/right_arm/rpc
+    echo "ctpq time $1 off 0 pos (-6.0 23.0 25.0 29.0  0.0 0.0 0.0 0.0 29.0 0.0 0.0 0.0 20.0 0.0 0.0 0.0)" | yarp rpc /ctpservice/right_arm/rpc
 }
 
 go_home_yoga() {
@@ -348,18 +348,25 @@ sequence_yoga() {
     go_home_yoga
 }
 
+sequence_walking_backup() {
+		smile && blink
+    speak "Le faccio vedere cosa mi hanno insegnato a fare!"
+		smile && blink
+    speak "Ho imparato a camminare di recente!"
+    sleep 2.0 && dblink
+		go_home_yoga
+}
+
 sequence_walking() {
 		smile && blink
     speak "Ho appena imparato anche a camminare!"
     sleep 2.0 && dblink
-		go_home_walking
 }
 
 sequence_goodbye() {
 		smile && blink
-    speak "Arrivederci Presidente! è stato un piacere!" && hello_left
-    sleep 2.0 && dblink
-    speak "Le auguro buona giornata!" && hello_left
+    speak "è stato un piacere conoscerla!" && hello_left
+    speak "Le àuguro buon proseguimento! Arrivederci!" && hello_left && dblink
     sleep 2.0 && blink
     go_home_walking
 }
