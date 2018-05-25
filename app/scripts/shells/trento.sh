@@ -291,8 +291,21 @@ urbi_et_orbi(){
 }
 
 show_director_left() {
-    echo "ctpq time 1.5 off 0 pos (-27.0 78.0 -37.0 33.0 -79.0 0.0 -4.0 26.0 27.0 0.0 29.0 59.0 117.0 87.0 176.0 250.0)" | yarp rpc /ctpservice/left_arm/rpc
-    echo "ctpq time 1.0 off 0 pos (-27.0 78.0 -37.0 93.0 -79.0 0.0 -4.0 26.0 67.0 0.0 99.0 59.0 117.0 87.0 176.0 250.0)" | yarp rpc /ctpservice/left_arm/rpc
+    echo "ctpq time 2 off 0 pos (-60.0 32.0 80.0 85.0 -59.0 -3.0 -8.0 15.0 37.0 7.0 0.0 4.0 0.0 2.0 8.0 43.0)" | yarp rpc /ctpservice/right_arm/rpc
+    echo "ctpq time 2 off 0 pos (-64.0 43.0 6.0 52.0 -28.0 -0.0 -7.0 15.0 30.0 7.0 0.0 4.0 0.0 2.0 8.0 43.0)" | yarp rpc /ctpservice/left_arm/rpc
+    sleep 3.0
+    go_home_helperL 2.0
+    go_home_helperR 2.0
+    sleep 3.0
+    smile
+}
+
+show_director_right() {
+    echo "ctpq time 2 off 0 pos (-60.0 32.0 80.0 85.0 -59.0 -3.0 -8.0 15.0 37.0 7.0 0.0 4.0 0.0 2.0 8.0 43.0)" | yarp rpc /ctpservice/left_arm/rpc
+    echo "ctpq time 2 off 0 pos (-64.0 43.0 6.0 52.0 -28.0 -0.0 -7.0 15.0 30.0 7.0 0.0 4.0 0.0 2.0 8.0 43.0)" | yarp rpc /ctpservice/right_arm/rpc
+    sleep 3.0
+    go_home_helperL 2.0
+    go_home_helperR 2.0
     sleep 3.0
     smile
 }
@@ -311,15 +324,15 @@ seq_01() {
 
 seq_02() {
     speak "Mi chiamo aicab!"
-    speak "Piacere di conoscervi!" && hello_both
-    sleep 1.0 && blink
+    speak "Piacere di conoscervi!" 
+    sleep 1.0 && blink && hello_both
     wait_till_quiet
     go_home_walking
 		dblink
 }
 
 seq_03() {
-    speak "Sono un robot bambino, nato all' istituto italiano di tecnologia di Genova!"
+    speak "Sono un robot bambino, nato all' istituto italiàno di tecnologia!"
     sleep 1.0 && blink
 }
 seq_04() {
@@ -332,7 +345,7 @@ seq_05() {
 }
 
 seq_06() {
-    speak "Mi hanno inventato per realizzare una macchina in grado di sviluppare un'intelligenza simile a quella degli umani. Tra qualche anno potrò aiutarvi nei lavori domestici o in altre attività delicate per cui avrete bisogno di supporto. come per esempio l'assistenza degli anziani e disabili!"
+    speak "Mi hanno inventato per realizzare una macchina in grado di sviluppare un intelligenza simile a quella degli umani. Tra qualche anno, potrò aiutarvi nei lavori domestici, o in altre attività delicate per cui avrete bisogno di suppòrto. come per esempio l'assistenza degli anziani e disabili!"
     sleep 1.0 && blink
     wait_till_quiet
 		dblink
@@ -346,14 +359,14 @@ seq_07() {
 }
 
 seq_08() {
-    speak "No, vi affiancherò nel lavoro per aiutarvi!"
+    speak "Certo che no! Vi affiancherò nel lavoro per aiutarvi!"
     sleep 1.0 && blink
     wait_till_quiet
 		dblink
 }
 
 seq_09() {
-    speak "Sì! Domani pomeriggio alle tre sarò nuovamente qui insieme al direttore dell'istituto italiano di tecnologia Professor Cingolani! Per il resto del tempo potete trovarmi in piazza battisti, con alcuni ricercatori di i i t!"
+    speak "Certo! Domani pomeriggio alle tre sarò nuovamente qui, insieme al direttore dell'istituto italiano di tecnologia, il Professor Cingolani! Per il resto del tempo potete trovarmi in piazza battisti, con alcuni ricercatori di i i t!"
     sleep 1.0 && blink
     wait_till_quiet
 		dblink
@@ -364,6 +377,7 @@ seq_10() {
     speak "Ciao a tutti!" && hello_both
     sleep 1.0 && blink
     wait_till_quiet
+    go_home_walking
 		dblink
 }
 
@@ -376,12 +390,13 @@ seq2_01() {
 		dblink
 }
 seq2_02() {
-    speak "Sono stato creato presso l'istituto italiano di tecnologia di Genova, circa dieci anni fa."
+    speak "Sono stato creato presso l'istituto italiano di tecnologia, circa dieci anni fa."
     sleep 1.0 && blink
 }
 seq2_03() {
-    speak "Alla mia creazione hanno contribuito numerosi ricercatori"
-    speak "di tutto il mondo!" && show_iit && blink
+    speak "Alla mia creazione hanno contribuito numerosi ricercatori di tutto il mondo!"
+    sleep 1.0 && blink
+    show_iit && blink
     go_home_walking
     sleep 1.0 && blink
     dblink
@@ -394,8 +409,10 @@ seq2_04() {
 
 seq2_05() {
     speak "Di tutti questi argomenti interessanti ve ne parlerà meglio il direttore dell'istituto"
-    speak "il professor Robèrto Cingolàni." && show_director_left && dblink
-    sleep 1.0 && blink
+    speak "il professor Roberto Cingolani."
+    sleep 5.0
+    show_director_left && dblink
+    go_home_walking
 }
 
 seq2_06() {
@@ -403,6 +420,7 @@ seq2_06() {
     speak "Ciao a tutti!" && hello_both
     sleep 1.0 && blink
     wait_till_quiet
+    go_home_walking
 		dblink
 }
 
