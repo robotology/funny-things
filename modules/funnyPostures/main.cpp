@@ -715,9 +715,6 @@ public:
 
         attach(rpcPort);
 
-        // request high resolution scheduling
-        Time::turboBoost();
-
         configureEmotions(rf);
 
         return true;
