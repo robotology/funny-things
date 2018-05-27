@@ -54,13 +54,13 @@ protected:
     double rate;
 
     // Classical interfaces
-    PolyDriver          dd;   // head device driver
-    IPositionControl2  *ipos;
-    IEncoders          *iencs;
-    IControlMode2      *imod;
-    Vector             *encs;
-    Vector              encs_0;
-    int                 jnts;
+    PolyDriver        dd;   // head device driver
+    IPositionControl *ipos;
+    IEncoders        *iencs;
+    IControlMode     *imod;
+    Vector           *encs;
+    Vector            encs_0;
+    int               jnts;
 
     bool isRunning;
     bool onStart;

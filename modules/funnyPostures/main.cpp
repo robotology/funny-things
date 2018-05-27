@@ -122,7 +122,7 @@ protected:
         vels[7]=80.0;
         vels[8]=200.0;
 
-        IControlMode2    *imode;
+        IControlMode     *imode;
         IPositionControl *iposs;
         if (type=="left")
         {
