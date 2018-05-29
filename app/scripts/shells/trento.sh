@@ -310,12 +310,40 @@ show_director_right() {
     smile
 }
 
+## Trento
+hello_left_chair() {
+    echo "ctpq time 1.5 off 0 pos (-72.4 67.2 -1.2 57.32 0.0 0.0 0.0 23.50 30.4 9.9 3.6 0.0 0.0 9.9 0.0 10.8)" | yarp rpc /ctpservice/left_arm/rpc
+    sleep 2.0
+    echo "ctpq time 0.5 off 0 pos (-72.4 67.2 -1.2 74.32 0.0 0.0 0.0 23.50 30.4 9.9 3.6 0.0 0.0 9.9 0.0 10.8)" | yarp rpc /ctpservice/left_arm/rpc
+    echo "ctpq time 0.5 off 0 pos (-72.4 67.2 -1.2 57.32 0.0 0.0 0.0 23.50 30.4 9.9 3.6 0.0 0.0 9.9 0.0 10.8)" | yarp rpc /ctpservice/left_arm/rpc
+    echo "ctpq time 0.5 off 0 pos (-72.4 67.2 -1.2 74.32 0.0 0.0 0.0 23.50 30.4 9.9 3.6 0.0 0.0 9.9 0.0 10.8)" | yarp rpc /ctpservice/left_arm/rpc
+    echo "ctpq time 0.5 off 0 pos (-72.4 67.2 -1.2 57.32 0.0 0.0 0.0 23.50 30.4 9.9 3.6 0.0 0.0 9.9 0.0 10.8)" | yarp rpc /ctpservice/left_arm/rpc
+    echo "ctpq time 0.5 off 0 pos (-72.4 67.2 -1.2 74.32 0.0 0.0 0.0 23.50 30.4 9.9 3.6 0.0 0.0 9.9 0.0 10.8)" | yarp rpc /ctpservice/left_arm/rpc
+    echo "ctpq time 0.5 off 0 pos (-72.4 67.2 -1.2 57.32 0.0 0.0 0.0 23.50 30.4 9.9 3.6 0.0 0.0 9.9 0.0 10.8)" | yarp rpc /ctpservice/left_arm/rpc
+    smile
+}
+
+## Trento
+home_chair() {
+    echo "ctpq time 1.5 off 0 pos (-28.0 65.6 45.91 27.3 0.0 0.0 0.0 24.0 30.4 9.9 3.6 0.0 0.0 0.0 0.0 0.0)" | yarp rpc /ctpservice/left_arm/rpc
+    sleep 2.0
+    smile
+}
+
+point_director_chair() {
+    echo "ctpq time 1.5 off 0 pos (-72.4 67.2 -1.2 57.32 0.0 0.0 0.0 23.50 30.4 9.9 3.6 0.0 0.0 9.9 0.0 10.8)" | yarp rpc /ctpservice/left_arm/rpc
+    sleep 2.0
+    smile
+}
+
+
+
 #######################################################################################
 # TRENTO SEQUENCES
 #######################################################################################
 ###### Day 31/05
 seq_01() {
-    speak "Buongiorno!" && hello_left
+    speak "Buona sera Tito e buonasera a tutti!" && hello_left
     sleep 1.0 && blink
     wait_till_quiet
     go_home_walking
@@ -332,41 +360,43 @@ seq_02() {
 }
 
 seq_03() {
-    speak "Sono un robot bambino, nato all' istituto italiàno di tecnologia!"
+    speak "Sono il robot umanoide più diffuso al mondo, mi hanno progettato e sviluppato all’istituto italiano di tecnologia di Geen ova!"
     sleep 1.0 && blink
 }
+
 seq_04() {
     speak "Sono unico al mondo grazie a tanti ricercatori internazionali!"
     sleep 1.0 && blink
 }
+
 seq_05() {
-    speak "Sono nato dieci anni fa, e ho trenta gemellini in giro per il mondo, come negli Stati Uniti, in Giappone e in alcune città Europee."
+    speak "Ho 40 fratelli, distribuiti in tutto il Mondo, e attualmente ci sono più di 30 laboratori tra Europa, Stati Uniti e Giappone, che li usano per implementare i loro studi sull’intelligenza artificiale e la robotica umanoide."
     sleep 1.0 && blink
+    wait_till_quiet
+		dblink
 }
 
 seq_06() {
-    speak "Mi hanno inventato per realizzare una macchina in grado di sviluppare un intelligenza simile a quella degli umani. Tra qualche anno, potrò aiutarvi nei lavori domestici, o in altre attività delicate per cui avrete bisogno di suppòrto. come per esempio l'assistenza degli anziani e disabili!"
+    speak "Proprio come voi, imparo dalle esperienze. Riconosco gli oggetti e li so afferrare, riesco a parlare con te,  so mantenere l’equilibrio, sto imparando a camminare, e sono dotato di una pelle sensibile che mi permette di sentire se vengo toccato o spinto. "
     sleep 1.0 && blink
     wait_till_quiet
 		dblink
 }
 
 seq_07() {
-    speak "Sono fatto di metallo, plastica e circuiti elettrici."
-    sleep 1.0 && blink
-    wait_till_quiet
-		dblink
+    speak "Tra qualche anno, vi affiancherò per aiutarvi nei lavori domestici, o in altre attività delicate per cui avrete bisogno di supporto, come per esempio l'assistenza degli anziani e i disabili."
+    sleep 1.0 && dblink
 }
 
 seq_08() {
-    speak "Certo che no! Vi affiancherò nel lavoro per aiutarvi!"
+    speak "Inoltre, la ricerca di base che i ricercatori dell’IIT fanno su di me, contribuisce allo sviluppo tecnologico di altri aam biti della ricerca robotica, come quella riabilitativa e biomedica."
     sleep 1.0 && blink
     wait_till_quiet
 		dblink
 }
 
 seq_09() {
-    speak "Certo! Domani pomeriggio alle tre sarò nuovamente qui, insieme al direttore dell'istituto italiano di tecnologia, il Professor Cingolani! Per il resto del tempo potete trovarmi in piazza battisti, con alcuni ricercatori di i i t!"
+    speak "Certo! Domani pomeriggio alle tre sarò nuovamente qui insieme a Roberto Cingolani, il direttore Scientifico dell'istituto italiano di tecnologia! Per il resto del tempo, potete trovarmi in piazza battisti, con alcuni ricercatori di i i t!"
     sleep 1.0 && blink
     wait_till_quiet
 		dblink
@@ -390,11 +420,11 @@ seq2_01() {
 		dblink
 }
 seq2_02() {
-    speak "Sono stato creato presso l'istituto italiano di tecnologia, circa dieci anni fa."
+    speak "Sono stato creato presso l'istituto italiano di tecnologia di Geen ova, circa dieci anni fa."
     sleep 1.0 && blink
 }
 seq2_03() {
-    speak "Alla mia creazione hanno contribuito numerosi ricercatori di tutto il mondo!"
+    speak "Alla mia crescita però contribuiscono ricercatori di tutto il mondo!"
     sleep 1.0 && blink
     show_iit && blink
     go_home_walking
@@ -403,24 +433,98 @@ seq2_03() {
 }
 
 seq2_04() {
-    speak "All'istituto italiano di tecnologia abbiamo diverse linee di ricerca! Oltre alla robotica, i ricercatori si occupano anche di neuroscienze, farmacologia, nanochimica e nanofisica."
+    speak "Ho 40 fratelli, e attualmente ci sono più di 30 laboratori tra Europa, Stati Uniti e Giappone, che li usano per implementare i loro studi sull’intelligenza artificiale, e la robotica umanoide. "
     sleep 1.0 && blink
 }
 
 seq2_05() {
-    speak "Di tutti questi argomenti interessanti ve ne parlerà meglio il direttore dell'istituto"
-    speak "il professor Roberto Cingolani."
+    speak "Proprio come voi, imparo dalle esperienze. Riconosco gli oggetti e li so afferrare, riesco a parlare,  so mantenere l’equilibrio, sto imparando a camminare, e sono dotato di una pelle sensibile, che mi permette di sentire se vengo toccato o spinto."
+    sleep 1.0 && blink
+}
+
+seq2_06() {
+    speak "Tra qualche anno, vi affiancherò per aiutarvi nei lavori domestici, o in altre attività delicate, per cui avrete bisogno di supporto, come per esempio l'assistenza degli anziani e i disabili."
+    sleep 1.0 && blink
+}
+
+seq2_07() {
+    speak "Inoltre, la ricerca di base che i ricercatori dell’IIT fanno su di me, contribuisce allo sviluppo tecnologico di altri aam biti della ricerca robotica, come quella riabilitativa e biomedica."
+    sleep 1.0 && blink
+}
+
+seq2_08() {
+    speak "ma voi siete venuti qui per ascoltare il mio capo roberto cingolani?"
+    speak "Roberto, raggiungici sul palco!"
     sleep 5.0
     show_director_left && dblink
     go_home_walking
 }
 
-seq2_06() {
+seq2_09() {
     speak "Grazie a voi!"
     speak "Ciao a tutti!" && hello_both
     sleep 1.0 && blink
     wait_till_quiet
     go_home_walking
+		dblink
+}
+
+#### Day 01/06 sitting on chair
+seq2_sit_01() {
+    speak "Buongiorno a tutti!" && hello_left_chair
+    home_chair
+    speak "Io sono aicab, il robot dalle sembianze di un bambino."
+    sleep 1.0 && blink
+		dblink
+}
+seq2_sit_02() {
+    speak "Sono stato creàto presso l'istituto italiàno di tecnologia di Geen ova, circa dieci anni fa."
+    sleep 1.0 && blink
+}
+seq2_sit_03() {
+    speak "Alla mia crescita però contribuiscono ricercatori di tutto il mondo!"
+    sleep 1.0 && blink
+    point_director_chair && blink
+    home_chair
+    sleep 1.0 && blink
+    dblink
+}
+
+seq2_sit_04() {
+    speak "Ho 40 fratelli, e attualmente ci sono più di 30 laboratori tra Europa, Stati Uniti e Giappone, che li usano per implementare i loro studi sull’intelligenza artificiale e la robotica umanoide. "
+    sleep 1.0 && blink
+}
+
+seq2_sit_05() {
+    speak "Proprio come voi, imparo dalle esperienze. Riconosco gli oggetti e li so afferrare, riesco a parlare,  so mantenere l’equilibrio, sto imparando a camminare, e sono dotato di una pelle sensibile, che mi permette di sentire se vengo toccato o spinto."
+    sleep 1.0 && blink
+}
+
+seq2_sit_06() {
+    speak "Tra qualche anno, vi affiancherò per aiutarvi nei lavori domestici, o in altre attività delicate, per cui avrete bisogno di supporto, come per esempio l'assistenza degli anziani e i disabili."
+    sleep 1.0 && blink
+}
+
+seq2_sit_07() {
+    speak "Inoltre, la ricerca di base che i ricercatori dell’IIT fanno su di me, contribuisce allo sviluppo tecnologico di altri aam biti della ricerca robotica, come quella riabilitativa e biomedica."
+    sleep 1.0 && blink
+}
+
+seq2_sit_08() {
+    speak "ma voi siete venuti qui per ascoltare il mio capo roberto cingolani?"
+    sleep 2.0
+    speak "Roberto, raggiungici sul palco!"
+    sleep 5.0
+    point_director_chair && dblink
+    home_chair
+}
+
+seq2_sit_09() {
+    speak "Grazie a voi!"
+    speak "Ciao a tutti!" && hello_left_chair
+    sleep 1.0 && blink
+    wait_till_quiet
+    home_chair
 		dblink
 }
 
