@@ -471,6 +471,8 @@ seq2_09() {
 
 #### Day 01/06 sitting on chair
 seq2_sit_01() {
+    gaze "look 15.0 0.0 3.0"
+    sleep 2.0
     speak "Buongiorno a tutti!" && hello_left_chair
     home_chair
     speak "Io sono aicab, il robot dalle sembianze di un bambino."
