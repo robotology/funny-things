@@ -343,10 +343,11 @@ point_director_chair() {
 #######################################################################################
 ###### Day 31/05
 seq_01() {
-    speak "Buona sera Tito e buonasera a tutti!" && hello_left
+    speak "Buona sera Tito!" && hello_left
     sleep 1.0 && blink
-    wait_till_quiet
     go_home_walking
+    speak "È un piacere essere qui per ascoltarvi e seguire l'intervento del Professor Fri mam."
+    wait_till_quiet
 		dblink
 }
 
@@ -360,7 +361,7 @@ seq_02() {
 }
 
 seq_03() {
-    speak "Sono il robot umanoide più diffuso al mondo, mi hanno progettato e sviluppato all’istituto italiano di tecnologia di Geen ova!"
+    speak "Sono il robot umanoide più diffuso al mondo, mi hanno progettato e sviluppato all’istituto itali áno di tecnologia di Geen ova!"
     sleep 1.0 && blink
 }
 
@@ -384,19 +385,19 @@ seq_06() {
 }
 
 seq_07() {
-    speak "Tra qualche anno, vi affiancherò per aiutarvi nei lavori domestici, o in altre attività delicate per cui avrete bisogno di supporto, come per esempio l'assistenza degli anziani e i disabili."
+    speak "No, sono stato progettato per affiancarvi e aiutarvi, o in altre attività delicate per cui avrete bisogno di supporto, come per esempio l'assistenza degli anziani e i disabili."
     sleep 1.0 && dblink
 }
 
 seq_08() {
-    speak "Inoltre, la ricerca di base che i ricercatori dell’IIT fanno su di me, contribuisce allo sviluppo tecnologico di altri aam biti della ricerca robotica, come quella riabilitativa e biomedica."
+    speak "Inoltre, la ricerca di base che i ricercatori dell’IIT fanno su di me, contribuisce allo sviluppo tecnologico di altri settori della ricerca robotica, come quella riabilitativa e biomedica."
     sleep 1.0 && blink
     wait_till_quiet
 		dblink
 }
 
 seq_09() {
-    speak "Certo! Domani pomeriggio alle tre sarò nuovamente qui insieme a Roberto Cingolani, il direttore Scientifico dell'istituto italiano di tecnologia! Per il resto del tempo, potete trovarmi in piazza battisti, con alcuni ricercatori di i i t!"
+    speak "Sii! Domani pomeriggio alle tre sarò nuovamente qui insieme a Roberto Cingolani, il direttore Scientifico dell'istituto itali áno di tecnologia! Per il resto del tempo, potete trovarmi in piazza battisti, con alcuni ricercatori di i i t!"
     sleep 1.0 && blink
     wait_till_quiet
 		dblink
@@ -420,7 +421,7 @@ seq2_01() {
 		dblink
 }
 seq2_02() {
-    speak "Sono stato creato presso l'istituto italiano di tecnologia di Geen ova, circa dieci anni fa."
+    speak "Sono stato creato presso l'istituto itali áno di tecnologia di Geen ova, circa dieci anni fa."
     sleep 1.0 && blink
 }
 seq2_03() {
@@ -443,12 +444,12 @@ seq2_05() {
 }
 
 seq2_06() {
-    speak "Tra qualche anno, vi affiancherò per aiutarvi nei lavori domestici, o in altre attività delicate, per cui avrete bisogno di supporto, come per esempio l'assistenza degli anziani e i disabili."
+    speak "No, Tra qualche anno, vi affiancherò per aiutarvi nei lavori domestici, o in altre attività delicate, per cui avrete bisogno di supporto, come per esempio l'assistenza degli anziani e i disabili."
     sleep 1.0 && blink
 }
 
 seq2_07() {
-    speak "Inoltre, la ricerca di base che i ricercatori dell’IIT fanno su di me, contribuisce allo sviluppo tecnologico di altri aam biti della ricerca robotica, come quella riabilitativa e biomedica."
+    speak "Inoltre, la ricerca di base che i ricercatori dell’IIT fanno su di me, contribuisce allo sviluppo tecnologico di altri settori della ricerca robotica, come quella riabilitativa e biomedica."
     sleep 1.0 && blink
 }
 
@@ -473,14 +474,14 @@ seq2_09() {
 seq2_sit_01() {
     gaze "look 15.0 0.0 3.0"
     sleep 2.0
-    speak "Buongiorno a tutti!" && hello_left_chair
+    speak "Buonasera a tutti! Ciao Massimo!" && hello_left_chair
     home_chair
     speak "Io sono aicab, il robot dalle sembianze di un bambino."
     sleep 1.0 && blink
 		dblink
 }
 seq2_sit_02() {
-    speak "Sono stato creàto presso l'istituto italiàno di tecnologia di Geen ova, circa dieci anni fa."
+    speak "Sono stato creàto presso l'istituto itali áno di tecnologia di Geen ova, circa dieci anni fa."
     sleep 1.0 && blink
 }
 seq2_sit_03() {
@@ -508,7 +509,7 @@ seq2_sit_06() {
 }
 
 seq2_sit_07() {
-    speak "Inoltre, la ricerca di base che i ricercatori dell’IIT fanno su di me, contribuisce allo sviluppo tecnologico di altri aam biti della ricerca robotica, come quella riabilitativa e biomedica."
+    speak "Inoltre, la ricerca di base che i ricercatori dell’IIT fanno su di me, contribuisce allo sviluppo tecnologico di altri settori della ricerca robotica, come quella riabilitativa e biomedica."
     sleep 1.0 && blink
 }
 
@@ -549,7 +550,7 @@ sequence_01() {
 
 sequence_02() {
     gaze "look-around 15.0 0.0 5.0"
-    speak "Sono nato circa 10 anni fa, all'Istituto Italiano di Tecnologia."
+    speak "Sono nato circa 10 anni fa, all'Istituto itali áno di Tecnologia."
     echo "ctpq time 1.0 off 0 pos (-12.0 37.0 6.0 67.0 -52.0 -14.0 9.0    12.0 -6.0 37.0 2.0 0.0 3.0 2.0 1.0 0.0)" | yarp rpc /ctpservice/left_arm/rpc
     sleep 2.0
     go_home_helperL 2.0
