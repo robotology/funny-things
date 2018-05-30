@@ -323,7 +323,6 @@ hello_left_chair() {
     smile
 }
 
-## Trento
 home_chair() {
     echo "ctpq time 1.5 off 0 pos (-25 59.0 53.9 32.7 0.0 0.0 0.0 25.92 30.01 9.90 3.60 7.85 1.81 9.89 1.80 10.79 )" | yarp rpc /ctpservice/left_arm/rpc
     sleep 2.0
@@ -336,7 +335,61 @@ point_director_chair() {
     smile
 }
 
+hello_right_chair() {
+    echo "ctpq time 1.5 off 0 pos (-72.4 67.2 -1.2 57.32 0.0 0.0 0.0 23.50 30.4 9.9 3.6 0.0 0.0 9.9 0.0 10.8)" | yarp rpc /ctpservice/right_arm/rpc
+    sleep 2.0
+    echo "ctpq time 0.5 off 0 pos (-72.4 67.2 -1.2 74.32 0.0 0.0 0.0 23.50 30.4 9.9 3.6 0.0 0.0 9.9 0.0 10.8)" | yarp rpc /ctpservice/right_arm/rpc
+    echo "ctpq time 0.5 off 0 pos (-72.4 67.2 -1.2 57.32 0.0 0.0 0.0 23.50 30.4 9.9 3.6 0.0 0.0 9.9 0.0 10.8)" | yarp rpc /ctpservice/right_arm/rpc
+    echo "ctpq time 0.5 off 0 pos (-72.4 67.2 -1.2 74.32 0.0 0.0 0.0 23.50 30.4 9.9 3.6 0.0 0.0 9.9 0.0 10.8)" | yarp rpc /ctpservice/right_arm/rpc
+    echo "ctpq time 0.5 off 0 pos (-72.4 67.2 -1.2 57.32 0.0 0.0 0.0 23.50 30.4 9.9 3.6 0.0 0.0 9.9 0.0 10.8)" | yarp rpc /ctpservice/right_arm/rpc
+    echo "ctpq time 0.5 off 0 pos (-72.4 67.2 -1.2 74.32 0.0 0.0 0.0 23.50 30.4 9.9 3.6 0.0 0.0 9.9 0.0 10.8)" | yarp rpc /ctpservice/right_arm/rpc
+    echo "ctpq time 0.5 off 0 pos (-72.4 67.2 -1.2 57.32 0.0 0.0 0.0 23.50 30.4 9.9 3.6 0.0 0.0 9.9 0.0 10.8)" | yarp rpc /ctpservice/right_arm/rpc
+    smile
+}
 
+home_chair_right() {
+    echo "ctpq time 1.5 off 0 pos (-25 59.0 53.9 32.7 0.0 0.0 0.0 25.92 30.01 9.90 3.60 7.85 1.81 9.89 1.80 10.79 )" | yarp rpc /ctpservice/right_arm/rpc
+    sleep 2.0
+    smile
+}
+
+point_director_chair_right() {
+    echo "ctpq time 1.5 off 0 pos (-72.4 67.2 -1.2 57.32 0.0 0.0 0.0 23.50 30.4 9.9 3.6 0.0 0.0 9.9 0.0 10.8)" | yarp rpc /ctpservice/right_arm/rpc
+    sleep 2.0
+    smile
+}
+
+nod_yes_once() {
+    echo "ctpq time 1 off 0 pos (-0.0 0.0 -0.0 0.0 -0.0 0.0)" | yarp rpc /ctpservice/head/rpc
+    echo "ctpq time 1 off 0 pos (-6.0 0.0 -0.0 0.0 -0.0 0.0)" | yarp rpc /ctpservice/head/rpc
+    echo "ctpq time 1 off 0 pos (-0.0 0.0 -0.0 0.0 -0.0 0.0)" | yarp rpc /ctpservice/head/rpc
+}
+
+nod_yes_mult() {
+    echo "ctpq time 1 off 0 pos (-0.0 0.0 -0.0 0.0 -0.0 0.0)" | yarp rpc /ctpservice/head/rpc
+    echo "ctpq time 1 off 0 pos (-6.0 0.0 -0.0 0.0 -0.0 0.0)" | yarp rpc /ctpservice/head/rpc
+    echo "ctpq time 1 off 0 pos (-0.0 0.0 -0.0 0.0 -0.0 0.0)" | yarp rpc /ctpservice/head/rpc
+    echo "ctpq time 1 off 0 pos (-6.0 0.0 -0.0 0.0 -0.0 0.0)" | yarp rpc /ctpservice/head/rpc
+    echo "ctpq time 1 off 0 pos (-0.0 0.0 -0.0 0.0 -0.0 0.0)" | yarp rpc /ctpservice/head/rpc
+    echo "ctpq time 1 off 0 pos (-6.0 0.0 -0.0 0.0 -0.0 0.0)" | yarp rpc /ctpservice/head/rpc
+    echo "ctpq time 1 off 0 pos (-0.0 0.0 -0.0 0.0 -0.0 0.0)" | yarp rpc /ctpservice/head/rpc
+}
+
+nod_no_once() {
+    echo "ctpq time 1 off 0 pos (-0.0 0.0 -3.0 0.0 -0.0 0.0)" | yarp rpc /ctpservice/head/rpc
+    echo "ctpq time 1 off 0 pos (-0.0 0.0  3.0 0.0 -0.0 0.0)" | yarp rpc /ctpservice/head/rpc
+    echo "ctpq time 1 off 0 pos (-0.0 0.0 -0.0 0.0 -0.0 0.0)" | yarp rpc /ctpservice/head/rpc
+}
+
+nod_no_mult() {
+    echo "ctpq time 1 off 0 pos (-0.0 0.0 -3.0 0.0 -0.0 0.0)" | yarp rpc /ctpservice/head/rpc
+    echo "ctpq time 1 off 0 pos (-0.0 0.0  3.0 0.0 -0.0 0.0)" | yarp rpc /ctpservice/head/rpc
+    echo "ctpq time 1 off 0 pos (-0.0 0.0 -3.0 0.0 -0.0 0.0)" | yarp rpc /ctpservice/head/rpc
+    echo "ctpq time 1 off 0 pos (-0.0 0.0  3.0 0.0 -0.0 0.0)" | yarp rpc /ctpservice/head/rpc
+    echo "ctpq time 1 off 0 pos (-0.0 0.0 -3.0 0.0 -0.0 0.0)" | yarp rpc /ctpservice/head/rpc
+    echo "ctpq time 1 off 0 pos (-0.0 0.0  3.0 0.0 -0.0 0.0)" | yarp rpc /ctpservice/head/rpc
+    echo "ctpq time 1 off 0 pos (-0.0 0.0 -0.0 0.0 -0.0 0.0)" | yarp rpc /ctpservice/head/rpc
+}
 
 #######################################################################################
 # TRENTO SEQUENCES
