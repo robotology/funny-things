@@ -40,7 +40,7 @@ using namespace yarp::dev;
 
 using namespace std;
 
-class iCubBreatherThread: public RateThread
+class iCubBreatherThread: public PeriodicThread
 {
 protected:
     /***************************************************************************/

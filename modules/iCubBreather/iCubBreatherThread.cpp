@@ -2,7 +2,7 @@
 
 iCubBreatherThread::iCubBreatherThread(int _rate, string _name, string _robot, string _part, bool _autoStart,
                                        double _noiseStd, double _refSpeed, int _v, const ResourceFinder &_rf) :
-                                       RateThread(_rate), name(_name), robot(_robot),
+                                       PeriodicThread((double)_rate/1000.0), name(_name), robot(_robot),
                                        verbosity(_v), part(_part), noiseStd(_noiseStd), refSpeed(_refSpeed)
 {
     if (_autoStart)
@@ -13,7 +13,7 @@ iCubBreatherThread::iCubBreatherThread(int _rate, string _name, string _robot, s
 
     ResourceFinder &rf = const_cast<ResourceFinder&>(_rf);
     groupPartBottle = rf.findGroup(part.c_str());
-    rate=getRate();
+    rate=1000.0*getPeriod();
 }
 
 bool iCubBreatherThread::threadInit()
@@ -131,7 +131,7 @@ void iCubBreatherThread::run()
 
     // modulate period
     double nextRate=rate+randngen.get(0,500.0);
-    setRate((int)nextRate);
+    setPeriod((double)nextRate/1000.0);
 }
 
 Vector iCubBreatherThread::computeNewTarget()

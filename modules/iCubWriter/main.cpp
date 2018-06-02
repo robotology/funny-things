@@ -70,7 +70,7 @@ using namespace iCub::action;
 
 
 /************************************************************************/
-class Gazer : public RateThread
+class Gazer : public PeriodicThread
 {
     IGazeControl     *igaze;
     ActionPrimitives *action;
@@ -79,7 +79,7 @@ class Gazer : public RateThread
 public:
     /************************************************************************/
     Gazer(PolyDriver &driver, ActionPrimitives *action, const Vector &offset) : 
-          RateThread(50)
+          PeriodicThread(0.05)
     {
         driver.view(this->igaze);
         this->action=action;
