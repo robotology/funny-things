@@ -8,7 +8,7 @@ project(${PROJECTNAME})
 
 set(source main.cpp)
 source_group("Source Files" FILES ${source})
-include_directories(${YARP_INCLUDE_DIRS} ${ICUB_INCLUDE_DIRS})
+include_directories(${ICUB_INCLUDE_DIRS})
 add_executable(${PROJECTNAME} ${source})
 target_link_libraries(${PROJECTNAME} ${YARP_LIBRARIES} ctrlLib)
 install(TARGETS ${PROJECTNAME} DESTINATION bin)

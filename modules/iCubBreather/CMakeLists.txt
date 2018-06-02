@@ -8,8 +8,6 @@ project(iCubBreather)
 file(GLOB source *.cpp)
 file(GLOB header *.h)
 
-include_directories(${YARP_INCLUDE_DIRS})
-
 source_group("Source Files" FILES ${source})
 source_group("Header Files" FILES ${header})
 
