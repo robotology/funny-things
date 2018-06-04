@@ -87,6 +87,64 @@ go_home_walking() {
     go_home_helper_walking 2.0
 }
 
+handshake_home() {
+    echo "ctpq time 1.5 off 0 pos (-42.0 26.0 17.0 44.0 -4.0 -39.0 35.0 30.0 29.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0)" | yarp rpc /ctpservice/right_arm/rpc
+    sleep 3.0
+}
+
+handshake() {
+    echo "ctpq time 1.5 off 0 pos (-42.0 26.0 17.0 44.0 -4.0 -39.0 35.0 30.0 29.0 8.0 30.0 32.0 42.0 50.0 50.0 150.0)" | yarp rpc /ctpservice/right_arm/rpc
+    sleep 3.0
+    echo "ctpq time 0.4 off 0 pos (-44.0 26.0 17.0 54.0 -4.0 -39.0 25.0 30.0 29.0 8.0 30.0 32.0 42.0 50.0 50.0 150.0)" | yarp rpc /ctpservice/right_arm/rpc
+    echo "ctpq time 0.4 off 0 pos (-42.0 26.0 17.0 44.0 -4.0 -39.0 35.0 30.0 29.0 8.0 30.0 32.0 42.0 50.0 50.0 150.0)" | yarp rpc /ctpservice/right_arm/rpc
+    echo "ctpq time 0.4 off 0 pos (-44.0 26.0 17.0 54.0 -4.0 -39.0 25.0 30.0 29.0 8.0 30.0 32.0 42.0 50.0 50.0 150.0)" | yarp rpc /ctpservice/right_arm/rpc
+    echo "ctpq time 0.4 off 0 pos (-42.0 26.0 17.0 44.0 -4.0 -39.0 35.0 30.0 29.0 8.0 30.0 32.0 42.0 50.0 50.0 150.0)" | yarp rpc /ctpservice/right_arm/rpc
+    echo "ctpq time 0.4 off 0 pos (-44.0 26.0 17.0 54.0 -4.0 -39.0 25.0 30.0 29.0 8.0 30.0 32.0 42.0 50.0 50.0 150.0)" | yarp rpc /ctpservice/right_arm/rpc
+    echo "ctpq time 0.4 off 0 pos (-42.0 26.0 17.0 44.0 -4.0 -39.0 35.0 30.0 29.0 8.0 30.0 32.0 42.0 50.0 50.0 150.0)" | yarp rpc /ctpservice/right_arm/rpc
+    sleep 3.0
+}
+
+handshake_open() {
+    echo "ctpq time 1.5 off 0 pos (-42.0 26.0 17.0 44.0 -4.0 -39.0 35.0 30.0 29.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0)" | yarp rpc /ctpservice/right_arm/rpc
+    sleep 3.0
+    echo "ctpq time 0.4 off 0 pos (-44.0 26.0 17.0 54.0 -4.0 -39.0 25.0 30.0 29.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0)" | yarp rpc /ctpservice/right_arm/rpc
+    echo "ctpq time 0.4 off 0 pos (-42.0 26.0 17.0 44.0 -4.0 -39.0 35.0 30.0 29.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0)" | yarp rpc /ctpservice/right_arm/rpc
+    echo "ctpq time 0.4 off 0 pos (-44.0 26.0 17.0 54.0 -4.0 -39.0 25.0 30.0 29.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0)" | yarp rpc /ctpservice/right_arm/rpc
+    echo "ctpq time 0.4 off 0 pos (-42.0 26.0 17.0 44.0 -4.0 -39.0 35.0 30.0 29.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0)" | yarp rpc /ctpservice/right_arm/rpc
+    echo "ctpq time 0.4 off 0 pos (-44.0 26.0 17.0 54.0 -4.0 -39.0 25.0 30.0 29.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0)" | yarp rpc /ctpservice/right_arm/rpc
+    echo "ctpq time 0.4 off 0 pos (-42.0 26.0 17.0 44.0 -4.0 -39.0 35.0 30.0 29.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0)" | yarp rpc /ctpservice/right_arm/rpc
+    sleep 3.0
+}
+
+handshake_new_home() {
+    echo "ctpq time 1.5 off 0 pos (-61.0 23.0 17.0 65.0  0.0  -1.9 15.0 30.0 26.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0)" | yarp rpc /ctpservice/right_arm/rpc
+    sleep 3.0
+}
+
+handshake_new() {
+    echo "ctpq time 1.5 off 0 pos (-61.0 23.0 17.0 65.0  0.0  -1.9 15.0 30.0 26.0 14.0 30.0 32.0 42.0 50.0 50.0 150.0)" | yarp rpc /ctpservice/right_arm/rpc
+    sleep 3.0
+    echo "ctpq time 0.5 off 0 pos (-61.0 23.0 17.0 65.0  0.0  -1.9 15.0 30.0 26.0 14.0 30.0 32.0 42.0 50.0 50.0 150.0)" | yarp rpc /ctpservice/right_arm/rpc
+    echo "ctpq time 0.5 off 0 pos (-61.0 23.0 17.0 50.0  0.0  -1.9 15.0 30.0 26.0 14.0 30.0 32.0 42.0 50.0 50.0 150.0)" | yarp rpc /ctpservice/right_arm/rpc
+    echo "ctpq time 0.5 off 0 pos (-61.0 23.0 17.0 65.0  0.0  -1.9 15.0 30.0 26.0 14.0 30.0 32.0 42.0 50.0 50.0 150.0)" | yarp rpc /ctpservice/right_arm/rpc
+    echo "ctpq time 0.5 off 0 pos (-61.0 23.0 17.0 50.0  0.0  -1.9 15.0 30.0 26.0 14.0 30.0 32.0 42.0 50.0 50.0 150.0)" | yarp rpc /ctpservice/right_arm/rpc
+    echo "ctpq time 0.5 off 0 pos (-61.0 23.0 17.0 65.0  0.0  -1.9 15.0 30.0 26.0 14.0 30.0 32.0 42.0 50.0 50.0 150.0)" | yarp rpc /ctpservice/right_arm/rpc
+    echo "ctpq time 0.5 off 0 pos (-61.0 23.0 17.0 50.0  0.0  -1.9 15.0 30.0 26.0 14.0 30.0 32.0 42.0 50.0 50.0 150.0)" | yarp rpc /ctpservice/right_arm/rpc
+    sleep 3.0
+}
+
+handshake_new_open() {
+    echo "ctpq time 1.5 off 0 pos (-61.0 23.0 17.0 65.0  0.0  -1.9 15.0 30.0 26.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0)" | yarp rpc /ctpservice/right_arm/rpc
+    sleep 3.0
+    echo "ctpq time 0.5 off 0 pos (-61.0 23.0 17.0 65.0  0.0  -1.9 15.0 30.0 26.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0)" | yarp rpc /ctpservice/right_arm/rpc
+    echo "ctpq time 0.5 off 0 pos (-61.0 23.0 17.0 50.0  0.0  -1.9 15.0 30.0 26.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0)" | yarp rpc /ctpservice/right_arm/rpc
+    echo "ctpq time 0.5 off 0 pos (-61.0 23.0 17.0 65.0  0.0  -1.9 15.0 30.0 26.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0)" | yarp rpc /ctpservice/right_arm/rpc
+    echo "ctpq time 0.5 off 0 pos (-61.0 23.0 17.0 50.0  0.0  -1.9 15.0 30.0 26.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0)" | yarp rpc /ctpservice/right_arm/rpc
+    echo "ctpq time 0.5 off 0 pos (-61.0 23.0 17.0 65.0  0.0  -1.9 15.0 30.0 26.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0)" | yarp rpc /ctpservice/right_arm/rpc
+    echo "ctpq time 0.5 off 0 pos (-61.0 23.0 17.0 50.0  0.0  -1.9 15.0 30.0 26.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0)" | yarp rpc /ctpservice/right_arm/rpc
+    sleep 3.0
+}
+
 ##############################
 
 greet_with_right_thumb_up() {
@@ -361,33 +419,33 @@ point_director_chair_right() {
 
 nod_yes_once() {
     echo "ctpq time 1 off 0 pos (-0.0 0.0 -0.0 0.0 -0.0 0.0)" | yarp rpc /ctpservice/head/rpc
-    echo "ctpq time 1 off 0 pos (-6.0 0.0 -0.0 0.0 -0.0 0.0)" | yarp rpc /ctpservice/head/rpc
+    echo "ctpq time 1 off 0 pos (-10.0 0.0 -0.0 0.0 -0.0 0.0)" | yarp rpc /ctpservice/head/rpc
     echo "ctpq time 1 off 0 pos (-0.0 0.0 -0.0 0.0 -0.0 0.0)" | yarp rpc /ctpservice/head/rpc
 }
 
 nod_yes_mult() {
     echo "ctpq time 1 off 0 pos (-0.0 0.0 -0.0 0.0 -0.0 0.0)" | yarp rpc /ctpservice/head/rpc
-    echo "ctpq time 1 off 0 pos (-6.0 0.0 -0.0 0.0 -0.0 0.0)" | yarp rpc /ctpservice/head/rpc
+    echo "ctpq time 1 off 0 pos (-10.0 0.0 -0.0 0.0 -0.0 0.0)" | yarp rpc /ctpservice/head/rpc
     echo "ctpq time 1 off 0 pos (-0.0 0.0 -0.0 0.0 -0.0 0.0)" | yarp rpc /ctpservice/head/rpc
-    echo "ctpq time 1 off 0 pos (-6.0 0.0 -0.0 0.0 -0.0 0.0)" | yarp rpc /ctpservice/head/rpc
+    echo "ctpq time 1 off 0 pos (-10.0 0.0 -0.0 0.0 -0.0 0.0)" | yarp rpc /ctpservice/head/rpc
     echo "ctpq time 1 off 0 pos (-0.0 0.0 -0.0 0.0 -0.0 0.0)" | yarp rpc /ctpservice/head/rpc
-    echo "ctpq time 1 off 0 pos (-6.0 0.0 -0.0 0.0 -0.0 0.0)" | yarp rpc /ctpservice/head/rpc
+    echo "ctpq time 1 off 0 pos (-10.0 0.0 -0.0 0.0 -0.0 0.0)" | yarp rpc /ctpservice/head/rpc
     echo "ctpq time 1 off 0 pos (-0.0 0.0 -0.0 0.0 -0.0 0.0)" | yarp rpc /ctpservice/head/rpc
 }
 
 nod_no_once() {
-    echo "ctpq time 1 off 0 pos (-0.0 0.0 -3.0 0.0 -0.0 0.0)" | yarp rpc /ctpservice/head/rpc
-    echo "ctpq time 1 off 0 pos (-0.0 0.0  3.0 0.0 -0.0 0.0)" | yarp rpc /ctpservice/head/rpc
+    echo "ctpq time 1 off 0 pos (-0.0 0.0 -6.0 0.0 -0.0 0.0)" | yarp rpc /ctpservice/head/rpc
+    echo "ctpq time 1 off 0 pos (-0.0 0.0  6.0 0.0 -0.0 0.0)" | yarp rpc /ctpservice/head/rpc
     echo "ctpq time 1 off 0 pos (-0.0 0.0 -0.0 0.0 -0.0 0.0)" | yarp rpc /ctpservice/head/rpc
 }
 
 nod_no_mult() {
-    echo "ctpq time 1 off 0 pos (-0.0 0.0 -3.0 0.0 -0.0 0.0)" | yarp rpc /ctpservice/head/rpc
-    echo "ctpq time 1 off 0 pos (-0.0 0.0  3.0 0.0 -0.0 0.0)" | yarp rpc /ctpservice/head/rpc
-    echo "ctpq time 1 off 0 pos (-0.0 0.0 -3.0 0.0 -0.0 0.0)" | yarp rpc /ctpservice/head/rpc
-    echo "ctpq time 1 off 0 pos (-0.0 0.0  3.0 0.0 -0.0 0.0)" | yarp rpc /ctpservice/head/rpc
-    echo "ctpq time 1 off 0 pos (-0.0 0.0 -3.0 0.0 -0.0 0.0)" | yarp rpc /ctpservice/head/rpc
-    echo "ctpq time 1 off 0 pos (-0.0 0.0  3.0 0.0 -0.0 0.0)" | yarp rpc /ctpservice/head/rpc
+    echo "ctpq time 1 off 0 pos (-0.0 0.0 -6.0 0.0 -0.0 0.0)" | yarp rpc /ctpservice/head/rpc
+    echo "ctpq time 1 off 0 pos (-0.0 0.0  6.0 0.0 -0.0 0.0)" | yarp rpc /ctpservice/head/rpc
+    echo "ctpq time 1 off 0 pos (-0.0 0.0 -6.0 0.0 -0.0 0.0)" | yarp rpc /ctpservice/head/rpc
+    echo "ctpq time 1 off 0 pos (-0.0 0.0  6.0 0.0 -0.0 0.0)" | yarp rpc /ctpservice/head/rpc
+    echo "ctpq time 1 off 0 pos (-0.0 0.0 -6.0 0.0 -0.0 0.0)" | yarp rpc /ctpservice/head/rpc
+    echo "ctpq time 1 off 0 pos (-0.0 0.0  6.0 0.0 -0.0 0.0)" | yarp rpc /ctpservice/head/rpc
     echo "ctpq time 1 off 0 pos (-0.0 0.0 -0.0 0.0 -0.0 0.0)" | yarp rpc /ctpservice/head/rpc
 }
 
@@ -414,7 +472,7 @@ seq_02() {
 }
 
 seq_03() {
-    speak "Sono il robot umanoide più diffuso al mondo, mi hanno progettato e sviluppato all’istituto itali áno di tecnologia di Geen ova!"
+    speak "Sono il robot umanoide avanzato più diffuso al mondo, mi hanno progettato e sviluppato all’istituto itali áno di tecnologia di Geen ova!"
     sleep 1.0 && blink
 }
 
@@ -438,7 +496,7 @@ seq_06() {
 }
 
 seq_07() {
-    speak "No, sono stato progettato per affiancarvi e aiutarvi, o in altre attività delicate per cui avrete bisogno di supporto, come per esempio l'assistenza degli anziani e i disabili."
+    speak "Noo, sono stato progettato per affiancarvi e aiutarvi nei lavori domestici, o in altre attività delicate per cui avrete bisogno di supporto, come per esempio l'assistenza degli anziani e i disabili."
     sleep 1.0 && dblink
 }
 
@@ -525,9 +583,7 @@ seq2_09() {
 
 #### Day 01/06 sitting on chair
 seq2_sit_01() {
-    gaze "look 15.0 0.0 3.0"
-    sleep 2.0
-    speak "Buonasera a tutti! Ciao Massimo!" && hello_left_chair
+    speak "Buon pomeriggio a tutti! Ciao Massimo!" && hello_left_chair
     home_chair
     speak "Io sono aicab, il robot dalle sembianze di un bambino."
     sleep 1.0 && blink
@@ -576,6 +632,15 @@ seq2_sit_08() {
 }
 
 seq2_sit_09() {
+    hello_left_chair
+    sleep 1.0 && blink
+    wait_till_quiet
+    home_chair
+		dblink
+}
+
+
+seq2_sit_10() {
     speak "Grazie a voi!"
     speak "Ciao a tutti!" && hello_left_chair
     sleep 1.0 && blink
@@ -583,6 +648,163 @@ seq2_sit_09() {
     home_chair
 		dblink
 }
+
+## Interview 01/06
+seq6_00() {
+    speak "Ciao!" && hello_left_chair
+    sleep 1.0 && blink
+    wait_till_quiet
+    home_chair
+		dblink
+}
+
+seq6_01() {
+    speak "Venite a trovarci al festival dell'economia di Trento!"
+    sleep 2.0
+    hello_left_chair
+    sleep 1.0 && blink
+    wait_till_quiet
+    home_chair
+		dblink
+}
+
+## Interview Agora 31/05
+seq4_00() {
+    speak "Ciao!" && hello_right
+    sleep 1.0 && blink
+    wait_till_quiet
+    go_home_walking
+		dblink
+}
+
+seq4_01() {
+    speak "Noo, non sostituirò i politici e nessun altra categoria di lavoratori!"
+    sleep 1.0 && blink
+    show_iit && blink
+    go_home_walking
+}
+
+seq4_02() {
+    speak "Sono stato progettato per affiancare e aiutare l'uomo nei lavori domestici, o in altre attività delicate per cui ci sarà bisogno di supporto, come per esempio l'assistenza degli anziani e i disabili."
+    sleep 1.0 && dblink
+}
+
+seq4_03() {
+    speak "Inoltre, la ricerca di base che i ricercatori dell’IIT fanno su di me, contribuisce allo sviluppo tecnologico di altri settori della ricerca robotica, come quella riabilitativa e biomedica."
+    sleep 1.0 && blink
+    wait_till_quiet
+		dblink
+}
+
+seq4_04() {
+    speak "Grazie a voi!"
+    sleep 1.0 && blink
+}
+
+seq4_05() {
+    speak "Ciao!" && hello_right
+    sleep 1.0 && blink
+    wait_till_quiet
+    go_home_walking
+		dblink
+}
+
+## Piazza
+ciao_bimbi() {
+    speak "Ciao bimbi!" && hello_right
+    sleep 1.0 && blink
+    wait_till_quiet
+    go_home_walking
+		dblink
+}
+
+ciao_bimbo() {
+    speak "Ciao bimbo!" && hello_left
+    sleep 1.0 && blink
+    wait_till_quiet
+    go_home_walking
+		dblink
+}
+
+ciao_bimba() {
+    speak "Ciao bimba!" && hello_right
+    sleep 1.0 && blink
+    wait_till_quiet
+    go_home_walking
+		dblink
+}
+
+ciao_ragazzi() {
+    speak "Ciao ragazzi!" && hello_right
+    sleep 1.0 && blink
+    wait_till_quiet
+    go_home_walking
+		dblink
+}
+
+ciao_tutti() {
+    speak "Ciao a tutti!" && hello_both
+    sleep 1.0 && blink
+    wait_till_quiet
+    go_home_walking
+		dblink
+}
+
+ciao_ciao() {
+    speak "Ciao ciao!" && hello_both
+    sleep 1.0 && blink
+    wait_till_quiet
+    go_home_walking
+		dblink
+}
+
+benvenuti() {
+    speak "Benvenuti!" && show_iit
+    sleep 1.0 && blink
+    wait_till_quiet
+    go_home_walking
+		dblink
+}
+
+
+benvenuto() {
+    speak "Benvenuto!" && show_iit
+    sleep 1.0 && blink
+    wait_till_quiet
+    go_home_walking
+		dblink
+}
+benvenuta() {
+    speak "Benvenuta!" && show_iit
+    sleep 1.0 && blink
+    wait_till_quiet
+    go_home_walking
+		dblink
+}
+
+piacere() {
+    speak "è stato un piacere!"
+    sleep 1.0 && blink
+    go_home_walking
+		dblink
+}
+
+ciao_custom() {
+    speak "Ciao! Sono Aicab" && hello_both
+    sleep 1.0 && blink
+    wait_till_quiet
+    go_home_walking
+		dblink
+}
+
+show_custom() {
+    speak "Auguri Zeno!" && show_iit
+    sleep 1.0 && blink
+    wait_till_quiet
+    go_home_walking
+		dblink
+}
+
 
 
 #######################################################################################
