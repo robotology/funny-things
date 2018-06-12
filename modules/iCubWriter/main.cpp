@@ -358,7 +358,7 @@ public:
         orientation.resize(4,0.0);
         if (Bottle *pB=bWriting.find("orientation").asList())
         {
-            int len=std::min((int)orientation.length(),pB->size());
+            int len=std::min(orientation.length(),pB->size());
             for (int i=0; i<len; i++)
                 orientation[i]=pB->get(i).asDouble();
         }
@@ -366,7 +366,7 @@ public:
         Vector top_left_corner(3,0.0);
         if (Bottle *pB=bWriting.find("top_left_corner").asList())
         {
-            int len=std::min((int)top_left_corner.length(),pB->size());
+            int len=std::min(top_left_corner.length(),pB->size());
             for (int i=0; i<len; i++)
                 top_left_corner[i]=pB->get(i).asDouble();
         }
@@ -393,7 +393,7 @@ public:
             {
                 if (Bottle *pB=bSegment.find("orientation").asList())
                 {
-                    int len=std::min((int)orientation.length(),pB->size());
+                    int len=std::min(orientation.length(),pB->size());
                     for (int j=0; j<len; j++)
                         segParams[i].orientation[j]=pB->get(j).asDouble();
                 }
@@ -438,7 +438,7 @@ public:
                 Vector stiffness(5,0.0);
                 if (Bottle *pB=bImpedance.find("stiffness").asList())
                 {
-                    int len=std::min((int)stiffness.length(),pB->size());
+                    int len=std::min(stiffness.length(),pB->size());
                     for (int i=0; i<len; i++)
                         stiffness[i]=pB->get(i).asDouble();
                 }
@@ -446,7 +446,7 @@ public:
                 Vector damping(stiffness.length(),0.0);
                 if (Bottle *pB=bImpedance.find("damping").asList())
                 {
-                    int len=std::min((int)damping.length(),pB->size());
+                    int len=std::min(damping.length(),pB->size());
                     for (int i=0; i<len; i++)
                         damping[i]=pB->get(i).asDouble();
                 }
@@ -488,7 +488,7 @@ public:
                 Vector offset(3,0.0);
                 if (Bottle *pB=bGaze.find("offset").asList())
                 {
-                    int len=std::min((int)offset.length(),pB->size());
+                    int len=std::min(offset.length(),pB->size());
                     for (int i=0; i<len; i++)
                         offset[i]=pB->get(i).asDouble();
                 }
