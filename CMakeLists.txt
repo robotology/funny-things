@@ -14,11 +14,9 @@ find_package(YARP REQUIRED COMPONENTS OS sig dev math gsl)
 find_package(ICUB REQUIRED)
 find_package(ICUBcontrib REQUIRED)
 
-list(APPEND CMAKE_MODULE_PATH ${YARP_MODULE_PATH})
 list(APPEND CMAKE_MODULE_PATH ${ICUB_MODULE_PATH})
 list(APPEND CMAKE_MODULE_PATH ${ICUBCONTRIB_MODULE_PATH})
 
-include(YarpInstallationHelpers)
 include(ICUBcontribHelpers)
 include(ICUBcontribOptions)
 icubcontrib_set_default_prefix()

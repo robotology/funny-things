@@ -5,8 +5,6 @@
 cmake_minimum_required(VERSION 3.5)
 project(iCubBlinker)
 
-include(YarpIDL)
-
 set(idl_files ${PROJECT_NAME}.thrift)
 
 yarp_add_idl(IDL_GEN_FILES ${PROJECT_NAME}.thrift)
