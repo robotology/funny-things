@@ -119,7 +119,7 @@ class iCubBreather: public RFModule
             {
                 switch (command.get(0).asVocab())
                 {
-                    case VOCAB4('s','t','a','r'):
+                    case createVocab('s','t','a','r'):
                     {
                         int res=Vocab::encode("started");
                         if (iCubBreatherThrd -> startBreathing())
@@ -132,7 +132,7 @@ class iCubBreather: public RFModule
                         reply.addVocab(res);
                         return true;
                     }
-                    case VOCAB4('s','t','o','p'):
+                    case createVocab('s','t','o','p'):
                     {
                         int res=Vocab::encode("stopped");
                         if (iCubBreatherThrd -> stopBreathing())

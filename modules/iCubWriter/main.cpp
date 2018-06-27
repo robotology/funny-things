@@ -523,7 +523,7 @@ public:
             switch (command.get(0).asVocab())
             {
                 //-----------------
-                case VOCAB2('g','o'):
+                case createVocab('g','o'):
                 {
                     if (doWriting())
                         reply.addVocab(ack);
