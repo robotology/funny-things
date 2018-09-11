@@ -1,0 +1,232 @@
+
+ #!/bin/bash
+
+#######################################################################################
+# HELP
+#######################################################################################
+usage() {
+cat << EOF
+
+***************************************************************************************
+R1 VIDEO SCRIPTING
+Author:  Vadim Tikhanoff   <vadim.tikhanoff@iit.it>
+
+This script scripts through the commands available for the navigation of R1
+
+USAGE:
+        $0 options
+
+***************************************************************************************
+OPTIONS:
+
+***************************************************************************************
+EXAMPLE USAGE:
+
+***************************************************************************************
+EOF
+}
+
+
+#######################################################################################
+# HELPER FUNCTIONS
+#######################################################################################
+
+wait_till_quiet() {
+    sleep 0.3
+    isSpeaking=$(echo "stat" | yarp rpc /iSpeak/rpc)
+    while [ "$isSpeaking" == "Response: speaking" ]; do
+        isSpeaking=$(echo "stat" | yarp rpc /iSpeak/rpc)
+        sleep 0.1
+        # echo $isSpeaking
+    done
+    echo "I'm not speaking any more :)"
+    echo $isSpeaking
+}
+
+speak() {
+    echo "\"$1\"" | yarp write ... /iSpeak
+}
+
+go_home_helper() {
+    go_home_helperR $1
+    go_home_helperL $1
+}
+
+go_home_helperL()
+{
+    echo "ctpq time $1 off 0 pos (7.0 10.0 -10.0 21.5 0.0 0.0 -0.0 -0.0)" | yarp rpc /ctpservice/left_arm/rpc
+}
+
+go_home_helperR()
+{
+    echo "ctpq time $1 off 0 pos (7.0 15.0 -10.0 12.5 0.0 0.0 -0.0 -0.0)" | yarp rpc /ctpservice/right_arm/rpc
+}
+
+go_home()
+{
+    go_home_helper 4.0
+}
+
+arms_up() {
+    echo "ctpq time 5.0 off 0 pos (9.0 25.0 -10.0 31.5 0.0 0.0 -0.0 -0.0)" | yarp rpc /ctpservice/left_arm/rpc
+    echo "ctpq time 5.0 off 0 pos (9.0 25.0 -10.0 31.5 0.0 0.0 -0.0 -0.0)" | yarp rpc /ctpservice/right_arm/rpc
+}
+
+torso_up() {
+    echo "ctpq time 6.0 off 0 pos (0.14 0.0 0.0 0.0)" | yarp rpc /ctpservice/torso/rpc
+}
+
+torso_down() {
+    echo "ctpq time 6.0 off 0 pos (0.03 0.0 0.0 0.0)" | yarp rpc /ctpservice/torso/rpc
+}
+
+head_down() {
+    echo "ctpq time 2.5 off 0 pos (30.0 0.0)" | yarp rpc /ctpservice/head/rpc
+}
+
+head_up() {
+    echo "ctpq time 2.5 off 0 pos (0.0 0.0)" | yarp rpc /ctpservice/head/rpc
+}
+
+look_gripper() {
+    echo "ctpq time 2.5 off 0 pos (41.7 14.9 -40.6 74.6 78.8 0.0 6.1 10.0)" | yarp rpc /ctpservice/left_arm/rpc
+    echo "ctpq time 2.5 off 0 pos (20.0 5.0)" | yarp rpc /ctpservice/head/rpc
+}
+
+gripper_move() {
+    echo "ctpq time 1 off 0 pos (85.0 60)" | yarp rpc /ctpservice/left_hand/rpc
+    echo "ctpq time 2.5 off 0 pos (41.7 14.9 -40.6 74.6 -33.8 0.0 6.1 10.0)" | yarp rpc /ctpservice/left_arm/rpc
+    sleep 1.3
+    echo "ctpq time 1 off 0 pos (25.0 25)" | yarp rpc /ctpservice/left_hand/rpc
+    echo "ctpq time 2.5 off 0 pos (41.7 14.9 -40.6 74.6 78.8 0.0 6.1 10.0)" | yarp rpc /ctpservice/left_arm/rpc
+    sleep 1.3
+    echo "ctpq time 1 off 0 pos (85.0 60)" | yarp rpc /ctpservice/left_hand/rpc
+    sleep 1.3
+    echo "ctpq time 1 off 0 pos (25.0 25)" | yarp rpc /ctpservice/left_hand/rpc
+}
+
+all_down() {
+    go_home
+    torso_down
+    head_down
+    echo "blck" | yarp rpc /faceExpressionImage/rpc
+}
+
+wake_up() {
+    head_up
+    echo "rst" | yarp rpc /faceExpressionImage/rpc
+    torso_up
+    arms_up
+}
+
+reach_right() {
+
+    echo "ctpq time 3.5 off 0 pos (9.0 25.0 -10.0 31.5 0.0 0.0 -0.0 -0.0)" | yarp rpc /ctpservice/left_arm/rpc
+    echo "ctpq time 3.5 off 0 pos (32.5 52.2 -9.9 8.8 0.0 0.1 0.1 0.0)" | yarp rpc /ctpservice/right_arm/rpc
+    echo "ctpq time 2.5 off 0 pos (20.0 -42.0)" | yarp rpc /ctpservice/head/rpc
+    #echo "ctpq time 3.0 off 0 pos (0.05 -0.0 -10.0 0.0)" | yarp rpc /ctpservice/torso/rpc
+    echo "set vels (0.013 0.013 0.013 0.0)" | yarp rpc /cer/torso/rpc:i
+    echo "set poss (0.05 -0.0 -22.0 0.0)" | yarp rpc /cer/torso/rpc:i
+}
+
+reach_left() {
+
+    echo "ctpq time 3.0 off 0 pos (9.0 25.0 -10.0 31.5 0.0 0.0 -0.0 -0.0)" | yarp rpc /ctpservice/right_arm/rpc
+    echo "ctpq time 3.0 off 0 pos (32.5 52.2 -9.9 8.8 0.0 0.1 0.1 0.0)" | yarp rpc /ctpservice/left_arm/rpc
+    echo "ctpq time 2.5 off 0 pos (20.0 42.0)" | yarp rpc /ctpservice/head/rpc
+    #echo "ctpq time 3.0 off 0 pos (0.05 -0.0 10.0 0.0)" | yarp rpc /ctpservice/torso/rpc
+    echo "set vels (0.008 0.008 0.008 0.0)" | yarp rpc /cer/torso/rpc:i
+    echo "set poss (0.05 -0.0 22.0 0.0)" | yarp rpc /cer/torso/rpc:i
+}
+
+rotate_base_left() {
+
+    echo "ctpq time 2.0 off 0 pos (0.10 0.0 0.0 -28.0)" | yarp rpc /ctpservice/torso/rpc
+    echo "ctpq time 3.0 off 0 pos (0.0 -16.0)" | yarp rpc /ctpservice/head/rpc
+    for i in {1..20}
+    do 
+        echo "set vmos (-25.0 25.0)"| yarp rpc /cer/mobile_base/rpc:i
+        sleep 0.05
+    done
+}
+
+rotate_base_right() {
+
+    echo "ctpq time 4.3 off 0 pos (0.10 0.0 0.0 28.0)" | yarp rpc /ctpservice/torso/rpc
+    echo "ctpq time 3.0 off 0 pos (0.0 16.0)" | yarp rpc /ctpservice/head/rpc
+    for i in {1..40}
+    do 
+        echo "set vmos (25.0 -25.0)"| yarp rpc /cer/mobile_base/rpc:i
+        sleep 0.05
+    done
+}
+
+rotate_base_home() {
+
+    echo "ctpq time 3.0 off 0 pos (0.10 0.0 0.0 0.0)" | yarp rpc /ctpservice/torso/rpc
+    echo "ctpq time 3.0 off 0 pos (0.0 0.0)" | yarp rpc /ctpservice/head/rpc
+    for i in {1..20}
+    do 
+        echo "set vmos (-25.0 25.0)"| yarp rpc /cer/mobile_base/rpc:i
+        sleep 0.05
+    done
+}
+
+salute() {
+    echo "set vels (0.015 0.015 0.015 0.0)" | yarp rpc /cer/torso/rpc:i
+    echo "set poss (0.10 -24.0 0.0 0.0)" | yarp rpc /cer/torso/rpc:i
+    echo "ctpq time 2.0 off 0 pos (0.0 0.0)" | yarp rpc /ctpservice/head/rpc
+    echo "ctpq time 3.0 off 0 pos (-9.0 15.0 -10.0 50.5 0.0 0.0 -0.0 -0.0)" | yarp rpc /ctpservice/right_arm/rpc
+    echo "ctpq time 3.0 off 0 pos (-9.0 15.0 -10.0 50.5 0.0 0.0 -0.0 -0.0)" | yarp rpc /ctpservice/left_arm/rpc
+    sleep 3
+    echo "ctpq time 1.0 off 0 pos (-24.0 0.0)" | yarp rpc /ctpservice/head/rpc
+    sleep 1
+    echo "set vels (0.01 0.01 0.01 0.0)" | yarp rpc /cer/torso/rpc:i
+    echo "set poss (0.10 0.0 0.0 0.0)" | yarp rpc /cer/torso/rpc:i
+    echo "ctpq time 4 off 0 pos (0.0 0.0)" | yarp rpc /ctpservice/head/rpc
+    arms_up
+}
+
+#######################################################################################
+# "SEQUENCES" FUNCTION:                                                               #
+#######################################################################################
+
+sequence_1() {
+    wake_up
+    sleep 7
+    look_gripper
+    sleep 3
+    gripper_move
+    sleep 3
+    reach_right
+    sleep 9 
+    reach_left
+    sleep 9 
+    wake_up
+}
+
+sequence_2() {
+
+    echo "ctpq time 2.0 off 0 pos (0.10 0.0 0.0 0.0)" | yarp rpc /ctpservice/torso/rpc
+    sleep 1.5 
+    rotate_base_left
+    sleep 1.5 
+    rotate_base_right
+    sleep 1.5
+    rotate_base_home
+}
+
+#######################################################################################
+# "MAIN" FUNCTION:                                                                    #
+#######################################################################################
+echo "********************************************************************************"
+echo ""
+
+$1 "$2"
+
+if [[ $# -eq 0 ]] ; then
+    echo "No options were passed!"
+    echo ""
+    usage
+    exit 1
+fi
