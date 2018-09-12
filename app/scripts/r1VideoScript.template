@@ -1,0 +1,109 @@
+<application>
+    <name>r1VideoScript</name>
+
+    <module>
+        <name>yarpdev</name>
+        <parameters>--from sensors/RealSense_conf.ini</parameters>
+        <node>r1-torso1</node>
+    </module>
+
+    <module>
+        <name>yarpdev</name>
+        <parameters>--device faceDisplayServer</parameters>
+        <node>r1-face</node>
+    </module>
+
+    <module>
+        <name>yarpdev</name>
+        <parameters>--device speech --lingware-context speech --default-language en-GB --robot r1 --pitch 80 --speed 100</parameters>
+        <node>r1-face</node>
+    </module>
+    
+     <module>
+        <name>cer_gaze-controller</name>
+        <parameters>--cameras::context cameraCalibration --cameras::file cerEyes_320x240.ini --joints-limits::pitch "(-10.0 35.0)" --joints-limits::yaw "(-40.0 40.0)"</parameters>
+        <node>r1-base</node>
+    </module>
+
+    <module>
+        <name>iSpeak</name>
+        <parameters>--package speech-dev</parameters>
+        <node>r1-face</node>
+    </module>
+
+    <module>
+        <name>faceExpressionImage</name>
+        <node>r1-base</node>
+    </module>
+
+    <module>
+        <name>ctpService</name>
+        <parameters>--robot cer --part left_arm</parameters>
+        <node>r1-console-cuda</node>
+    </module>
+
+    <module>
+        <name>ctpService</name>
+        <parameters>--robot cer --part left_hand</parameters>
+        <node>r1-console-cuda</node>
+    </module>
+    
+    <module>
+        <name>ctpService</name>
+        <parameters>--robot cer --part right_hand</parameters>
+        <node>r1-console-cuda</node>
+    </module>
+
+    <module>
+        <name>ctpService</name>
+        <parameters>--robot cer --part right_arm</parameters>
+        <node>r1-console-cuda</node>
+    </module>
+
+    <module>
+        <name>ctpService</name>
+        <parameters>--robot cer --part torso</parameters>
+        <node>r1-console-cuda</node>
+    </module>
+
+    <module>
+        <name>ctpService</name>
+        <parameters>--robot cer --part head</parameters>
+        <node>r1-console-cuda</node>
+    </module>
+
+    <module>
+        <name>yarpview</name>
+        <node>r1-console-linux</node>
+        <parameters>--name /viewer/camera --out /out --x 0 --y 0 --RefreshTime 33 --compact</parameters>
+    </module>
+
+    <!--connections for face display -->
+
+    <connection>
+        <from>/faceExpressionImage/image:o</from> 
+        <to>/robot/faceDisplay/image:i</to>
+        <protocol>tcp</protocol>
+    </connection>
+
+     <!--connections for speech -->
+
+     <connection>
+        <from>/iSpeak/speech-dev/rpc</from>
+        <to>/r1/speech:rpc</to>
+        <protocol>tcp</protocol>
+    </connection>
+
+    <connection>
+        <from>/depthCamera/rgbImage:o</from>
+        <to>/viewer/camera</to>
+        <protocol>mjpeg</protocol>
+    </connection>
+    
+    <connection>
+        <from>/out</from>
+        <to>/cer_gaze-controller/target:i</to>
+        <protocol>tcp+send.portmonitor+type.lua+file.r1-look_pm.lua</protocol>
+    </connection>
+
+</application>
