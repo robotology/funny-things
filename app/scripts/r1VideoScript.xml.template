@@ -75,7 +75,7 @@
     <module>
         <name>yarpview</name>
         <node>r1-console-linux</node>
-        <parameters>--name /viewer/camera --out /out --x 0 --y 0 --RefreshTime 33 --compact</parameters>
+        <parameters>--name /viewer/camera --out /out --x 0 --y 0 --p 33 --compact</parameters>
     </module>
 
     <!--connections for face display -->
@@ -103,7 +103,7 @@
     <connection>
         <from>/out</from>
         <to>/cer_gaze-controller/target:i</to>
-        <protocol>tcp+send.portmonitor+type.lua+file.r1-look_pm.lua</protocol>
+        <protocol>tcp+send.portmonitor+type.lua+context.funny-things+file.r1-look_pm.lua</protocol>
     </connection>
 
 </application>
