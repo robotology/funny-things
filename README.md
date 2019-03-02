@@ -1,7 +1,7 @@
 Funny Things
 ============
 
-<a href="https://zenhub.com"><img src="https://raw.githubusercontent.com/ZenHubIO/support/master/zenhub-badge.png"></a>
+[![ZenHub](https://img.shields.io/badge/Shipping_faster_with-ZenHub-435198.svg)](https://zenhub.com)
 
 `funny-things` is a repository which contains, among other funny things, a set of modules for easy scripting and execution of non-interactive (pre-programmed) demos. These modules (`funnyPostures`, `iCubBlinker` and `gaze.lua`) are devised to perform a set of actions, including moving, gazing,  blinking, face expressions, etc, which can be easily handled through `rpc` commands. Moreover, these calls can be managed directly through the use of bash (`.sh`) scripts, which allow easy synchronization, ordering and test of these calls so that they can be predefined for particular demos. Several examples are available in the repo.
 
