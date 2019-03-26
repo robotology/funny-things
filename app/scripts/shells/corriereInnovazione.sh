@@ -928,7 +928,7 @@ corr_05() {
 
 # Vorresti fare per una volta il direttore del Corriere Innovazione?
 corr_06() {
-    speak "Il giornalismo è una disciplina importante e complessa. Preferisco lasciarla a voi umani"
+    speak "Il giornalismo è una disciplina importante, e complessa. Preferisco lasciarla a voi umani"
 }
 
 #######################################################################################
