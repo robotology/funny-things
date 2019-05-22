@@ -108,7 +108,7 @@ Once the modules are operational and the connection is made, one can simply run 
 speak "Hello, I am a humanoid robot"
 ```
 
-this call the **speak** function that is found in any of the scripts in this repo, and send the `string` to iSpeak 
+this calls the **speak** function that is found in any of the scripts in this repo, and sends the `string` to the iSpeak module
 
 ```shell
 speak() {
