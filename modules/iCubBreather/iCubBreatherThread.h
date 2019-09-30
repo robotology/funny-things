@@ -29,9 +29,10 @@
 
 #include <yarp/math/RandnScalar.h> 
 
+#include <mutex>
 #include <iostream>
 #include <string>
-#include <stdarg.h>
+#include <cstdarg>
 #include <vector>
 
 using namespace yarp::os;
@@ -69,7 +70,7 @@ protected:
     std::vector <double> noiseStDvtns;
     std::vector <double> refSpeeds;
 
-    yarp::os::Mutex mutex;
+    mutex mtx;
     yarp::math::RandnScalar randngen;
 
     /**

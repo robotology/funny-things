@@ -121,7 +121,7 @@ void iCubBreatherThread::run()
         }
     }
 
-    LockGuard lg(mutex);
+    lock_guard<mutex> lg(mtx);
     if (isRunning)
     {
         Vector newTarget = computeNewTarget();
@@ -242,7 +242,7 @@ bool iCubBreatherThread::goHome()
 
 bool iCubBreatherThread::startBreathing()
 {
-    LockGuard lg(mutex);
+    lock_guard<mutex> lg(mtx);
     onStart = true;
     isRunning = true;
     return true;
@@ -250,7 +250,7 @@ bool iCubBreatherThread::startBreathing()
 
 bool iCubBreatherThread::stopBreathing()
 {
-    LockGuard lg(mutex);
+    lock_guard<mutex> lg(mtx);
     isRunning = false;
     return true;
 }

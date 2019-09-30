@@ -13,6 +13,7 @@
  * Public License for more details
 */
 
+#include <mutex>
 #include <iostream>
 #include <fstream>
 #include <iomanip>
@@ -73,7 +74,7 @@ private:
     Port emotionsPort;
     RpcServer rpcPort;
 
-    Mutex mutex;
+    mutex mtx;
     bool isBlinking;
 
     double dt;
@@ -444,7 +445,6 @@ public:
     /***************************************************************/
     string save()
     {
-        // LockGuard lg(mutex);
         string path    = rf->getHomeContextPath().c_str();
         string inifile = path+"/"+rf->find("from").asString();
         yInfo("Saving calib configuration to %s",inifile.c_str());
@@ -469,7 +469,6 @@ public:
     /***************************************************************/
     string load()
     {
-        // LockGuard lg(mutex);
         rf->setVerbose(true);
         string fileName=rf->findFile(rf->find("from").asString().c_str());
         rf->setVerbose(false);
@@ -656,7 +655,7 @@ public:
     /***************************************************************/
     bool updateModule()
     {
-        LockGuard lg(mutex);
+        lock_guard<mutex> lg(mtx);
 
         if (Time::now()-t0>=dt)
         {
