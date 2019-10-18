@@ -1,0 +1,135 @@
+<application>
+<name>PWC Synthesize</name>
+
+    <module>
+        <name>yarpdev</name>
+        <parameters>--device speech --lingware-context speech --default-language en-US --robot r1 --pitch 80 --speed 95</parameters>
+        <node>r1-console-linux</node>
+    </module>
+
+    <module>
+        <name>yarpdev</name>
+        <parameters>--device faceDisplayServer</parameters>
+        <node>r1-face</node>
+    </module>
+
+     <module>
+        <name>faceExpressionImage</name>
+        <node>r1-base</node>
+    </module>
+
+    <module>
+        <name>yarpdev</name>
+        <parameters>--from sensors/RealSense_conf_640x480.ini</parameters>
+        <node>r1-torso1</node>
+    </module>
+
+    <module>
+        <name>yarpview</name>
+        <parameters>--name /viewer/rgb --x 10 --y 40 --p 50 --compact --out /viewer/rgb/click</parameters>
+        <node>r1-console-linux</node>
+    </module>
+
+    <module>
+        <name>iSpeak</name>
+        <parameters>--package speech-dev</parameters>
+        <node>r1-face</node>
+    </module>
+
+    <module>
+        <name>baseControl</name>
+        <parameters>--context baseControl --from baseCtrl_cer.ini --skip_robot_interface_check</parameters>
+        <node>r1-base</node>
+    </module>
+
+    <module>
+        <name>joystickCtrl</name>
+        <parameters>--context joystickCtrl --from cer_linux.ini</parameters>
+        <node>r1-base</node>
+    </module>
+
+    <module>
+        <name>navController</name>
+        <parameters>--velocity-angular-saturation 5.0</parameters>
+        <dependencies>
+            <port timeout="5">/baseControl/rpc</port>
+            <port timeout="5">/baseControl/odometry:o</port>
+            <port timeout="5">/baseControl/control:i</port>
+        </dependencies>
+        <node>r1-console-linux</node>
+    </module>
+
+    <module>
+        <name>cer_gaze-controller</name>
+        <parameters>--cameras::context cameraCalibration --cameras::file cerEyes_640x480.ini --joints-limits::pitch "(-10.0 35.0)" --joints-limits::yaw "(-40.0 40.0)"</parameters>
+        <node>r1-base</node>
+    </module>
+
+    <module>
+        <name>ctpService</name>
+        <parameters>--robot cer --part left_arm</parameters>
+        <node>r1-base</node>
+    </module>
+
+    <module>
+        <name>ctpService</name>
+        <parameters>--robot cer --part left_hand</parameters>
+        <node>r1-base</node>
+    </module>
+    
+    <module>
+        <name>ctpService</name>
+        <parameters>--robot cer --part right_hand</parameters>
+        <node>r1-base</node>
+    </module>
+
+    <module>
+        <name>ctpService</name>
+        <parameters>--robot cer --part right_arm</parameters>
+        <node>r1-base</node>
+    </module>
+
+    <module>
+        <name>ctpService</name>
+        <parameters>--robot cer --part torso</parameters>
+        <node>r1-base</node>
+    </module>
+
+    <module>
+        <name>ctpService</name>
+        <parameters>--robot cer --part head</parameters>
+        <node>r1-base</node>
+    </module>
+    
+    <connection>
+        <from>/faceExpressionImage/image:o</from> 
+        <to>/robot/faceDisplay/image:i</to>
+        <protocol>tcp</protocol>
+    </connection>
+
+     <connection>
+        <from>/iSpeak/speech-dev/rpc</from>
+        <to>/r1/speech:rpc</to>
+        <protocol>tcp</protocol>
+    </connection>
+
+    <connection>
+        <from>/depthCamera/rgbImage:o</from>
+        <to>/viewer/rgb</to>
+        <protocol>mjpeg</protocol>
+    </connection>
+		
+    <connection>
+	    <from>/joystickCtrl:o</from>
+	    <to>/baseControl/joystick1:i</to>
+	    <protocol>udp</protocol>
+    </connection>
+
+    <connection>
+        <from>/viewer/rgb/click</from>
+        <to>/cer_gaze-controller/target:i</to>
+        <protocol>fast_tcp+send.portmonitor+type.lua+context.funny-things+file.r1-look_pm.lua</protocol>
+    </connection>
+
+</application>
+

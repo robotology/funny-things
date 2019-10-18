@@ -61,7 +61,7 @@ PortMonitor.update = function(thing)
     local location = yarp.Bottle()
     local val = location:addList()
     
-    val:addDouble(320-px)
+    val:addDouble(px)
     val:addDouble(py)
     
     tx:put("target-location",location:get(0))
