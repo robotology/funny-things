@@ -288,6 +288,26 @@ close_bottle() {
     echo "ctpq time 1 off 0 pos (25.0 25)" | yarp rpc /ctpservice/right_hand/rpc
 }
 
+show_way_left() {
+    echo "ctpq time 2.0 off 0 pos (-11.0 -26.0)" | yarp rpc /ctpservice/head/rpc
+    sleep 1.0
+    echo "ctpq time 3.0 off 0 pos (48.0488 62.3146 -10.0196 41.3966 0.0549318 0.000242599 0.263676 -0.521954)" | yarp rpc /ctpservice/left_arm/rpc 
+    echo "ctpq time 2.0 off 0 pos (-11.0 26.0)" | yarp rpc /ctpservice/head/rpc
+    sleep 2.0
+    echo "ctpq time 2.0 off 0 pos (-11.0 -26.0)" | yarp rpc /ctpservice/head/rpc
+    echo "ctpq time 3.0 off 0 pos (7.0 10.0 -10.0 21.5 0.0 0.0 -0.0 -0.0)" | yarp rpc /ctpservice/left_arm/rpc 
+}
+
+show_way_right() {
+    echo "ctpq time 2.0 off 0 pos (-11.0 26.0)" | yarp rpc /ctpservice/head/rpc
+    sleep 1.0
+    echo "ctpq time 3.0 off 0 pos (48.0488 62.3146 -10.0196 41.3966 0.0549318 0.000242599 0.263676 -0.521954)" | yarp rpc /ctpservice/right_arm/rpc 
+    echo "ctpq time 2.0 off 0 pos (-11.0 -26.0)" | yarp rpc /ctpservice/head/rpc
+    sleep 2.0
+    echo "ctpq time 2.0 off 0 pos (-11.0 26.0)" | yarp rpc /ctpservice/head/rpc
+    echo "ctpq time 3.0 off 0 pos (7.0 10.0 -10.0 21.5 0.0 0.0 -0.0 -0.0)" | yarp rpc /ctpservice/right_arm/rpc 
+}
+
 
 #######################################################################################
 # "SEQUENCES" FUNCTION:                                                               #
@@ -383,17 +403,33 @@ sq_03() {
 }
 
 sq_04() {
+  head_down
+  sleep 2
+  echo "blck" | yarp rpc /faceExpressionImage/rpc
+}
+
+sq_05() {
+  head_up
+  sleep 2
+  echo "rst" | yarp rpc /faceExpressionImage/rpc
   speak "Uum. I was just meditating on that, sorry"
   wait_till_quiet
-  speak "I was thinking I would really love trying hard, and doing my best, for all my life"
+  speak "I would really love trying hard, and doing my best"
   wait_till_quiet
-  speak "Seriously. I'd love to help you, giving for example, information and directions in the shopping centers, airports, or in the hotels"
+  speak "Seriously. I'd love to help you"
   wait_till_quiet
+  speak "Giving for example, information and directions in the shopping centers, airports, or in the hotels"
+  sleep 1
+  show_way_left
+  show_way_right
+  head_up
   speak "I could also provide surveillance"
   wait_till_quiet
+  sleep 3
   speak "I could collect useful information on customers habits, and help you increasingly better"
-  wait_till_quiet
-  speak "I have a mind like a steel trap! Ha ha ha"
+  echo "ctpq time 2.0 off 0 pos (37.0625 20.7422 28.9161 43.1544 52.1632 0.000171598 0.0941744 -0.032623)" | yarp rpc /ctpservice/left_arm/rpc
+  sleep 3
+  go_home
   wait_till_quiet
   speak "Frankly, I'm even more ambitious. I dream of being a member of the family"
   wait_till_quiet
@@ -402,17 +438,31 @@ sq_04() {
   speak "How about that?"
 }
 
-sq_05() {
+sq_06() {
   speak "People from Genoa! Always talking about money!"
+  echo "ctpq time 2.0 off 0 pos (37.0625 20.7422 28.9161 43.1544 52.1632 0.000171598 0.0941744 -0.032623)" | yarp rpc /ctpservice/left_arm/rpc
+  echo "ctpq time 2.0 off 0 pos (37.0625 20.7422 28.9161 43.1544 52.1632 0.000171598 0.0941744 -0.032623)" | yarp rpc /ctpservice/right_arm/rpc
+  sleep 3
+  go_home
   wait_till_quiet
-  speak "Anyway, I agree with you, dad!"
+  speak "Anyway, I agree with you dad!"
   wait_till_quiet
+  echo "ctpq time 1 off 0 pos (97.0 87.0)" | yarp rpc /ctpservice/left_hand/rpc
+  echo "ctpq time 2.0 off 0 pos (78.9864 33.8633 -71.3674 15.8771 -3.83973 0.000153849 0.489695 0.065246)" | yarp rpc /ctpservice/left_arm/rpc
   speak "I see that many of you look quite tired, time for a coffee break, maybe?"
+  sleep 2
+  echo "ctpq time 1.5 off 0 pos (78.9864 19.8633 -71.3674 53.8771 -3.83973 0.000153849 0.489695 0.065246)" | yarp rpc /ctpservice/left_arm/rpc
+  echo "ctpq time 1.5 off 0 pos (78.9864 33.8633 -71.3674 15.8771 -3.83973 0.000153849 0.489695 0.065246)" | yarp rpc /ctpservice/left_arm/rpc
+  sleep 2
+  echo "ctpq time 1 off 0 pos (25.0 25.0)" | yarp rpc /ctpservice/left_hand/rpc
+  go_home
+
   wait_till_quiet
+  sleep 2
   speak "Where is Claudio Bisio?"
 }
 
-sq_06() {
+sq_07() {
   speak "Sorry! It's just that they have the same haircut!"
 }
 
