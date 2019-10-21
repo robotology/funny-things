@@ -1,5 +1,5 @@
 <application>
-<name>PWC Synthesize</name>
+<name>R1 PWC Synthesize</name>
 
     <module>
         <name>yarpdev</name>
@@ -50,7 +50,7 @@
 
     <module>
         <name>navController</name>
-        <parameters>--velocity-angular-saturation 5.0</parameters>
+        <parameters>--velocity-angular-saturation 7.5</parameters>
         <dependencies>
             <port timeout="5">/baseControl/rpc</port>
             <port timeout="5">/baseControl/odometry:o</port>
@@ -107,9 +107,15 @@
         <protocol>tcp</protocol>
     </connection>
 
-     <connection>
+    <connection>
         <from>/iSpeak/speech-dev/rpc</from>
         <to>/r1/speech:rpc</to>
+        <protocol>tcp</protocol>
+    </connection>
+
+    <connection>
+        <from>/iSpeak/r1:rpc</from>
+        <to>/faceExpressionImage/rpc</to>
         <protocol>tcp</protocol>
     </connection>
 

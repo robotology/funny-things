@@ -30,12 +30,16 @@ nav_reset() {
   echo "reset_odometry" | yarp rpc /navController/rpc
 }
 
+nav_stop() {
+  echo "stop" | yarp rpc /navController/rpc
+}
+
 nav_go_to() {
   echo "go_to $1 $2 $3" | yarp rpc /navController/rpc
 }
 
 nav_go_to_wait() {
-  echo "go_to_wait $1 $2 $3 $4" | yarp rpc /navController/rpc
+  echo "go_to_wait $1 $2 $3" | yarp rpc /navController/rpc
 }
 
 wait_till_quiet() {
@@ -167,33 +171,22 @@ rotate_base_left() {
 
     echo "ctpq time 2.0 off 0 pos (0.10 0.0 0.0 -28.0)" | yarp rpc /ctpservice/torso/rpc
     echo "ctpq time 3.0 off 0 pos (0.0 -16.0)" | yarp rpc /ctpservice/head/rpc
-    for i in {1..20}
-    do 
-        echo "set vmos (-25.0 25.0)"| yarp rpc /cer/mobile_base/rpc:i
-        sleep 0.05
-    done
+    nav_go_to_wait 0.0 0.0 28.0
 }
 
 rotate_base_right() {
 
     echo "ctpq time 4.3 off 0 pos (0.10 0.0 0.0 28.0)" | yarp rpc /ctpservice/torso/rpc
     echo "ctpq time 3.0 off 0 pos (0.0 16.0)" | yarp rpc /ctpservice/head/rpc
-    for i in {1..40}
-    do 
-        echo "set vmos (25.0 -25.0)"| yarp rpc /cer/mobile_base/rpc:i
-        sleep 0.05
-    done
+    nav_go_to_wait 0.0 0.0 -28.0
 }
 
 rotate_base_home() {
 
     echo "ctpq time 3.0 off 0 pos (0.10 0.0 0.0 0.0)" | yarp rpc /ctpservice/torso/rpc
     echo "ctpq time 3.0 off 0 pos (0.0 0.0)" | yarp rpc /ctpservice/head/rpc
-    for i in {1..20}
-    do 
-        echo "set vmos (-25.0 25.0)"| yarp rpc /cer/mobile_base/rpc:i
-        sleep 0.05
-    done
+    nav_go_to_wait 0.0 0.0 0.0
+    sleep 1.0
 }
 
 salute() {
@@ -246,32 +239,53 @@ open_hands() {
     echo "ctpq time 1 off 0 pos (25.0 25)" | yarp rpc /ctpservice/right_hand/rpc
 }
 
-arm_bottle() {
+take_bottle_left() {
 
     echo "ctpq time 3.0 off 0 pos (63.4 14.8 17.0 50.4 -1.1 0.0 0.2 0.09)" | yarp rpc /ctpservice/left_arm/rpc
     sleep 4.0
     echo "ctpq time 2 off 0 pos (70.0 70.0)" | yarp rpc /ctpservice/left_hand/rpc
     sleep 2.0
     echo "ctpq time 2.0 off 0 pos (20.0 14.8 -12.0 54.4 0.0 0.0 0.0 0.00)" | yarp rpc /ctpservice/left_arm/rpc
-    
+}
+
+take_bottle_right() {
+
+    echo "ctpq time 3.0 off 0 pos (63.4 14.8 17.0 50.4 -1.1 0.0 0.2 0.09)" | yarp rpc /ctpservice/right_arm/rpc
+    sleep 4.0
+    echo "ctpq time 2 off 0 pos (70.0 70.0)" | yarp rpc /ctpservice/right_hand/rpc
+    sleep 2.0
+    echo "ctpq time 2.0 off 0 pos (20.0 14.8 -12.0 54.4 0.0 0.0 0.0 0.00)" | yarp rpc /ctpservice/right_arm/rpc    
+}
+
+give_bottle_left() {
+
+    echo "ctpq time 3.0 off 0 pos (63.4 14.8 17.0 50.4 -1.1 0.0 0.2 0.09)" | yarp rpc /ctpservice/left_arm/rpc
+    sleep 3.0
+    echo "ctpq time 1 off 0 pos (0.0 0.0)" | yarp rpc /ctpservice/left_hand/rpc
+    sleep 2.0
+    go_home
+}
+
+give_bottle_right() {
+
+    echo "ctpq time 3.0 off 0 pos (63.4 14.8 17.0 50.4 -1.1 0.0 0.2 0.09)" | yarp rpc /ctpservice/right_arm/rpc
+    sleep 3.0
+    echo "ctpq time 1 off 0 pos (0.0 0.0)" | yarp rpc /ctpservice/right_hand/rpc
+    sleep 2.0
+    go_home
 }
 
 arm_trash() {
-    echo "ctpq time 3.0 off 0 pos (43.4 14.8 -12.0 50.4 0.0 0.1 0.0 0.0)" | yarp rpc /ctpservice/left_arm/rpc
+    echo "ctpq time 3.0 off 0 pos (43.4 14.8 -12.0 50.4 0.0 0.1 0.0 0.0)" | yarp rpc /ctpservice/right_arm/rpc
     sleep 6.0
     echo "ctpq time 1 off 0 pos (25.0 25.0)" | yarp rpc /ctpservice/left_hand/rpc
     sleep 2.0
-    for i in {1..50}
-    do 
-        echo "3.0 -0.05 -0.0 0.0 100.0 0.0 0.0 0.0 0.0"| yarp write ... /baseControl/aux_control:i
-        sleep 0.025
-    done
-
     arms_down
 }
 
 close_bottle() {
-    echo "ctpq time 1 off 0 pos (25.0 25)" | yarp rpc /ctpservice/left_hand/rpc
+    echo "ctpq time 3.0 off 0 pos (63.4 14.8 17.0 50.4 -1.1 0.0 0.2 0.09)" | yarp rpc /ctpservice/right_arm/rpc
+    echo "ctpq time 1 off 0 pos (25.0 25)" | yarp rpc /ctpservice/right_hand/rpc
 }
 
 
@@ -279,7 +293,7 @@ close_bottle() {
 # "SEQUENCES" FUNCTION:                                                               #
 #######################################################################################
 
-sequence_1() {
+mov_show_1() {
   wake_up_head
   sleep 3
   look_gripper
@@ -293,10 +307,11 @@ sequence_1() {
   wake_up
 }
 
-sequence_2() {
+mov_show_2() {
+  nav_reset
   echo "ctpq time 2.0 off 0 pos (0.10 0.0 0.0 0.0)" | yarp rpc /ctpservice/torso/rpc
-  sleep 1.5 
-  rotate_base_leftreach_right
+  sleep 1.5
+  rotate_base_left
   sleep 1.5 
   rotate_base_right
   sleep 1.5
@@ -306,12 +321,17 @@ sequence_2() {
 
 sq_01() {
   speak "Here you are Giorgio!"
-  speak "Ten years of research and one humanoid robot, only for clearing your throat?"
+  give_bottle_left
+  speak "Ten years of research in robotics, only for clearing your throat?"
 }
 
 sq_02() {
   speak "Sorry Giorgio"
+  echo "ctpq time 2.0 off 0 pos (37.0625 20.7422 28.9161 43.1544 52.1632 0.000171598 0.0941744 -0.032623)" | yarp rpc /ctpservice/right_arm/rpc
+  echo "ctpq time 2.0 off 0 pos (37.0625 20.7422 28.9161 43.1544 52.1632 0.000171598 0.0941744 -0.032623)" | yarp rpc /ctpservice/left_arm/rpc
   speak "I parked in a red zone this morning, and I got a ticket, that's why I'm so nervous!"
+  sleep 3.0
+  go_home
   wait_till_quiet
   speak "Anyway you're welcome, I've been created to help humans. Especially, those of a certain age"
 }
@@ -319,19 +339,47 @@ sq_02() {
 sq_03() {
   speak "Of course! I love being on the stage!"
   wait_till_quiet
+  salute
   speak "Good morning everyone! My name is R1, I've been designed and built at the Italian Institute of Technology"
+  sleep 3
+  go_home
   wait_till_quiet
   speak "I'm only two years old, but I can already locate, grasp and bring objects to you"
+  look_gripper
+  sleep 2
+  gripper_move
+  sleep 1
+  head_up
+  go_home
+  sleep 2
   wait_till_quiet
   speak "I can move around on my wheels, and interact with people"
+  mov_show_2
   wait_till_quiet
   speak "I can do these things, because I'm equipped with a sophisticated intelligence, that most of you call, artificial"
+  sleep 5
+  echo "ctpq time 2.0 off 0 pos (37.0625 20.7422 28.9161 43.1544 52.1632 0.000171598 0.0941744 -0.032623)" | yarp rpc /ctpservice/left_arm/rpc
+  sleep 3
+  go_home
   wait_till_quiet
-  speak "I can explore the world using my cameras, and I have also artificial skin on my arms, which is touch sensitive, and that lets me interact with the environment and my human partners more naturally"
+  speak "I can explore the world using my cameras"
+  echo "ctpq time 1.0 off 0 pos (10.0 0.0)" | yarp rpc /ctpservice/head/rpc
+  echo "ctpq time 1.0 off 0 pos (10.0 20.0)" | yarp rpc /ctpservice/head/rpc
+  echo "ctpq time 1.0 off 0 pos (-10.0 20.0)" | yarp rpc /ctpservice/head/rpc
+  echo "ctpq time 1.0 off 0 pos (-10.0 -20.0)" | yarp rpc /ctpservice/head/rpc
+  echo "ctpq time 1.0 off 0 pos (10.0 -20.0)" | yarp rpc /ctpservice/head/rpc
+  echo "ctpq time 1.0 off 0 pos (0.0 0.0)" | yarp rpc /ctpservice/head/rpc
+  wait_till_quiet
+  speak "I have also artificial skin on my arms, which is touch sensitive, and that lets me interact with the environment and my human partners more naturally"
+  sleep 3
+  look_gripper
+  sleep 3
+  head_up
+  go_home
   wait_till_quiet
   speak "To be honest, I have to thank i Cub, for most of the things I can do now"
   wait_till_quiet
-  speak "Is it enough?"
+  speak "Is it enough, Giorgio?"
 }
 
 sq_04() {
