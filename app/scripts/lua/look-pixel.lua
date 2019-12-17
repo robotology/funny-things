@@ -49,7 +49,7 @@ while not interrupting do
         print("looking at ", u,v)
     end
     
-    yarp.Time_delay(0.2)
+    yarp.delay(0.2)
 end
 
 port_tx:close()

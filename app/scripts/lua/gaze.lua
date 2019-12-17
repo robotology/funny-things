@@ -57,7 +57,7 @@ port_gaze_rx:open("/gaze/rx")
 
 while not interrupting and port_gaze_rx:getInputCount() == 0 do
     print("checking yarp connection...")
-    yarp.Time_delay(1.0)
+    yarp.delay(1.0)
 end
 
 azi = 0.0
@@ -66,7 +66,7 @@ ver = 0.0
 azi_delta = 2
 ele_delta = 2
 ver_delta = 1
-t0 = yarp.Time_now()
+t0 = yarp.now()
 
 
 while state ~= "quit" and not interrupting do
@@ -139,12 +139,12 @@ while state ~= "quit" and not interrupting do
         tx:addDouble(ver)
         port_gaze_tx:write()
         print("looking at ", azi,ele,ver)
-        yarp.Time_delay(2.0)
+        yarp.delay(2.0)
         state = "idle"
 
     elseif state == "look-around" then
 
-        local t1 = yarp.Time_now()
+        local t1 = yarp.now()
         if t1-t0 > math.random(2,4) then
             local azi_new = azi + math.random(-azi_delta,azi_delta)
             local ele_new = ele + math.random(-ele_delta,ele_delta)
@@ -162,7 +162,7 @@ while state ~= "quit" and not interrupting do
 
     elseif state == "idle" then
 
-        yarp.Time_delay(0.1)
+        yarp.delay(0.1)
 
     end
 end
