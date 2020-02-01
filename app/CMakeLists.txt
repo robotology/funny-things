@@ -15,8 +15,8 @@ yarp_install(FILES ${scripts}  DESTINATION ${ICUBCONTRIB_APPLICATIONS_TEMPLATES_
 
 add_custom_target(copy_lua_in_build ALL)
 foreach(_bin IN ITEMS ${lua_bin})
-    add_custom_command(TARGET copy_lua_in_build POST_BUILD
-                       COMMAND ${CMAKE_COMMAND} -E copy ${_bin} ${CMAKE_BINARY_DIR}/bin/${CMAKE_CFG_INTDIR}
-                       COMMENT "Copying ${_bin} to ${CMAKE_BINARY_DIR}/bin/${CMAKE_CFG_INTDIR}/")
+  add_custom_command(TARGET copy_lua_in_build POST_BUILD
+                     COMMAND ${CMAKE_COMMAND} -E copy ${_bin} ${CMAKE_BINARY_DIR}/bin/${CMAKE_CFG_INTDIR}
+                     COMMENT "Copying ${_bin} to ${CMAKE_BINARY_DIR}/bin/${CMAKE_CFG_INTDIR}/")
 endforeach()
 install(PROGRAMS ${lua_bin} DESTINATION bin)

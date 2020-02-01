@@ -69,6 +69,7 @@ tested_os_sec Tested OS Windows, Linux
 */
 
 #include <cstdio>
+#include <cmath>
 #include <sstream>
 #include <string>
 #include <limits>
@@ -79,14 +80,13 @@ tested_os_sec Tested OS Windows, Linux
 #include <yarp/sig/all.h>
 #include <yarp/math/Math.h>
 
-#include <iCub/ctrl/math.h>
-
 using namespace std;
 using namespace yarp::os;
 using namespace yarp::dev;
 using namespace yarp::sig;
 using namespace yarp::math;
-using namespace iCub::ctrl;
+
+constexpr double DEG2RAD = M_PI / 180.0;
 
 
 /*********************************************/
@@ -368,7 +368,7 @@ protected:
             targetR(2,3)=0.15;
 
             Vector r(4,0.0);
-            r[1]=-1.0; r[3]=CTRL_DEG2RAD*30.0;
+            r[1]=-1.0; r[3]=DEG2RAD*30.0;
             targetL=axis2dcm(r)*targetL;
             targetR=axis2dcm(r)*targetR;
 
@@ -402,7 +402,7 @@ protected:
                 targetR(1,3)=0.25;
 
                 Vector r(4,0.0);
-                r[2]=1.0; r[3]=CTRL_DEG2RAD*20.0;
+                r[2]=1.0; r[3]=DEG2RAD*20.0;
                 targetL=axis2dcm(r)*targetL;
 
                 r[2]=-1.0;
@@ -441,7 +441,7 @@ protected:
                 targetL(2,3)=0.2;
 
                 Vector r(4,0.0);
-                r[2]=-1.0; r[3]=CTRL_DEG2RAD*50.0;
+                r[2]=-1.0; r[3]=DEG2RAD*50.0;
                 targetL=axis2dcm(r)*targetL;
 
                 targetG[0]=40.0;
@@ -480,7 +480,7 @@ protected:
                     targetR(2,3)=0.2;
 
                     Vector r(4,0.0);
-                    r[2]=1.0; r[3]=CTRL_DEG2RAD*50.0;
+                    r[2]=1.0; r[3]=DEG2RAD*50.0;
                     targetR=axis2dcm(r)*targetR;
 
                     targetG[0]=-40.0;
@@ -513,7 +513,7 @@ protected:
             targetR(1,3)=0.15;
 
             Vector r(4,0.0);
-            r[1]=1.0; r[3]=CTRL_DEG2RAD*20.0;
+            r[1]=1.0; r[3]=DEG2RAD*20.0;
             targetL=axis2dcm(r)*targetL;
             targetR=axis2dcm(r)*targetR;
 

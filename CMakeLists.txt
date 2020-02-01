@@ -3,18 +3,14 @@
 # CopyPolicy: Released under the terms of the GNU GPL v2.0.
 
 cmake_minimum_required(VERSION 3.5)
-set(PROJECTNAME funny-things)
-project(${PROJECTNAME})
+project(funny-things)
 
 set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED 11)
 
-find_package(YARP 3.3.0 REQUIRED COMPONENTS os sig dev math gsl idl_tools)
-find_package(ICUB REQUIRED)
 find_package(ICUBcontrib REQUIRED)
-
-list(APPEND CMAKE_MODULE_PATH ${ICUB_MODULE_PATH})
+find_package(YARP 3.3.0 REQUIRED COMPONENTS os sig dev math gsl idl_tools)
 list(APPEND CMAKE_MODULE_PATH ${ICUBCONTRIB_MODULE_PATH})
 
 include(ICUBcontribHelpers)
