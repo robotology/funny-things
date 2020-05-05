@@ -614,7 +614,6 @@ int main(int argc, char *argv[])
     }
 
     ResourceFinder rf;
-    rf.setVerbose(true);
     rf.setDefaultContext("funny-things");
     rf.setDefaultConfigFile("iCubWriter.ini");
     rf.setDefault("part","right_arm");

@@ -469,9 +469,7 @@ public:
     /***************************************************************/
     string load()
     {
-        rf->setVerbose(true);
         string fileName=rf->findFile(rf->find("from").asString().c_str());
-        rf->setVerbose(false);
         if (fileName=="")
         {
             yWarning("[iCubBlinker::load] No filename has been found. Skipping..");

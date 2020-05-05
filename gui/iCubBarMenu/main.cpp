@@ -10,7 +10,6 @@ int main(int argc, char *argv[])
     yarp::os::Network yarp;
     ResourceFinder rf;
 
-    rf.setVerbose( true );
     rf.setDefaultConfigFile( "config.ini" );        //overridden by --from parameter
     rf.setDefaultContext( "iCubBarMenu" );        //overridden by --context parameter
     rf.configure( argc, argv );

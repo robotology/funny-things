@@ -275,7 +275,6 @@ class iCubBreather: public RFModule
 int main(int argc, char * argv[])
 {
     ResourceFinder rf;
-    rf.setVerbose(false);
     rf.setDefaultContext("funny-things");
     rf.setDefaultConfigFile("iCubBreather.ini");
     rf.configure(argc,argv);
