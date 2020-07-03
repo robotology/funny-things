@@ -20,6 +20,10 @@
 #include <string>
 
 #include <yarp/os/all.h>
+#include <yarp/dev/PolyDriver.h>
+#include <yarp/dev/IPositionControl.h>
+#include <yarp/dev/IControlMode.h>
+#include <yarp/dev/IControlLimits.h>
 #include <yarp/math/Rand.h>
 #include <yarp/math/NormRand.h>
 
@@ -63,6 +67,12 @@ class Blinker: public RFModule, public iCubBlinker_IDL
 private:
     // Resource finder used to find for files and configurations:
     ResourceFinder* rf;
+    // PolyDriver and interface to command the eyelids in the rfe robots
+    yarp::dev::PolyDriver _poly;
+    yarp::dev::IPositionControl* _iPos{ nullptr };
+    double _minPoly{ 0.0 }, _maxPoly{ 0.0 };
+    // TODO check if it is correct
+    size_t _joint_eylids{ 0 };
 
     string name;
     string robot;
@@ -129,12 +139,32 @@ private:
     bool doBlinkFast()
     {
         bool res = true;
-        yDebug("Sending raw value: %i",sMin);
-        res = res && sendRawValue(("S" + int2string(sMin))); // close eyelids
-        Time::delay(0.15);
 
-        yDebug("Sending raw value: %i",sMax);
-        res = res && sendRawValue(("S" + int2string(sMax))); // open  eyelids
+        if (_iPos) {
+            yDebug()<<"Sending position"<<_maxPoly;
+            res &= _iPos->positionMove(_joint_eylids, _maxPoly); // the max means eyes closed
+            // wait motion done
+            bool motion_done = false;
+            while (!motion_done) {
+                Time::delay(0.001);
+                auto ok = _iPos->checkMotionDone(_joint_eylids, &motion_done);
+                if(!ok) {
+                    yError()<<"Unable to check if the motion of the eyelids is done";
+                    return false;
+                }
+
+            }
+            yDebug()<<"Sending position"<<_minPoly;
+            res &= _iPos->positionMove(_joint_eylids, _minPoly); // the min means eyes opened
+        }
+        else {
+            yDebug("Sending raw value: %i",sMin);
+            res = res && sendRawValue(("S" + int2string(sMin))); // close eyelids
+            Time::delay(0.15);
+            yDebug("Sending raw value: %i",sMax);
+            res = res && sendRawValue(("S" + int2string(sMax))); // open  eyelids
+        }
+
         Time::delay(0.05);
 
         return res;
@@ -167,24 +197,71 @@ private:
         yDebug("Starting a naturalistic blink. T_cl %g \t T_su %g \t T_op %g Total %g",
                 t_cl,t_su,t_op,t_cl+t_su+t_op);
 
-        for (int i = 0; i < 11; i++)
-        {
-            int valueToSend = sMax-i*(sMax-sMin)/10;
-            string rawvalue = "S" + int2string(valueToSend);
-            yDebug("Sending raw value: %s %i",rawvalue.c_str(),100-i*10);
-            sendRawValue(rawvalue);
-            Time::delay(t_cl/10.0);
+
+        if (_iPos) {
+            // the minimum means fully open, the max means fully closed in the iCub
+            // mounting the rfe board
+            for (int i = 0; i < 11; i++)
+            {
+                auto targetPos = _minPoly + i * (_maxPoly - _minPoly) / 10;
+                string rawvalue = "S" + int2string(targetPos);
+                yDebug() << "Sending postion: " << targetPos << " " << i * 10;
+                _iPos->positionMove(_joint_eylids, targetPos);
+                bool motion_done = false;
+                while (!motion_done) {
+                    Time::delay(0.001);
+                    auto ok = _iPos->checkMotionDone(_joint_eylids, &motion_done);
+                    if(!ok) {
+                        yError()<<"Unable to check if the motion of the eyelids is done";
+                        return false;
+                    }
+
+                }
+                Time::delay(t_op / 10.0);
+            }
+
+            Time::delay(t_su);
+
+            for (int i = 0; i < 11; i++)
+            {
+                auto targetPos = _maxPoly - i * (_maxPoly - _minPoly) / 10;
+                string rawvalue = "S" + int2string(targetPos);
+                yDebug() << "Sending postion: " << targetPos << " " << 100 - i * 10;
+                _iPos->positionMove(_joint_eylids, targetPos);
+                bool motion_done = false;
+                while (!motion_done) {
+                    Time::delay(0.001);
+                    auto ok = _iPos->checkMotionDone(_joint_eylids, &motion_done);
+                    if(!ok) {
+                        yError()<<"Unable to check if the motion of the eyelids is done";
+                        return false;
+                    }
+
+                }
+                Time::delay(t_cl / 10.0);
+            }
+
         }
+        else {
+            for (int i = 0; i < 11; i++)
+            {
+                int valueToSend = sMax - i * (sMax - sMin) / 10;
+                string rawvalue = "S" + int2string(valueToSend);
+                yDebug("Sending raw value: %s %i", rawvalue.c_str(), 100 - i * 10);
+                sendRawValue(rawvalue);
+                Time::delay(t_cl / 10.0);
+            }
 
-        Time::delay(t_su);
+            Time::delay(t_su);
 
-        for (int i = 0; i < 11; i++)
-        {
-            int valueToSend = sMin+i*(sMax-sMin)/10;
-            string rawvalue = "S" + int2string(valueToSend);
-            yDebug("Sending raw value: %s %i",rawvalue.c_str(),i*10);
-            sendRawValue(rawvalue);
-            Time::delay(t_op/10.0);
+            for (int i = 0; i < 11; i++)
+            {
+                int valueToSend = sMin + i * (sMax - sMin) / 10;
+                string rawvalue = "S" + int2string(valueToSend);
+                yDebug("Sending raw value: %s %i", rawvalue.c_str(), i * 10);
+                sendRawValue(rawvalue);
+                Time::delay(t_op / 10.0);
+            }
         }
 
         return true;
@@ -320,11 +397,50 @@ public:
 
         isBlinking=rf->check("autoStart");
 
-        emotionsPort.open(("/"+name+"/emotions/raw").c_str());
-        if (rf->check("autoConnect"))
+        yarp::os::Property rcb_face_conf{ {"device",Value("remote_controlboard")},
+                                  {"local", Value(getName("/face/remoteControlBoard"))},
+                                  {"remote",Value("/icub/face")},
+                                  {"part",Value("face")} };
+
+        if (_poly.open(rcb_face_conf))
         {
-            Network::connect(emotionsPort.getName().c_str(),"/"+robot+"/face/raw/in");
+            yarp::dev::IControlMode* iCM{ nullptr };
+            yarp::dev::IControlLimits* iCtrlLim{ nullptr };
+            auto ok = _poly.view(iCM);
+            ok     &= _poly.view(_iPos);
+            ok     &= _poly.view(iCtrlLim);
+            if (iCM)
+                ok &= iCM->setControlMode(_joint_eylids, VOCAB_CM_POSITION); // TODO, maybe it is better POSITION_DIRECT? 
+            if (iCtrlLim) {
+                ok &= iCtrlLim->getLimits(_joint_eylids, &_minPoly, &_maxPoly);
+                _maxPoly = _maxPoly - 25.0; // safe zone for avoiding hw fault
+            }
+            if (_iPos) {
+                ok &= _iPos->setRefSpeed(_joint_eylids, 50.0); // max velocity that doesn't give problems
+                ok &= _iPos->setRefAcceleration(_joint_eylids, std::numeric_limits<double>::max());
+            }
+            if (!ok)
+            {
+                yError() << "Fail to configure correctly the remote_controlboard";
+                return false;
+            }
         }
+        else
+        {
+            yWarning() << "Failed to open the remote_controlboard device for commanding the eyelids, you can ignore this warning if your robot doesn't have the rfe board";
+            auto ok = emotionsPort.open(("/" + name + "/emotions/raw").c_str());
+            if (rf->check("autoConnect"))
+            {
+                ok &= Network::connect(emotionsPort.getName().c_str(), "/" + robot + "/face/raw/in");
+            }
+            if (!ok)
+            {
+                yError() << "Configuration phase failed, please check if yarprobotinterface (iCub with RFE) or the the serial device (iCub without RFE) are running.";
+                return false;
+            }
+        }
+
+
 
         doubleBlink=rf->check("doubleBlink");
 
@@ -370,6 +486,11 @@ public:
     /***************************************************************/
     bool close()
     {
+        if (_poly.isValid())
+        {
+            _poly.close();
+            _iPos = nullptr;
+        }
         emotionsPort.close();
         rpcPort.close();
         return true;
