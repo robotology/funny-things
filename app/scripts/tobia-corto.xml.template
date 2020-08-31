@@ -1,0 +1,59 @@
+<application>
+    <name>Tobia Corto Scripting</name>
+
+    <!-- Dependencies -->
+    <dependencies>
+        <port>/icub/yarprobotinterface</port>
+    </dependencies>
+
+    <!-- Movements -->
+    <module>
+        <name>ctpService</name>
+        <parameters>--robot icub --part left_arm</parameters>
+        <node>icub21</node>
+    </module>
+    <module>
+        <name>ctpService</name>
+        <parameters>--robot icub --part right_arm</parameters>
+        <node>icub21</node>
+    </module>
+    <module>
+        <name>ctpService</name>
+        <parameters>--robot icub --part torso</parameters>
+        <node>icub21</node>
+    </module>
+    <module>
+        <name>ctpService</name>
+        <parameters>--robot icub --part head</parameters>
+        <node>icub21</node>
+    </module>
+    <module>
+        <name>ctpService</name>
+        <parameters>--robot icub --part left_leg</parameters>
+        <node>icub21</node>
+    </module>
+    <module>
+        <name>ctpService</name>
+        <parameters>--robot icub --part right_leg</parameters>
+        <node>icub21</node>
+    </module>
+
+    <!-- Breathers -->
+    <module>
+        <name>iCubBreather</name>
+        <parameters>--name iCubBreatherHead --part head</parameters>
+        <node>icub21</node>
+    </module>
+
+    <module>
+        <name>iCubBreather</name>
+        <parameters>--name iCubBreatherLeft --part left_arm</parameters>
+        <node>icub21</node>
+    </module>
+
+    <module>
+        <name>iCubBreather</name>
+        <parameters>--name iCubBreatherRight --part right_arm</parameters>
+        <node>icub21</node>
+    </module>
+</application>
