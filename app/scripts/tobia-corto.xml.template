@@ -1,0 +1,74 @@
+<application>
+    <name>Tobia Corto Scripting</name>
+
+    <!-- Dependencies -->
+    <dependencies>
+        <port>/icub/yarprobotinterface</port>
+        <port>/iKinGazeCtrl/rpc</port>
+    </dependencies>
+
+    <!-- Gaze -->
+    <module>
+        <name>gaze.lua</name>
+        <parameters></parameters>
+        <deployer>lua</deployer>
+        <node>icub21</node>
+        <dependencies>
+            <port timeout="10">/iKinGazeCtrl/angles:i</port>
+            <port timeout="10">/iKinGazeCtrl/angles:o</port>
+        </dependencies>
+    </module>
+
+    <!-- Movements -->
+    <module>
+        <name>ctpService</name>
+        <parameters>--robot icub --part left_arm</parameters>
+        <node>icub21</node>
+    </module>
+    <module>
+        <name>ctpService</name>
+        <parameters>--robot icub --part right_arm</parameters>
+        <node>icub21</node>
+    </module>
+    <module>
+        <name>ctpService</name>
+        <parameters>--robot icub --part head</parameters>
+        <node>icub21</node>
+    </module>
+
+    <!-- Speakers -->
+   <module>
+        <name>yarpdev</name>
+        <parameters>--device speech --lingware-context speech --robot icub --default-language it-IT --pitch 90 --speed 100</parameters>
+        <node>icub21</node>
+    </module>    
+    <module>
+        <name>iSpeak</name>
+        <parameters>--package speech-dev</parameters>
+        <node>pc104</node>
+    </module>
+
+
+    <!-- Connections -->
+    <connection>
+        <from>/gaze/tx</from>
+        <to>/iKinGazeCtrl/angles:i</to>
+        <protocol>tcp</protocol>
+    </connection>
+    <connection>
+        <from>/iKinGazeCtrl/angles:o</from>
+        <to>/gaze/rx</to>
+        <protocol>tcp</protocol>
+    </connection>
+    <connection>
+       <from>/iSpeak/speech-dev/rpc</from>
+       <to>/icub/speech:rpc</to>
+       <protocol>tcp</protocol>
+    </connection>
+    <connection>
+        <from>/iSpeak/emotions:o</from>
+        <to>/icub/face/emotions/in</to>
+        <protocol>tcp</protocol>
+    </connection>
+
+</application>
