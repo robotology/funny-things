@@ -17,20 +17,6 @@ This script scripts through the commands available for the shooting of Tobia mov
 
 USAGE:
         $0 options
-
-WITH AVAILABLE OPTIONS:
-        scene_1
-        scene_8 TEYES TARM ARM
-        scene_14 TARM ARM
-        scene_17 TEYES
-        scene_22 TARM ARM
-
-EXAMPLE: 
-        ./tobia-corto.sh scene_1
-        ./tobia-corto.sh scene_8 0.75 3.0 left_arm
-        ./tobia-corto.sh scene_14 0.7 left_arm
-        ./tobia-corto.sh scene_17 0.5
-        ./tobia-corto.sh scene_22 2.0 left_arm
   
         
 ***************************************************************************************
@@ -126,8 +112,8 @@ gaze_bind() {
 }
 
 gaze_only_eyes() {
-    gaze_bind pitch 0.0
-    gaze_bind yaw 0.0
+    gaze_bind pitch 0
+    gaze_bind yaw 0
     gaze "$1"
 }
 
@@ -154,7 +140,8 @@ gaze_only_eyes_up() {
 }
 
 follow_only_eyes() {
-    gaze_only_eyes "look -20.0 0.0 5.0"
+    let AZI=20*$1
+    gaze_only_eyes "look $AZI 0.0 5.0"
 }
 
 set_speed_eyes() {
@@ -283,9 +270,10 @@ perform_1_2() {
 }
 
 perform_8_3() {
-    TEYES=${1:-0.75}
+    AZIDIR=${1:-1}
+    TEYES=${2:-2.5}
     set_speed_eyes $TEYES
-    follow_only_eyes 
+    follow_only_eyes $AZIDIR
 }
 
 perform_8_4() {
@@ -299,7 +287,6 @@ perform_8_5() {
     TARM=${1:-1.5}
     ARM=${2:-left_arm}
     point_breast $TARM $ARM
-    #look_down
     gaze_only_eyes_down
     sad
 }
