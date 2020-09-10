@@ -31,6 +31,10 @@ DRAW_TIME=1.5
 #######################################################################################
 # HELPER FUNCTIONS
 #######################################################################################
+speak() {
+    echo "\"$1\"" | yarp write ... /iSpeak
+}
+
 close_eyes() {
     echo "S40" | yarp write ... /icub/face/raw/in
 }
@@ -589,6 +593,8 @@ perform_22_29() {
     ARM=${2:-left_arm}
     gaze_with_neck "look -10.0 10.0 5.0"
     point_face $TARM $ARM
+    sleep $TARM
+    speak "tob ia"
 }
 
 perform_22_30() {
