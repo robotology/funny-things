@@ -106,8 +106,8 @@ gaze() {
 }
 
 gaze_with_neck() {
-    echo "clear pitch" | yarp rpc /iKinGazeCtrl/rpc
-    echo "clear yaw" | yarp rpc /iKinGazeCtrl/rpc
+    #echo "clear pitch" | yarp rpc /iKinGazeCtrl/rpc
+    #echo "clear yaw" | yarp rpc /iKinGazeCtrl/rpc
     gaze "$1"
 }
 
@@ -119,6 +119,7 @@ gaze_bind() {
 gaze_only_eyes() {
     gaze_bind pitch 0
     gaze_bind yaw 0
+    gaze
     gaze "$1"
 }
 
@@ -144,9 +145,36 @@ gaze_only_eyes_up() {
     gaze_only_eyes "look 0.0 20.0 5.0"
 }
 
+fix_only_eyes_left() {
+    echo "ctpq time 1.0 off 3 pos (0.0 -20.0 5.0)"  | yarp rpc /ctpservice/head/rpc
+}
+
+fix_only_eyes_right() {
+    echo "ctpq time 1.0 off 3 pos (0.0 20.0 5)"  | yarp rpc /ctpservice/head/rpc
+}
+
+fix_only_eyes_down() {
+    echo "ctpq time 1.0 off 3 pos (-20.0 0.0 5)"  | yarp rpc /ctpservice/head/rpc
+}
+
+fix_only_eyes_up() {
+    echo "ctpq time 1.0 off 3 pos (20.0 0.0 5)"  | yarp rpc /ctpservice/head/rpc
+}
+
 follow_only_eyes() {
     let AZI=20*$1
     gaze_only_eyes "look $AZI 0.0 5.0"
+}
+
+look_around_eyes() {
+    echo "ctpq time $1 off 3 pos (0.0 0.0)"  | yarp rpc /ctpservice/head/rpc
+    echo "ctpq time $1 off 3 pos (1.0 3.0)"  | yarp rpc /ctpservice/head/rpc
+    echo "ctpq time $1 off 3 pos (5.0 -5.0)"  | yarp rpc /ctpservice/head/rpc
+    echo "ctpq time $1 off 3 pos (-10.0 0.0)"  | yarp rpc /ctpservice/head/rpc
+    echo "ctpq time $1 off 3 pos (-6.0 2.0)"  | yarp rpc /ctpservice/head/rpc
+    echo "ctpq time $1 off 3 pos (4.0 8.0)"  | yarp rpc /ctpservice/head/rpc
+    echo "ctpq time $1 off 3 pos (0.0 -1.0)"  | yarp rpc /ctpservice/head/rpc
+    echo "ctpq time $1 off 3 pos (-3.0 6.0)"  | yarp rpc /ctpservice/head/rpc
 }
 
 follow_draw_wall_left() {
@@ -157,6 +185,14 @@ follow_draw_wall_left() {
     fix_point $DRAW_TIME 0.0274725 0.021978 31 0.043956 $ENDEYE 2.00394
 }
 
+follow_draw_wall_right() {
+    let ENDEYE=$1-$2
+    fix_point $DRAW_TIME 0.0274725 0.021978 -31 0.043956 $1 2.00394	
+    fix_point $DRAW_TIME 0.0274725 0.021978 -31 0.043956 $ENDEYE 2.00394	
+    fix_point $DRAW_TIME 0.0274725 0.021978 -31 0.043956 $1 2.00394	
+    fix_point $DRAW_TIME 0.0274725 0.021978 -31 0.043956 $ENDEYE 2.00394
+}
+
 set_speed_eyes() {
     echo "set Teyes $1" | yarp rpc /iKinGazeCtrl/rpc
 }
@@ -165,8 +201,9 @@ set_speed_neck() {
     echo "set Tneck $1" | yarp rpc /iKinGazeCtrl/rpc
 }
 
-take_pen() {
-    echo "ctpq time 3.0 off 7 pos (27.0 47.0 22.0 123.0 66.0 100.0 35.0 90.0 240.0)" | yarp rpc /ctpservice/$1/rpc  
+take_pen_wall_right() {
+    START=${1:-30}
+    echo "ctpq time 3 off 0 pos (-80.1648 $START -5.31495 52.7582 0.000353772 -0.043956 -0.142857 16.75 20.84 23.48 29.79 36 49.71 42.96 40.3 95.01)" | yarp rpc /ctpservice/right_arm/rpc  
 }
 
 greet() {
@@ -179,54 +216,70 @@ greet() {
     echo "ctpq time $1 off 0 pos (-70.0 40.0 -7.0 100.0 60.0 -10.0 -10.0)" | yarp rpc /ctpservice/$2/rpc
 }
 
-cover_eye() {
-	echo "ctpq time $1 off 0 pos (-67.19 19 25.74 95 -60 0 0 59 20 20 20 10 10 10 10 10)" | yarp rpc /ctpservice/$2/rpc
+cover_left_eye() {
+	echo "ctpq time $1 off 0 pos (-67.19 19 25.74 95 -60 0 0 15.0 20.0 20.0 17.0 10.0 13.5 10.0 13.0 5.0)" | yarp rpc /ctpservice/left_arm/rpc
 }
 
-uncover_eye(){
-	echo "ctpq time $1 off 0 pos (-40 35 16 95 -60 0 0 59 20 20 20 10 10 10 10 10)" | yarp rpc /ctpservice/$2/rpc
+cover_right_eye() {
+	echo "ctpq time $1 off 0 pos (-67.19 19 25.74 95 -60 0 0 57.0 20.0 0.0 0.0 0.0 0.0 0.0 0.0 2.5)" | yarp rpc /ctpservice/right_arm/rpc
+}
+
+uncover_left_eye() {
+	echo "ctpq time $1 off 0 pos (-35 35 16 95 -60 0 0 15.0 20.0 20.0 17.0 10.0 13.5 10.0 13.0 5.0)" | yarp rpc /ctpservice/left_arm/rpc
+}
+
+uncover_right_eye() {
+	echo "ctpq time $1 off 0 pos (-35 35 16 95 -60 0 0 57.0 20.0 0.0 0.0 0.0 0.0 0.0 0.0 2.5)" | yarp rpc /ctpservice/right_arm/rpc
 }
 
 peek_a_boo(){
         TARM=$1
-        THIDE=$2
+        TOPEN=$2
+        THIDE=$3
 	gaze "idle"
-	cover_eye $TARM left_arm
+	cover_left_eye $TARM
 	sleep $TARM
-	cover_eye $TARM right_arm
+        happy
+	cover_right_eye $TARM
 	sleep $TARM
 	close_eyes
 	sleep $THIDE
-	let TUNCOVER=$TARM*2
+	let TUNCOVER=$TOPEN*2
 	echo $TUNCOVER
-	uncover_eye $TUNCOVER left_arm
-	uncover_eye $TUNCOVER right_arm
-	sleep $TARM
+	uncover_left_eye $TUNCOVER
+	uncover_right_eye $TUNCOVER
+	sleep $TOPEN
 	open_eyes
+	surprised
 }
 
 emotion() {
-    echo "set mou $1" | yarp rpc /icub/face/emotions/in
-    echo "set leb $1" | yarp rpc /icub/face/emotions/in
-    echo "set reb $1" | yarp rpc /icub/face/emotions/in
+    MOU=${1:-neu}
+    LEB=${2:-$1}
+    REB=${3:-$LEB}
+    echo "set mou $MOU" | yarp rpc /icub/face/emotions/in
+    echo "set leb $LEB" | yarp rpc /icub/face/emotions/in
+    echo "set reb $REB" | yarp rpc /icub/face/emotions/in
 }
 
 happy() {
-	emotion "hap"
+    emotion "hap"
 }
 
 neutral() {
-	emotion "neu"
+    emotion "neu"
 }
 
 sad() {
-	emotion "sad"
+    emotion "sad"
+}
+
+surprised() {
+    emotion "hap" "sur"
 }
 
 curious() {
-    echo "set mou neu" | yarp rpc /icub/face/emotions/in
-    echo "set leb shy" | yarp rpc /icub/face/emotions/in
-    echo "set reb shy" | yarp rpc /icub/face/emotions/in
+    emotion "neu" "shy"
 }
 
 arm_sleeve() {
@@ -251,6 +304,28 @@ draw_table_right() {
     echo "ctpq time 2.0 off 0 pos (-84.35 67.65 56.69 58.38 1.23 -2.33 13.44 16.75 20.84 23.48 29.79 36 49.71 42.96 40.3 95.01)" | yarp rpc /ctpservice/right_arm/rpc
     echo "ctpq time 2.0 off 0 pos (-84.35 77.23 56.6 58.38 1.23 -2.33 13.44 16.75 20.71 23.91 29.79 36 52.52 42.96 49.4 95.54)" | yarp rpc /ctpservice/right_arm/rpc
     echo "ctpq time 2.0 off 0 pos (-84.35 62.81 56.78 58.38 1.23 -2.24 13.53 15.85 21.49 22.17 30.52 36.4 50.11 42.22 40.3 93.94)" | yarp rpc /ctpservice/right_arm/rpc
+}
+
+draw_table_left() {
+    echo "ctpq time 2.0 off 0 pos (-84.35 67.65 56.69 58.38 1.23 -2.33 13.44 8 21.4805 30 71.9942 36.3807 59.2831 68.6921 28.1038 87.807)" | yarp rpc /ctpservice/left_arm/rpc
+    echo "ctpq time 2.0 off 0 pos (-84.35 77.23 56.6 58.38 1.23 -2.33 13.44 8 21.4805 30 71.9942 36.3807 59.2831 68.6921 28.1038 87.807)" | yarp rpc /ctpservice/left_arm/rpc
+    echo "ctpq time 2.0 off 0 pos (-84.35 62.81 56.78 58.38 1.23 -2.24 13.53 8 21.4805 30 71.9942 36.3807 59.2831 68.6921 28.1038 87.807)" | yarp rpc /ctpservice/left_arm/rpc
+}
+
+draw_wall_wrist_right() {
+    let ENDARM=$1+$2
+    echo "ctpq time $DRAW_TIME off 0 pos (-80.1648 $1 -5.31495 52.7582 0.000353772 -0.043956 -0.142857 16.75 20.84 23.48 29.79 36 49.71 42.96 40.3 95.01)" | yarp rpc /ctpservice/right_arm/rpc
+    echo "ctpq time $DRAW_TIME off 0 pos (-80.1648 $ENDARM -5.31495 52.7582 0.000353772 10 -0.142857 16.75 20.84 23.48 29.79 36 49.71 42.96 40.3 95.01)" | yarp rpc /ctpservice/right_arm/rpc
+    echo "ctpq time $DRAW_TIME off 0 pos (-80.1648 $1 -5.31495 52.7582 0.000353772 -10 -0.142857 16.75 20.84 23.48 29.79 36 49.71 42.96 40.3 95.01)" | yarp rpc /ctpservice/right_arm/rpc
+    echo "ctpq time $DRAW_TIME off 0 pos (-80.1648 $ENDARM -5.31495 52.7582 0.000353772 0 -0.0549451 16.75 20.84 23.48 29.79 36 49.71 42.96 40.3 95.01)" | yarp rpc /ctpservice/right_arm/rpc
+}
+
+draw_wall_no_wrist_right() {
+    let ENDARM=$1+$2
+    echo "ctpq time $DRAW_TIME off 0 pos (-80.1648 $1 -5.31495 52.7582 0.000353772 -0.043956 -0.142857 16.75 20.84 23.48 29.79 36 49.71 42.96 40.3 95.01)" | yarp rpc /ctpservice/right_arm/rpc
+    echo "ctpq time $DRAW_TIME off 0 pos (-80.1648 $ENDARM -5.31495 52.7582 0.000353772 0 -0.142857 16.75 20.84 23.48 29.79 36 49.71 42.96 40.3 95.01)" | yarp rpc /ctpservice/right_arm/rpc
+    echo "ctpq time $DRAW_TIME off 0 pos (-80.1648 $1 -5.31495 52.7582 0.000353772 0 -0.142857 16.75 20.84 23.48 29.79 36 49.71 42.96 40.3 95.01)" | yarp rpc /ctpservice/right_arm/rpc
+    echo "ctpq time $DRAW_TIME off 0 pos (-80.1648 $ENDARM -5.31495 52.7582 0.000353772 0 -0.0549451 16.75 20.84 23.48 29.79 36 49.71 42.96 40.3 95.01)" | yarp rpc /ctpservice/right_arm/rpc
 }
 
 draw_wall_wrist_left() {
@@ -285,14 +360,18 @@ home_head() {
     echo "ctpq time 1.0 off 0 pos (0.0 0.0 0.0 0.0 0.0 5.0)"  | yarp rpc /ctpservice/head/rpc
 }
 
-home_arm() {
-    echo "ctpq time $1 off 0 pos (-29.5 30.0 0.0 44.5 0.0 0.0 0.0 15.0 44.5 0.0 2.0 0.0 0.0 0.0 0.0 0.0)" | yarp rpc /ctpservice/$2/rpc
+home_left_arm() {
+    echo "ctpq time $1 off 0 pos (-29.5 30.0 0.0 44.5 0.0 0.0 0.0 15.0 20.0 20.0 17.0 10.0 13.5 10.0 13.0 5.0)" | yarp rpc /ctpservice/left_arm/rpc
+}
+
+home_right_arm() {
+    echo "ctpq time $1 off 0 pos (-29.5 30.0 0.0 44.5 0.0 0.0 0.0 57.0 20.0 0.0 0.0 0.0 0.0 0.0 0.0 2.5)" | yarp rpc /ctpservice/right_arm/rpc
 }
 
 home_all() {
     # This is with the arms over the table
-    home_arm 3.0 left_arm
-    home_arm 3.0 right_arm
+    home_left_arm 3.0
+    home_right_arm 3.0
     home_head
     neutral
     open_eyes
@@ -381,23 +460,27 @@ perform_12_12() {
 
 perform_13_13() {
     EYESDIR=${1:-1}
-    SEYE=${2:-2.0}
-    SNECK=${3:-2.0}
+    SEYE=${2:-1.5}
+    SNECK=${3:-1.5}
     TARM=${4:-3.0}
-    T1=${5:-5.0}
-    T2=${6:-6.0}
+    T1=${5:-3.0}
+    T2=${6:-4.0}
     let EYESYAW=22*$EYESDIR
     
     set_speed_eyes $SEYE
     set_speed_neck $SNECK
-    gaze_with_neck "look 0.0 10.0 5.0"
+    gaze_with_neck "look 0.0 20.0 5.0"
+    sleep $SNECK
+    emotion "neu" "sur" "neu" 
     sleep $T1
     arm_sleeve $TARM left_arm
     arm_sleeve $TARM right_arm
     sleep $T2
-    set_speed_eyes 0.25
-    set_speed_neck 0.75   
-    fix_point 2.0 -28.8956 -3.23077 $EYESYAW -17.978 -0.346534 9.00014	
+    set_speed_eyes 0.75
+    set_speed_neck 1   
+    fix_point 1.5 -28.8956 -3.23077 $EYESYAW -17.978 -0.346534 9.00014
+    sleep 0.5
+    neutral
 }
 
 perform_14_14() {
@@ -413,50 +496,66 @@ perform_14_15() {
 }
 
 perform_15_16() {
-    AZI=${1:-20.0}
-    EL=${2:-10.0}
+    TLOOK=${1:-1.5}
+    AZI=${2:-20.0}
+    EL=${3:-10.0}
     set_speed_eyes 0.75
-    set_speed_neck 0.75
+    set_speed_neck 1
     gaze_with_neck "look $AZI $EL 5.0"
     sleep 4.0
-    gaze_bind pitch $EL
-    gaze_bind yaw $AZI
-    gaze "set-delta 10 5 0" 
-    gaze "look-around $AZI $EL 5.0"
+    #gaze_bind pitch $EL
+    #gaze_bind yaw $AZI
+    #gaze "set-delta 10 5 0" 
+    #gaze "look-around $AZI $EL 5.0"
+    look_around_eyes $TLOOK
 }
 
 perform_15_17() {
-    TARM=${1:-3}
-    THIDE=${2:-2.0}
-    peek_a_boo $TARM $THIDE
+    TARM=${1:-2}
+    TOPEN=${2:-2}
+    THIDE=${3:-2.0}
+    peek_a_boo $TARM $TOPEN $THIDE
 }
 
 perform_15_18() {
     STARTLEFT=${1:-30}
     AMPLLEFT=${2:-20}
-    STARTEYES=${3:-8}
-    AMPLEYES=${4:-13}
-    follow_draw_wall_left $STARTEYES $AMPLEYES
-    draw_wall_wrist_left $STARTLEFT $AMPLLEFT
-    #draw_wall_no_wrist_left
+    STARTEYES=${3:--8}
+    AMPLEYES=${4:--13}
+    follow_draw_wall_right $STARTEYES $AMPLEYES
+    draw_wall_wrist_right $STARTLEFT $AMPLLEFT
 }
 
 perform_17_22() {
     TEYES=${1:-0.75}
     set_speed_eyes $TEYES
-    gaze_only_eyes_right
+    #gaze_only_eyes_right
+    fix_only_eyes_right
+    sleep 0.2
+    emotion "neu" "neu" "sur"
     sleep 3.0
-    gaze_only_eyes_left
+    #gaze_only_eyes_left
+    fix_only_eyes_left
+    sleep 0.2
+    emotion "hap" "sur" "neu"
     sleep 3.0
-    gaze_only_eyes_up
+    #gaze_only_eyes_up
+    fix_only_eyes_up
+    sleep 0.2
+    emotion "neu" "sur" "sur"
     sleep 3.0
-    gaze_only_eyes_down
+    #gaze_only_eyes_down
+    fix_only_eyes_down
+    sad
     sleep 3.0
+    neutral
     close_eyes
     home_head
     sleep 3.0
     open_eyes
+    surprised
     sleep 3.0
+    emotion "neu" "ang"
     squint
     sleep 3.0
 }
@@ -471,16 +570,15 @@ perform_20_25() {
     AZI=${1:-20.0}
     EL=${2:--20.0}
     gaze_with_neck "look $AZI $EL 5"
+    echo "ctpq time 1.0 off 3 pos (-15.0)"  | yarp rpc /ctpservice/head/rpc
     sad
 }
 
-perform_22_25() {
+perform_22_26() {
     gaze_with_neck "look 0.0 4.0 5.0"
-    sleep 10.0
-    generic_gaze
 }
 
-perform_22_26() {
+perform_22_27() {
     AZI=${1:-20.0}
     EL=${2:-10.0}
     gaze_with_neck "look $AZI $EL 5"
