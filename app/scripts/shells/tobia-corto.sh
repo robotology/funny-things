@@ -576,17 +576,25 @@ perform_17_22() {
 }
 
 perform_20_24() {
-    AZI=${1:-20.0}
-    EL=${2:-10.0}
-    gaze "look $AZI $EL 5"
+    EYETILT=${1:-12}
+    AZI=${2:--20.0}
+    EL=${3:-18.0}
+    fix_point 1.5 $EL 0 $AZI $EYETILT 0 10
 }
 
 perform_20_25() {
-    AZI=${1:-20.0}
-    EL=${2:--20.0}
-    gaze "look $AZI $EL 5"
-    echo "ctpq time 1.0 off 3 pos (-15.0)"  | yarp rpc /ctpservice/head/rpc
+    EYETILT=${1:--15}
+    AZI=${2:--20.0}
+    EL=${3:--25.0}
+    fix_point 1.5 $EL 0 $AZI $EYETILT 0 10
+    sleep 0.75
     sad
+}
+
+perform_20() {
+    perform_20_24
+    sleep 2.0
+    perform_20_25
 }
 
 perform_22_26() {
