@@ -26,7 +26,7 @@ EOF
 #######################################################################################
 # GLOBAL VARIABLES
 #######################################################################################
-DRAW_TIME=1.0
+DRAW_TIME=1.5
 
 #######################################################################################
 # HELPER FUNCTIONS
@@ -74,7 +74,7 @@ point_straight() {
 nod() {
     START=$1
     TIME=$2
-    TUNCOVER=$(bc <<< "$START-8")
+    TUNCOVER=$(bc <<< "$START - 8")
     echo "ctpq time $TIME off 0 pos ($END)"  | yarp rpc /ctpservice/head/rpc
     echo "ctpq time $TIME off 0 pos ($START)" | yarp rpc /ctpservice/head/rpc
     echo "ctpq time $TIME off 0 pos ($END)"  | yarp rpc /ctpservice/head/rpc
@@ -150,7 +150,7 @@ look_around_eyes() {
 }
 
 follow_draw_wall_left() {
-    ENDEYE=$(bc <<< "$1-$2")
+    ENDEYE=$(bc <<< "$1 - $2")
     fix_point $DRAW_TIME 0.0274725 0.021978 31 0.043956 $1 2.00394	
     fix_point $DRAW_TIME 0.0274725 0.021978 31 0.043956 $ENDEYE 2.00394	
     fix_point $DRAW_TIME 0.0274725 0.021978 31 0.043956 $1 2.00394	
@@ -162,7 +162,7 @@ follow_draw_wall_left() {
 }
 
 follow_draw_wall_right() {
-    ENDEYE=$(bc <<< "$1-$2")
+    ENDEYE=$(bc <<< "$1 - $2")
     fix_point $DRAW_TIME 0.0274725 0.021978 -31 0.043956 $1 2.00394	
     fix_point $DRAW_TIME 0.0274725 0.021978 -31 0.043956 $ENDEYE 2.00394	
     fix_point $DRAW_TIME 0.0274725 0.021978 -31 0.043956 $1 2.00394	
@@ -171,6 +171,13 @@ follow_draw_wall_right() {
     fix_point $DRAW_TIME 0.0274725 0.021978 -31 0.043956 $ENDEYE 2.00394	
     fix_point $DRAW_TIME 0.0274725 0.021978 -31 0.043956 $1 2.00394	
     fix_point $DRAW_TIME 0.0274725 0.021978 -31 0.043956 $ENDEYE 2.00394
+}
+
+follow_draw_line_left() {
+    ENDEYE=$(bc <<< "$1 - $2") #WE NEED THE EXTRASPACE BEFORE AND AFTER THE MINUS
+    echo $ENDEYE
+    fix_point $DRAW_TIME 0.0274725 0.021978 18.0 0.043956 $1 10.0	
+    fix_point $DRAW_TIME 0.0274725 0.021978 18.0 0.043956 $ENDEYE 10.0	
 }
 
 set_speed_eyes() {
@@ -184,6 +191,11 @@ set_speed_neck() {
 take_pen_wall_right() {
     START=${1:-30}
     echo "ctpq time 3 off 0 pos (-80.1648 $START -5.31495 52.7582 0.000353772 -0.043956 -0.142857 16.75 20.84 23.48 29.79 36 49.71 42.96 40.3 95.01)" | yarp rpc /ctpservice/right_arm/rpc  
+}
+
+take_pen_wall_left() {
+    START=${1:-30}
+    echo "ctpq time 3 off 0 pos (-80.1648 $START -5.31495 52.7582 0.000353772 -0.043956 -0.142857 8 21.4805 30 71.9942 36.3807 59.2831 68.6921 28.1038 87.807)" | yarp rpc /ctpservice/left_arm/rpc  
 }
 
 greet() {
@@ -314,6 +326,20 @@ draw_table_left() {
     echo "ctpq time 2.0 off 0 pos (-84.35 62.81 56.78 58.38 1.23 -2.24 13.53 8 21.4805 30 71.9942 36.3807 59.2831 68.6921 28.1038 87.807)" | yarp rpc /ctpservice/left_arm/rpc
 }
 
+draw_point_right() {
+    ENDARM=$(bc <<< "$1+$2")
+    echo "ctpq time $DRAW_TIME off 0 pos (-80.1648 $1 -5.31495 52.7582 0.000353772 -0.043956 -0.142857 16.75 20.84 23.48 29.79 36 49.71 42.96 40.3 95.01)" | yarp rpc /ctpservice/right_arm/rpc
+    echo "ctpq time $DRAW_TIME off 0 pos (-80.1648 $1 -5.31495 52.7582 0.000353772 -0.043956 10.0 16.75 20.84 23.48 29.79 36 49.71 42.96 40.3 95.01)" | yarp rpc /ctpservice/right_arm/rpc
+    echo "ctpq time $DRAW_TIME off 0 pos (-80.1648 $1 -5.31495 52.7582 0.000353772 -0.043956 -0.142857 16.75 20.84 23.48 29.79 36 49.71 42.96 40.3 95.01)" | yarp rpc /ctpservice/right_arm/rpc    
+}
+
+draw_line_right() {
+    ENDARM=$(bc <<< "$1+$2")
+    echo $ENDARM
+    echo "ctpq time $DRAW_TIME off 0 pos (-80.1648 $1 -5.31495 52.7582 0.000353772 -0.043956 -0.142857 16.75 20.84 23.48 29.79 36 49.71 42.96 40.3 95.01)" | yarp rpc /ctpservice/right_arm/rpc
+    echo "ctpq time $DRAW_TIME off 0 pos (-80.1648 $ENDARM -5.31495 52.7582 0.000353772 10 -0.142857 16.75 20.84 23.48 29.79 36 49.71 42.96 40.3 95.01)" | yarp rpc /ctpservice/right_arm/rpc
+}
+
 draw_wall_wrist_right() {
     ENDARM=$(bc <<< "$1+$2")
     echo "ctpq time $DRAW_TIME off 0 pos (-80.1648 $1 -5.31495 52.7582 0.000353772 -0.043956 -0.142857 16.75 20.84 23.48 29.79 36 49.71 42.96 40.3 95.01)" | yarp rpc /ctpservice/right_arm/rpc
@@ -336,6 +362,19 @@ draw_wall_no_wrist_right() {
     echo "ctpq time $DRAW_TIME off 0 pos (-80.1648 $ENDARM -5.31495 52.7582 0.000353772 0 -0.142857 16.75 20.84 23.48 29.79 36 49.71 42.96 40.3 95.01)" | yarp rpc /ctpservice/right_arm/rpc
     echo "ctpq time $DRAW_TIME off 0 pos (-80.1648 $1 -5.31495 52.7582 0.000353772 0 -0.142857 16.75 20.84 23.48 29.79 36 49.71 42.96 40.3 95.01)" | yarp rpc /ctpservice/right_arm/rpc
     echo "ctpq time $DRAW_TIME off 0 pos (-80.1648 $ENDARM -5.31495 52.7582 0.000353772 0 -0.0549451 16.75 20.84 23.48 29.79 36 49.71 42.96 40.3 95.01)" | yarp rpc /ctpservice/right_arm/rpc
+}
+
+draw_point_left() {
+    echo "ctpq time $DRAW_TIME off 0 pos (-80.1648 $1 -5.31495 52.7582 0.000353772 -0.043956 -0.142857 8 21.4805 30 71.9942 36.3807 59.2831 68.6921 28.1038 87.807)" | yarp rpc /ctpservice/left_arm/rpc
+    echo "ctpq time $DRAW_TIME off 0 pos (-80.1648 $1 -5.31495 52.7582 0.000353772 -0.043956 10.0 8 21.4805 30 71.9942 36.3807 59.2831 68.6921 28.1038 87.807)" | yarp rpc /ctpservice/left_arm/rpc
+    echo "ctpq time $DRAW_TIME off 0 pos (-80.1648 $1 -5.31495 52.7582 0.000353772 -0.043956 -0.142857 8 21.4805 30 71.9942 36.3807 59.2831 68.6921 28.1038 87.807)" | yarp rpc /ctpservice/left_arm/rpc
+}
+
+draw_line_left() {
+    ENDARM=$(bc <<< "$1+$2")
+    echo $ENDARM
+    echo "ctpq time $DRAW_TIME off 0 pos (-80.1648 $1 -5.31495 52.7582 0.000353772 -0.043956 -0.142857 8 21.4805 30 71.9942 36.3807 59.2831 68.6921 28.1038 87.807)" | yarp rpc /ctpservice/left_arm/rpc
+    echo "ctpq time $DRAW_TIME off 0 pos (-80.1648 $ENDARM -5.31495 52.7582 0.000353772 10 -0.142857 8.68525 21.4805 30 70.5475 36.7637 60.0628 68.6921 29.1707 86.5875)" | yarp rpc /ctpservice/left_arm/rpc
 }
 
 draw_wall_wrist_left() {
@@ -567,12 +606,18 @@ perform_15_17() {
 }
 
 perform_15_18() {
-    STARTLEFT=${1:-30}
-    AMPLLEFT=${2:-20}
-    STARTEYES=${3:--8}
-    AMPLEYES=${4:--13}
-    follow_draw_wall_right $STARTEYES $AMPLEYES
-    draw_wall_wrist_right $STARTLEFT $AMPLLEFT
+    STARTLEFT=${1:-30.0}
+    AMPLLEFT=${2:-30.0}
+    STARTEYES=${3:-0.0} #${3:--8.0}
+    AMPLEYES=${4:-20.0} #${4:--13.0}
+    #follow_draw_wall_right $STARTEYES $AMPLEYES
+    #draw_wall_wrist_right $STARTLEFT $AMPLLEFT
+    fix_point $DRAW_TIME 0.0274725 0.021978 18.0 0.043956 $STARTEYES 12.0
+    draw_point_left $STARTLEFT
+    TREACT=$(bc <<< "$DRAW_TIME*3")
+    sleep $TREACT
+    follow_draw_line_left $STARTEYES $AMPLEYES
+    draw_line_left $STARTLEFT $AMPLLEFT
 }
 
 perform_15_21() {
