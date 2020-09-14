@@ -38,7 +38,7 @@
     </module>
 
     <module>
-        <name>simFaceExpression</name>
+        <name>simFaceExpressions</name>
         <parameters></parameters>
         <node>localhost</node>
         <stdio></stdio>
