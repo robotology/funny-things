@@ -374,6 +374,35 @@ move_trex_left() {
     echo "ctpq time 1.0 off 0 pos (-82.2747 20 60.9708 23.6593 -7 1.01099 0.912088 3.83677 15.2931 23.55 56.081 6.12414 79.9459 33.424 47.6629 56.9127)" | yarp rpc /ctpservice/left_arm/rpc
 }
 
+imitate_robot() {
+    ENDARM=$(bc <<< "$3+$4")
+    i=1
+    while [ "$i" -le "$2" ]; do
+        echo "ctpq time $1 off 0 pos (-15.8649 22.3947 0.00176004 $3 -0.00142396 0.000890493 0.119221 59.8433 0.048714 0.0672761 0.0200121 0.0240908 0.00724052 0.0210287 0.00672317 0.0203399)" | yarp rpc /ctpservice/left_arm/rpc
+        fix_point $1 0.0 0.0 12.0 0.0 0.0 0.0 
+        sleep $1
+        echo "ctpq time $1 off 0 pos (-15.7507 22.4016 0.000323085 $3 0.000139115 0.000481608 0.118885 59.8411 0.0486692 0.0672874 0.0202492 0.0240462 0.0071755 0.0209986 0.00668006 0.0328025)" | yarp rpc /ctpservice/right_arm/rpc
+        fix_point $1 0.0 0.0 -12.0 0.0 0.0 0.0 
+        sleep $1
+
+        echo "ctpq time $1 off 0 pos (-15.8649 22.3947 0.00176004 $ENDARM -0.00142396 0.000890493 0.119221 59.8433 0.048714 0.0672761 0.0200121 0.0240908 0.00724052 0.0210287 0.00672317 0.0203399)" | yarp rpc /ctpservice/left_arm/rpc
+        fix_point $1 0.0 0.0 12.0 0.0 0.0 0.0 
+        sleep $1
+        echo "ctpq time $1 off 0 pos (-15.7507 22.4016 0.000323085 $ENDARM 0.000139115 0.000481608 0.118885 59.8411 0.0486692 0.0672874 0.0202492 0.0240462 0.0071755 0.0209986 0.00668006 0.0328025)" | yarp rpc /ctpservice/right_arm/rpc
+        fix_point $1 0.0 0.0 -12.0 0.0 0.0 0.0 
+        sleep $1
+        i=$(($i + 1))
+    done
+}
+
+home_left_arm_body() {
+    echo "ctpq time 2.0 off 0 pos (-15.8649 22.3947 0.00176004 30.0 -0.00142396 0.000890493 0.119221 59.8433 0.048714 0.0672761 0.0200121 0.0240908 0.00724052 0.0210287 0.00672317 0.0203399)" | yarp rpc /ctpservice/left_arm/rpc
+}
+
+home_right_arm_body() {
+    echo "ctpq time 2.0 off 0 pos (-15.7507 22.4016 0.000323085 30.0 0.000139115 0.000481608 0.118885 59.8411 0.0486692 0.0672874 0.0202492 0.0240462 0.0071755 0.0209986 0.00668006 0.0328025)" | yarp rpc /ctpservice/right_arm/rpc
+}
+
 home_head() {
     echo "ctpq time 2.0 off 0 pos (0.0 0.0 0.0 0.0 0.0 5.0)"  | yarp rpc /ctpservice/head/rpc
 }
@@ -544,6 +573,14 @@ perform_15_18() {
     AMPLEYES=${4:--13}
     follow_draw_wall_right $STARTEYES $AMPLEYES
     draw_wall_wrist_right $STARTLEFT $AMPLLEFT
+}
+
+perform_15_21() {
+    TIME=${1:-1.5}
+    NREP=${2:-2}
+    START=${3:-45.0}
+    AMPL=${4:-10.0}
+    imitate_robot $TIME $NREP $START $AMPL
 }
 
 perform_17_22() {
