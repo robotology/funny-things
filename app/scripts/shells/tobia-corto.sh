@@ -219,7 +219,7 @@ peek_a_boo(){
     gaze "idle"
     cover_left_eye $TARM
     sleep $TARM
-    happy
+    #happy
     cover_right_eye $TARM
     sleep $TARM
     close_eyes
@@ -230,7 +230,7 @@ peek_a_boo(){
     uncover_right_eye $TUNCOVER
     sleep $TOPEN
     open_eyes
-    surprised
+    #surprised
 }
 
 emotion() {
@@ -391,7 +391,7 @@ home_all() {
     home_left_arm 3.0
     home_right_arm 3.0
     home_head
-    neutral
+    #neutral
     open_eyes
 }
 
@@ -410,7 +410,7 @@ perform_1_1() {
 
 perform_1_2() {
     generic_gaze
-    curious
+    #curious
 }
 
 perform_8_3() {
@@ -432,7 +432,7 @@ perform_8_5() {
     ARM=${2:-left_arm}
     point_breast $TARM $ARM
     fix_only_eyes_down
-    sad
+    #sad
 }
 
 perform_8_6() {
@@ -440,7 +440,7 @@ perform_8_6() {
     ARM=${2:-left_arm}
     gaze "look -10.0 -10.0 5.0"
     point_forehead $TARM $ARM
-    happy
+    #happy
 }
 
 perform_8_7() {
@@ -482,7 +482,7 @@ perform_13_13_1() {
     EL=${3:-17.0}
     fix_point 1.5 $EL 0 $AZI $EYETILT 0 10
     sleep 1.5
-    emotion "neu" "sur" "neu"
+    #emotion "neu" "sur" "neu"
 }
 
 perform_13_13_2() {
@@ -496,7 +496,7 @@ perform_13_13_3() {
     EYESYAW=$(bc <<< "22*$EYESDIR")
     fix_point 1.5 -28.8956 -3.23077 $EYESYAW -17.978 -0.346534 9.00014
     sleep 0.5
-    neutral
+    #neutral
 }
 
 perform_13_13() {
@@ -550,27 +550,27 @@ perform_17_22() {
     TEYES=${1:-0.75}
     fix_only_eyes_right
     sleep 0.2
-    emotion "neu" "neu" "sur"
+    #emotion "neu" "neu" "sur"
     sleep 3.0
     fix_only_eyes_left
     sleep 0.2
-    emotion "hap" "sur" "neu"
+    #emotion "hap" "sur" "neu"
     sleep 3.0
     fix_only_eyes_up
     sleep 0.2
-    emotion "neu" "sur" "sur"
+    #emotion "neu" "sur" "sur"
     sleep 3.0
     fix_only_eyes_down
-    sad
+    #sad
     sleep 3.0
-    neutral
+    #neutral
     close_eyes
     home_head
     sleep 3.0
     open_eyes
-    surprised
+    #surprised
     sleep 3.0
-    emotion "neu" "ang"
+    #emotion "neu" "ang"
     squint
     sleep 3.0
 }
@@ -588,7 +588,7 @@ perform_20_25() {
     EL=${3:--25.0}
     fix_point 1.5 $EL 0 $AZI $EYETILT 0 10
     sleep 0.75
-    sad
+    #sad
 }
 
 perform_20() {
@@ -623,7 +623,7 @@ perform_22_27_3() {
     EL=${3:-17.0}
     fix_point 1.5 $EL 0 $AZI $EYETILT 0 10
     sleep 0.75
-    emotion "neu" "sur"
+    #emotion "neu" "sur"
 }
 
 perform_22_29() {
@@ -634,8 +634,8 @@ perform_22_29() {
     EL=${5:-17.0}
     fix_point 1.5 $EL 0 $AZI $EYETILT 0 10
     point_face $TARM $ARM
-    sleep $TARM
-    speak "tob ia"
+    #sleep $TARM
+    #speak "tob ia"
 }
 
 perform_22_30() {
@@ -645,7 +645,7 @@ perform_22_30() {
     EYETILT=${4:-0}
     EL=${5:-0.0}
     fix_point 1.5 $EL 0 $AZI $EYETILT 0 10
-    sad
+    #sad
     #caress $ARM
     caress_elbow $TARM $ARM
 }

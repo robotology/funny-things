@@ -36,19 +36,6 @@
         <node>icub21</node>
     </module>
 
-    <!-- Speakers -->
-   <module>
-        <name>yarpdev</name>
-        <parameters>--device speech --lingware-context speech --robot icub --default-language it-IT --pitch 90 --speed 100</parameters>
-        <node>icub21</node>
-    </module>    
-    <module>
-        <name>iSpeak</name>
-        <parameters>--package speech-dev</parameters>
-        <node>pc104</node>
-    </module>
-
-
     <!-- Connections -->
     <connection>
         <from>/gaze/tx</from>
@@ -60,15 +47,4 @@
         <to>/gaze/rx</to>
         <protocol>tcp</protocol>
     </connection>
-    <connection>
-       <from>/iSpeak/speech-dev/rpc</from>
-       <to>/icub/speech:rpc</to>
-       <protocol>tcp</protocol>
-    </connection>
-    <connection>
-        <from>/iSpeak/emotions:o</from>
-        <to>/icub/face/emotions/in</to>
-        <protocol>tcp</protocol>
-    </connection>
-
 </application>
