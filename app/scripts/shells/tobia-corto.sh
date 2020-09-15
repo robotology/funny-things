@@ -35,16 +35,60 @@ speak() {
     echo "\"$1\"" | yarp write ... /iSpeak
 }
 
+move_eyelids() {
+    echo "$1" | yarp write ... /icub/face/raw/in
+}
+
 close_eyes() {
-    echo "S40" | yarp write ... /icub/face/raw/in
+    move_eyelids "S40"
 }
 
 open_eyes() {
-    echo "S70" | yarp write ... /icub/face/raw/in
+    move_eyelids "S60"
 }
 
 squint() {
-    echo "S45" | yarp write ... /icub/face/raw/in
+    move_eyelids "S45"
+}
+
+open_eyes_sequentially() {
+    for i in {40..60}
+    do
+        APERTURE="S$i"
+        echo $APERTURE
+        move_eyelids $APERTURE
+        sleep 1.0   
+    done
+}
+
+roll_neck() {
+    fix_point 3.0 0.0 15.0 0.0 0.0 0.0 0.0
+    fix_point 3.0 0.0 -15.0 0.0 0.0 0.0 0.0
+}
+
+pitch_neck() {
+    fix_point 3.0 18.0 0.0 0.0 0.0 0.0 0.0
+    fix_point 3.0 -30.0 0.0 0.0 0.0 0.0 0.0
+}
+
+yaw_neck() {
+    fix_point 3.0 0.0 0.0 40.0 0.0 0.0 0.0
+    fix_point 3.0 0.0 0.0 -40.0 0.0 0.0 0.0
+}
+
+tilt_eyes() {
+    fix_point 3.0 0.0 0.0 0.0 25.0 0.0 0.0
+    fix_point 3.0 0.0 0.0 0.0 -25.0 0.0 0.0
+}
+
+version_eyes() {
+    fix_point 3.0 0.0 0.0 0.0 0.0 25.0 0.0
+    fix_point 3.0 0.0 0.0 0.0 0.0 -25.0 0.0
+}
+
+verge_eyes() {
+    fix_point 3.0 0.0 0.0 0.0 0.0 0.0 0.0
+    fix_point 3.0 0.0 0.0 0.0 0.0 0.0 40.0
 }
 
 point() {
@@ -180,6 +224,13 @@ follow_draw_line_left() {
     fix_point $DRAW_TIME 0.0274725 0.021978 18.0 0.043956 $ENDEYE 10.0	
 }
 
+follow_draw_line_right() {
+    ENDEYE=$(bc <<< "$1 - $2") #WE NEED THE EXTRASPACE BEFORE AND AFTER THE MINUS
+    echo $1 $2 $ENDEYE
+    fix_point $DRAW_TIME 0.0274725 0.021978 -18.0 0.043956 $1 10.0	
+    fix_point $DRAW_TIME 0.0274725 0.021978 -18.0 0.043956 $ENDEYE 10.0	
+}
+
 set_speed_eyes() {
     echo "set Teyes $1" | yarp rpc /iKinGazeCtrl/rpc
 }
@@ -190,12 +241,12 @@ set_speed_neck() {
 
 take_pen_wall_right() {
     START=${1:-30}
-    echo "ctpq time 3 off 0 pos (-80.1648 $START -5.31495 52.7582 0.000353772 -0.043956 -0.142857 16.75 20.84 23.48 29.79 36 49.71 42.96 40.3 95.01)" | yarp rpc /ctpservice/right_arm/rpc  
+    echo "ctpq time 3.0 off 0 pos (-80.1648 $START -5.31495 52.7582 0.000353772 -0.043956 -0.142857 16.75 20.84 23.48 29.79 36 49.71 42.96 40.3 95.01)" | yarp rpc /ctpservice/right_arm/rpc  
 }
 
 take_pen_wall_left() {
     START=${1:-30}
-    echo "ctpq time 3 off 0 pos (-80.1648 $START -5.31495 52.7582 0.000353772 -0.043956 -0.142857 8 21.4805 30 71.9942 36.3807 59.2831 68.6921 28.1038 87.807)" | yarp rpc /ctpservice/left_arm/rpc  
+    echo "ctpq time 3.0 off 0 pos (-80.1648 $START -5.31495 52.7582 0.000353772 -0.043956 -0.142857 8 21.4805 30 71.9942 36.3807 59.2831 68.6921 28.1038 87.807)" | yarp rpc /ctpservice/left_arm/rpc  
 }
 
 greet() {
@@ -327,7 +378,6 @@ draw_table_left() {
 }
 
 draw_point_right() {
-    ENDARM=$(bc <<< "$1+$2")
     echo "ctpq time $DRAW_TIME off 0 pos (-80.1648 $1 -5.31495 52.7582 0.000353772 -0.043956 -0.142857 16.75 20.84 23.48 29.79 36 49.71 42.96 40.3 95.01)" | yarp rpc /ctpservice/right_arm/rpc
     echo "ctpq time $DRAW_TIME off 0 pos (-80.1648 $1 -5.31495 52.7582 0.000353772 -0.043956 10.0 16.75 20.84 23.48 29.79 36 49.71 42.96 40.3 95.01)" | yarp rpc /ctpservice/right_arm/rpc
     echo "ctpq time $DRAW_TIME off 0 pos (-80.1648 $1 -5.31495 52.7582 0.000353772 -0.043956 -0.142857 16.75 20.84 23.48 29.79 36 49.71 42.96 40.3 95.01)" | yarp rpc /ctpservice/right_arm/rpc    
@@ -417,19 +467,23 @@ imitate_robot() {
     ENDARM=$(bc <<< "$3+$4")
     i=1
     while [ "$i" -le "$2" ]; do
-        echo "ctpq time $1 off 0 pos (-15.8649 22.3947 0.00176004 $3 -0.00142396 0.000890493 0.119221 59.8433 0.048714 0.0672761 0.0200121 0.0240908 0.00724052 0.0210287 0.00672317 0.0203399)" | yarp rpc /ctpservice/left_arm/rpc
-        fix_point $1 0.0 0.0 12.0 0.0 0.0 0.0 
+        echo "ctpq time $1 off 0 pos (-15.8649 30.584 0.00176004 $3 -0.00142396 0.000890493 0.119221 1.2 15.209 0.0672761 0.0200121 0.0240908 0.00724052 0.0210287 0.00672317 0.0203399)" | yarp rpc /ctpservice/left_arm/rpc
+        fix_point $1 0.0 0.0 12.0 0.0 0.0 0.0
         sleep $1
-        echo "ctpq time $1 off 0 pos (-15.7507 22.4016 0.000323085 $3 0.000139115 0.000481608 0.118885 59.8411 0.0486692 0.0672874 0.0202492 0.0240462 0.0071755 0.0209986 0.00668006 0.0328025)" | yarp rpc /ctpservice/right_arm/rpc
-        fix_point $1 0.0 0.0 -12.0 0.0 0.0 0.0 
+        move_eyelids "S55"
+        echo "ctpq time $1 off 0 pos (-15.7507 30.584 0.000323085 $3 0.000139115 0.000481608 0.118885 15.002 15.209 0.0672874 0.0202492 0.0240462 0.0071755 0.0209986 0.00668006 0.0328025)" | yarp rpc /ctpservice/right_arm/rpc
+        fix_point $1 0.0 0.0 -12.0 0.0 0.0 0.0
         sleep $1
-
-        echo "ctpq time $1 off 0 pos (-15.8649 22.3947 0.00176004 $ENDARM -0.00142396 0.000890493 0.119221 59.8433 0.048714 0.0672761 0.0200121 0.0240908 0.00724052 0.0210287 0.00672317 0.0203399)" | yarp rpc /ctpservice/left_arm/rpc
-        fix_point $1 0.0 0.0 12.0 0.0 0.0 0.0 
+        move_eyelids "S45" 
+        
+        echo "ctpq time $1 off 0 pos (-15.8649 30.584 0.00176004 $ENDARM -0.00142396 0.000890493 0.119221 1.2 15.209 0.0672761 0.0200121 0.0240908 0.00724052 0.0210287 0.00672317 0.0203399)" | yarp rpc /ctpservice/left_arm/rpc
+        fix_point $1 0.0 0.0 12.0 0.0 0.0 0.0
         sleep $1
-        echo "ctpq time $1 off 0 pos (-15.7507 22.4016 0.000323085 $ENDARM 0.000139115 0.000481608 0.118885 59.8411 0.0486692 0.0672874 0.0202492 0.0240462 0.0071755 0.0209986 0.00668006 0.0328025)" | yarp rpc /ctpservice/right_arm/rpc
-        fix_point $1 0.0 0.0 -12.0 0.0 0.0 0.0 
+        move_eyelids "S50"
+        echo "ctpq time $1 off 0 pos (-15.7507 30.584 0.000323085 $ENDARM 0.000139115 0.000481608 0.118885 15.002 15.209 0.0672874 0.0202492 0.0240462 0.0071755 0.0209986 0.00668006 0.0328025)" | yarp rpc /ctpservice/right_arm/rpc
+        fix_point $1 0.0 0.0 -12.0 0.0 0.0 0.0
         sleep $1
+        move_eyelids "S60" 
         i=$(($i + 1))
     done
 }
@@ -609,22 +663,32 @@ perform_15_18() {
     STARTLEFT=${1:-30.0}
     AMPLLEFT=${2:-30.0}
     STARTEYES=${3:-0.0} #${3:--8.0}
-    AMPLEYES=${4:-20.0} #${4:--13.0}
+    AMPLEYES=${4:--20.0} #${4:--13.0}
+
     #follow_draw_wall_right $STARTEYES $AMPLEYES
     #draw_wall_wrist_right $STARTLEFT $AMPLLEFT
-    fix_point $DRAW_TIME 0.0274725 0.021978 18.0 0.043956 $STARTEYES 12.0
-    draw_point_left $STARTLEFT
+
+    #fix_point $DRAW_TIME 0.0274725 0.021978 18.0 0.043956 $STARTEYES 12.0
+    #draw_point_left $STARTLEFT
+    #TREACT=$(bc <<< "$DRAW_TIME*3")
+    #sleep $TREACT
+    #follow_draw_line_left $STARTEYES $AMPLEYES
+    #draw_line_left $STARTLEFT $AMPLLEFT
+
+    fix_point $DRAW_TIME 0.0274725 0.021978 -18.0 0.043956 $STARTEYES 12.0
+    draw_point_right $STARTLEFT
     TREACT=$(bc <<< "$DRAW_TIME*3")
+    echo "Treact:" $TREACT
     sleep $TREACT
-    follow_draw_line_left $STARTEYES $AMPLEYES
-    draw_line_left $STARTLEFT $AMPLLEFT
+    follow_draw_line_right $STARTEYES $AMPLEYES
+    draw_line_right $STARTLEFT $AMPLLEFT
 }
 
 perform_15_21() {
     TIME=${1:-1.5}
     NREP=${2:-2}
-    START=${3:-45.0}
-    AMPL=${4:-10.0}
+    START=${3:-55.0}
+    AMPL=${4:-20.0}
     imitate_robot $TIME $NREP $START $AMPL
 }
 
