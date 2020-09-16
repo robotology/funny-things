@@ -31,6 +31,18 @@ DRAW_TIME=1.5
 #######################################################################################
 # HELPER FUNCTIONS
 #######################################################################################
+start_breathers() {
+    echo "start" | yarp rpc /iCubBreatherHead/rpc:i
+    echo "start" | yarp rpc /iCubBreatherLeft/rpc:i
+    echo "start" | yarp rpc /iCubBreatherRight/rpc:i
+}
+
+stop_breathers() {
+    echo "stop" | yarp rpc /iCubBreatherHead/rpc:i
+    echo "stop" | yarp rpc /iCubBreatherLeft/rpc:i
+    echo "stop" | yarp rpc /iCubBreatherRight/rpc:i
+}
+
 speak() {
     echo "\"$1\"" | yarp write ... /iSpeak
 }
@@ -451,16 +463,67 @@ draw_wall_no_wrist_left() {
     echo "ctpq time $DRAW_TIME off 0 pos (-80.1648 $ENDARM -5.31495 52.7582 0.000353772 0 -0.0549451 8.28121 22.268 30 70.9092 35.9978 57.7237 68.3248 28.1038 84.9615)" | yarp rpc /ctpservice/left_arm/rpc
 }
 
-move_trex_left() {
-    echo "ctpq time 1.0 off 0 pos (-82.2747 60 60.7949 23.6593 -26 1.01099 -0.142857 3.23071 15.743 22.6271 57.5276 5.74115 79.9459 33.7913 50.8634 59.7582)" | yarp rpc /ctpservice/left_arm/rpc
-    echo "ctpq time 1.0 off 0 pos (-82.2747 55 60.9708 23.6593 14.3996 1.01099 0.912088 3.83677 15.2931 23.55 56.081 6.12414 79.9459 33.424 47.6629 56.9127)" | yarp rpc /ctpservice/left_arm/rpc
-    echo "ctpq time 1.0 off 0 pos (-82.2747 50 60.9708 23.6593 -6 1.01099 0.912088 3.83677 15.2931 23.55 56.081 6.12414 79.9459 33.424 47.6629 56.9127)" | yarp rpc /ctpservice/left_arm/rpc
-    echo "ctpq time 1.0 off 0 pos (-82.2747 45 60.9708 23.6593 10 1.01099 0.912088 3.83677 15.2931 23.55 56.081 6.12414 79.9459 33.424 47.6629 56.9127)" | yarp rpc /ctpservice/left_arm/rpc
-    echo "ctpq time 1.0 off 0 pos (-82.2747 40 60.9708 23.6593 -11 1.01099 0.912088 3.83677 15.2931 23.55 56.081 6.12414 79.9459 33.424 47.6629 56.9127)" | yarp rpc /ctpservice/left_arm/rpc
-    echo "ctpq time 1.0 off 0 pos (-82.2747 35 60.9708 23.6593 7 1.01099 0.912088 3.83677 15.2931 23.55 56.081 6.12414 79.9459 33.424 47.6629 56.9127)" | yarp rpc /ctpservice/left_arm/rpc
-    echo "ctpq time 1.0 off 0 pos (-82.2747 30 60.9708 23.6593 -9 1.01099 0.912088 3.83677 15.2931 23.55 56.081 6.12414 79.9459 33.424 47.6629 56.9127)" | yarp rpc /ctpservice/left_arm/rpc
-    echo "ctpq time 1.0 off 0 pos (-82.2747 25 60.9708 23.6593 5 1.01099 0.912088 3.83677 15.2931 23.55 56.081 6.12414 79.9459 33.424 47.6629 56.9127)" | yarp rpc /ctpservice/left_arm/rpc
-    echo "ctpq time 1.0 off 0 pos (-82.2747 20 60.9708 23.6593 -7 1.01099 0.912088 3.83677 15.2931 23.55 56.081 6.12414 79.9459 33.424 47.6629 56.9127)" | yarp rpc /ctpservice/left_arm/rpc
+open_trex_left() {
+    echo "ctpq time 3.0 off 7 pos (15.0 70.0 20.0 17.0 10.0 13.5 10.0 13.0 5.0)" | yarp rpc /ctpservice/left_arm/rpc
+}
+
+home_left_table_side() {
+    echo "ctpq time 3.0 off 2 pos (15.6)" | yarp rpc /ctpservice/torso/rpc
+    echo "ctpq time 3.0 off 0 pos ($1 55 60.707 51.8791 -31.1995 12.5275 8.102 14.9479 70.5299 17.5509 15.213 9.95409 12.4995 9.54445 11.7454 5.28667)" | yarp rpc /ctpservice/left_arm/rpc
+    fix_point 3.0 -29.4 -12.4 20.9 -10.8 0.0 5.0
+    move_eyelids "S50"
+}
+
+home_left_table_top() {
+    echo "ctpq time 3.0 off 2 pos (15.6)" | yarp rpc /ctpservice/torso/rpc
+    echo "ctpq time 3.0 off 0 pos (-52.7 55.0 60.7949 52.85 0.0 13.0 0.032967 15.0 45.5 20.0 17.0 10.0 13.5 10.0 13.0 5.0)" | yarp rpc /ctpservice/left_arm/rpc
+    fix_point 3.0 -29.4 -12.4 20.9 -10.8 0.0 5.0
+    move_eyelids "S50"
+}
+
+grasp_trex_left() {
+    echo "ctpq time 3.0 off 7 pos (3.23071 70.0 46.8 81.6 54.0 112.4 60.3 83.2 80.0)" | yarp rpc /ctpservice/left_arm/rpc
+}
+
+follow_trex_left() {
+    echo "ctpq time $2 off 0 pos ($1 55 60.707 51.8791 -31.1995 12.5275 8.102 3.23071 70.0 46.8 81.6 54.0 112.4 60.3 83.2 80.0)" | yarp rpc /ctpservice/left_arm/rpc
+    fix_point $2 -29.4 -12.4 20.9 -10.8 0.0 5.0
+    sleep $2
+
+    echo "ctpq time $2 off 0 pos ($1 50 60.707 51.8791 -13.2 12.5275 8.102 3.23071 70.0 46.8 81.6 54.0 112.4 60.3 83.2 80.0)" | yarp rpc /ctpservice/left_arm/rpc
+    fix_point $2 -29.4 4.76923 18.0 -10.8 0.0 5.0
+    sleep $2
+    
+    echo "ctpq time $2 off 0 pos ($1 50 60.707 51.8791 14.2 12.5275 8.102 3.23071 70.0 46.8 81.6 54.0 112.4 60.3 83.2 80.0)" | yarp rpc /ctpservice/left_arm/rpc
+    sleep $2
+    
+    echo "ctpq time $2 off 0 pos ($1 45 60.707 51.8791 -7.0 12.5275 8.102 3.23071 70.0 46.8 81.6 54.0 112.4 60.3 83.2 80.0)" | yarp rpc /ctpservice/left_arm/rpc
+    fix_point $2 -29.4 -5.16484 16.0 -10.8 0.0 5.0
+    sleep $2
+
+    echo "ctpq time $2 off 0 pos ($1 45 60.707 51.8791 9.6 12.5275 8.102 3.23071 70.0 46.8 81.6 54.0 112.4 60.3 83.2 80.0)" | yarp rpc /ctpservice/left_arm/rpc
+    sleep $2
+    open_eyes
+ 
+    echo "ctpq time $2 off 0 pos ($1 40 60.707 51.8791 -19.6 12.5275 8.102 3.23071 70.0 46.8 81.6 54.0 112.4 60.3 83.2 80.0)" | yarp rpc /ctpservice/left_arm/rpc
+    fix_point $2 -29.4 4.76923 15.0 -10.8 0.0 5.0
+    sleep $2
+
+    echo "ctpq time $2 off 0 pos ($1 40 60.707 51.8791 4.8 12.5275 8.102 3.23071 70.0 46.8 81.6 54.0 112.4 60.3 83.2 80.0)" | yarp rpc /ctpservice/left_arm/rpc
+    sleep $2
+
+    echo "ctpq time $2 off 0 pos ($1 35 60.707 51.8791 -14.8 12.5275 8.102 3.23071 70.0 46.8 81.6 54.0 112.4 60.3 83.2 80.0)" | yarp rpc /ctpservice/left_arm/rpc
+    fix_point $2 -29.4 -4.76923 11.95 -10.8 0.0 5.0
+    sleep $2
+
+    echo "ctpq time $2 off 0 pos ($1 35 60.707 51.8791 4.8 12.5275 8.102 3.23071 70.0 46.8 81.6 54.0 112.4 60.3 83.2 80.0)" | yarp rpc /ctpservice/left_arm/rpc
+    sleep $2
+
+    echo "ctpq time $2 off 0 pos ($1 30 60.707 51.8791 6.0 12.5275 8.102 3.23071 70.0 46.8 81.6 54.0 112.4 60.3 83.2 80.0)" | yarp rpc /ctpservice/left_arm/rpc
+    fix_point $2 -29.4 8.4 4.9 -10.8 0.0 5.0
+    sleep $2
+
+    echo "ctpq time $2 off 0 pos ($1 30 60.707 51.8791 -14.8 12.5275 8.102 3.23071 70.0 46.8 81.6 54.0 112.4 60.3 83.2 80.0)" | yarp rpc /ctpservice/left_arm/rpc
 }
 
 imitate_robot() {
@@ -500,6 +563,10 @@ home_head() {
     echo "ctpq time 2.0 off 0 pos (0.0 0.0 0.0 0.0 0.0 5.0)"  | yarp rpc /ctpservice/head/rpc
 }
 
+home_torso() {
+    echo "ctpq time 3.0 off 0 pos (0.0 0.0 0.0)"  | yarp rpc /ctpservice/torso/rpc
+}
+
 home_left_arm() {
     echo "ctpq time $1 off 0 pos (-29.5 30.0 0.0 44.5 0.0 0.0 0.0 15.0 20.0 20.0 17.0 10.0 13.5 10.0 13.0 5.0)" | yarp rpc /ctpservice/left_arm/rpc
 }
@@ -513,6 +580,7 @@ home_all() {
     home_left_arm 3.0
     home_right_arm 3.0
     home_head
+    home_torso
     #neutral
     open_eyes
 }
@@ -682,6 +750,30 @@ perform_15_18() {
     sleep $TREACT
     follow_draw_line_right $STARTEYES $AMPLEYES
     draw_line_right $STARTLEFT $AMPLLEFT
+}
+
+perform_15_20_peluche() {
+    STARTHEIGHT=${1:--50.6} 
+    TARM=${2:-1.0}
+    EYECLOSE=${3:-S50}
+    home_left_table_side $STARTHEIGHT
+    sleep 3.0
+    grasp_trex_left
+    sleep 4.0
+    follow_trex_left $STARTHEIGHT $TARM $EYECLOSE
+}
+
+perform_15_20_toy() {
+    STARTHEIGHT=${1:--52.7}
+    OFFSET=$(bc <<< "$STARTHEIGHT - 8")
+    echo $STARTHEIGHT $OFFSET
+    TARM=${2:-1.0}
+    EYECLOSE=${3:-S50}
+    home_left_table_top $STARTHEIGHT 
+    sleep 3.0
+    grasp_trex_left
+    sleep 3.0
+    follow_trex_left $OFFSET $TARM $EYECLOSE
 }
 
 perform_15_21() {

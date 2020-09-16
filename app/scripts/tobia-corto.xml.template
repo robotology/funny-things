@@ -32,7 +32,31 @@
     </module>
     <module>
         <name>ctpService</name>
+        <parameters>--robot icub --part torso</parameters>
+        <node>icub21</node>
+    </module>
+    <module>
+        <name>ctpService</name>
         <parameters>--robot icub --part head</parameters>
+        <node>icub21</node>
+    </module>
+
+    <!-- Breathers -->
+    <module>
+        <name>iCubBreather</name>
+        <parameters>--name iCubBreatherHead --part head</parameters>
+        <node>icub21</node>
+    </module>
+
+    <module>
+        <name>iCubBreather</name>
+        <parameters>--name iCubBreatherLeft --part left_arm</parameters>
+        <node>icub21</node>
+    </module>
+
+    <module>
+        <name>iCubBreather</name>
+        <parameters>--name iCubBreatherRight --part right_arm</parameters>
         <node>icub21</node>
     </module>
 
