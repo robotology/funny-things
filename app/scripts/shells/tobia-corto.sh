@@ -243,6 +243,150 @@ follow_draw_line_right() {
     fix_point $DRAW_TIME 0.0274725 0.021978 -18.0 0.043956 $ENDEYE 10.0	
 }
 
+choreography() {
+    TEMPO=${1:-0.834}
+    ARM=${2:-"left_arm"}
+    OBSERVE=${3:-1.5}
+    case "$ARM" in
+    "left_arm") YAWTOARM=15 ;;
+    *) YAWTOARM=-15 ;;
+    esac
+    TOWAIT=$(bc <<< "$OBSERVE * 3")
+
+    # ARM settings
+    SHLDSPEED=20
+    ELBSPEED=26
+    SHLDRANGE=$(bc <<< "$SHLDSPEED * $TEMPO")
+    SHLDMIDDLE=-10.0
+    SHLDSTART=$(bc <<< "$SHLDMIDDLE - $SHLDRANGE")
+    SHLDEND=$(bc <<< "$SHLDMIDDLE + $SHLDRANGE")
+    ELBRANGE=$(bc <<< "$ELBSPEED * $TEMPO")
+    ELBMIDDLE=50.0
+    ELBEND=$(bc <<< "$ELBMIDDLE + $ELBRANGE")
+
+    #Head settings
+    YAWSPEED=20
+    PITCHSPEED=20
+    YAWRANGE=$(bc <<< "$YAWSPEED * $TEMPO")
+    YAWMIDDLE=0
+    YAW1=$(bc <<< "$YAWMIDDLE - $YAWRANGE")
+    YAW2=$(bc <<< "$YAWMIDDLE + $YAWRANGE")
+    case "$ARM" in
+    "left_arm") YAWSTART=$YAW1 ;;
+    *) YAWSTART=$YAW2 ;;
+    esac
+    case "$ARM" in
+    "left_arm") YAWEND=$YAW2 ;;
+    *) YAWEND=$YAW1 ;;
+    esac
+    PITCHRANGE=$(bc <<< "$PITCHSPEED * $TEMPO")
+    PITCHMIDDLE=-5.0
+    PITCHEND=$(bc <<< "$PITCHMIDDLE + $PITCHRANGE")
+
+    #Torso settings
+    TYAWSPEED=15
+    TYAWRANGE=$(bc <<< "$TYAWSPEED * $TEMPO")
+    TYAWMIDDLE=0
+    TYAW1=$(bc <<< "$TYAWMIDDLE - $TYAWRANGE")
+    TYAW2=$(bc <<< "$TYAWMIDDLE + $TYAWRANGE")
+    case "$ARM" in
+    "left_arm") TYAWSTART=$TYAW1 ;;
+    *) TYAWSTART=$TYAW2 ;;
+    esac
+    case "$ARM" in
+    "left_arm") TYAWEND=$TYAW2 ;;
+    *) TYAWEND=$TYAW1 ;;
+    esac
+
+    echo "ctpq time $OBSERVE off 0 pos (10 0 0 0 0 0)"  | yarp rpc /ctpservice/head/rpc
+    echo "ctpq time $OBSERVE off 0 pos (0 0 -10 0 0 0)"  | yarp rpc /ctpservice/head/rpc
+    echo "ctpq time $OBSERVE off 0 pos (-10 0 $YAWTOARM 0 0 0)"  | yarp rpc /ctpservice/head/rpc
+    sleep $TOWAIT
+
+    echo "ctpq time $TEMPO off 0 pos (-25 20 $SHLDSTART $ELBEND 0 0 0 18 21.5 25 69.5 8 22 65.5 129 172.5)" | yarp rpc /ctpservice/$ARM/rpc
+    sleep $TEMPO
+    echo "ctpq time $TEMPO off 0 pos (-25 20 $SHLDMIDDLE $ELBMIDDLE 0 0 0 18 21.5 25 69.5 8 22 65.5 129 172.5)" | yarp rpc /ctpservice/$ARM/rpc
+    sleep $TEMPO
+    echo "ctpq time $TEMPO off 0 pos (-25 20 $SHLDEND $ELBEND 0 0 0 18 21.5 25 69.5 8 22 65.5 129 172.5)" | yarp rpc /ctpservice/$ARM/rpc
+    sleep $TEMPO
+    echo "ctpq time $TEMPO off 0 pos (-25 20 $SHLDMIDDLE $ELBMIDDLE 0 0 0 18 21.5 25 69.5 8 22 65.5 129 172.5)" | yarp rpc /ctpservice/$ARM/rpc
+    sleep $TEMPO
+
+    echo "ctpq time $TEMPO off 0 pos (-25 20 $SHLDSTART $ELBEND 0 0 0 18 21.5 25 69.5 8 22 65.5 129 172.5)" | yarp rpc /ctpservice/$ARM/rpc
+    sleep $TEMPO
+    echo "ctpq time $TEMPO off 0 pos (-25 20 $SHLDMIDDLE $ELBMIDDLE 0 0 0 18 21.5 25 69.5 8 22 65.5 129 172.5)" | yarp rpc /ctpservice/$ARM/rpc
+    sleep $TEMPO
+    echo "ctpq time $TEMPO off 0 pos (-25 20 $SHLDEND $ELBEND 0 0 0 18 21.5 25 69.5 8 22 65.5 129 172.5)" | yarp rpc /ctpservice/$ARM/rpc
+    echo "ctpq time $TEMPO off 0 pos (0 0 0 0 0 0)"  | yarp rpc /ctpservice/head/rpc
+    sleep $TEMPO
+    echo "ctpq time $TEMPO off 0 pos (-25 20 $SHLDMIDDLE $ELBMIDDLE 0 0 0 18 21.5 25 69.5 8 22 65.5 129 172.5)" | yarp rpc /ctpservice/$ARM/rpc
+    sleep $TEMPO
+
+    echo "ctpq time $TEMPO off 0 pos (-25 20 $SHLDSTART $ELBEND 0 0 0 18 21.5 25 69.5 8 22 65.5 129 172.5)" | yarp rpc /ctpservice/$ARM/rpc
+    echo "ctpq time $TEMPO off 0 pos ($PITCHEND 0 $YAWSTART 0 0 0)"  | yarp rpc /ctpservice/head/rpc
+    sleep $TEMPO
+    echo "ctpq time $TEMPO off 0 pos (-25 20 $SHLDMIDDLE $ELBMIDDLE 0 0 0 18 21.5 25 69.5 8 22 65.5 129 172.5)" | yarp rpc /ctpservice/$ARM/rpc
+    echo "ctpq time $TEMPO off 0 pos ($PITCHMIDDLE 0 $YAWMIDDLE 0 0 0)"  | yarp rpc /ctpservice/head/rpc
+    sleep $TEMPO
+    echo "ctpq time $TEMPO off 0 pos (-25 20 $SHLDEND $ELBEND 0 0 0 18 21.5 25 69.5 8 22 65.5 129 172.5)" | yarp rpc /ctpservice/$ARM/rpc
+    echo "ctpq time $TEMPO off 0 pos ($PITCHEND 0 $YAWEND 0 0 0)"  | yarp rpc /ctpservice/head/rpc
+    sleep $TEMPO
+    echo "ctpq time $TEMPO off 0 pos (-25 20 $SHLDMIDDLE $ELBMIDDLE 0 0 0 18 21.5 25 69.5 8 22 65.5 129 172.5)" | yarp rpc /ctpservice/$ARM/rpc
+    echo "ctpq time $TEMPO off 0 pos ($PITCHMIDDLE 0 $YAWMIDDLE 0 0 0)"  | yarp rpc /ctpservice/head/rpc
+    sleep $TEMPO
+
+    echo "ctpq time $TEMPO off 0 pos (-25 20 $SHLDSTART $ELBEND 0 0 0 18 21.5 25 69.5 8 22 65.5 129 172.5)" | yarp rpc /ctpservice/$ARM/rpc
+    echo "ctpq time $TEMPO off 0 pos ($PITCHEND 0 $YAWSTART 0 0 0)"  | yarp rpc /ctpservice/head/rpc
+    echo "ctpq time $TEMPO off 0 pos ($TYAWSTART 0 0)"  | yarp rpc /ctpservice/torso/rpc
+    sleep $TEMPO
+    echo "ctpq time $TEMPO off 0 pos (-25 20 $SHLDMIDDLE $ELBMIDDLE 0 0 0 18 21.5 25 69.5 8 22 65.5 129 172.5)" | yarp rpc /ctpservice/$ARM/rpc
+    echo "ctpq time $TEMPO off 0 pos ($PITCHMIDDLE 0 $YAWMIDDLE 0 0 0)"  | yarp rpc /ctpservice/head/rpc
+    echo "ctpq time $TEMPO off 0 pos ($TYAWMIDDLE 0 0)"  | yarp rpc /ctpservice/torso/rpc
+    sleep $TEMPO
+    echo "ctpq time $TEMPO off 0 pos (-25 20 $SHLDEND $ELBEND 0 0 0 18 21.5 25 69.5 8 22 65.5 129 172.5)" | yarp rpc /ctpservice/$ARM/rpc
+    echo "ctpq time $TEMPO off 0 pos ($PITCHEND 0 $YAWEND 0 0 0)"  | yarp rpc /ctpservice/head/rpc
+    echo "ctpq time $TEMPO off 0 pos ($TYAWEND 0 0)"  | yarp rpc /ctpservice/torso/rpc
+    sleep $TEMPO
+    echo "ctpq time $TEMPO off 0 pos (-25 20 $SHLDMIDDLE $ELBMIDDLE 0 0 0 18 21.5 25 69.5 8 22 65.5 129 172.5)" | yarp rpc /ctpservice/$ARM/rpc
+    echo "ctpq time $TEMPO off 0 pos ($PITCHMIDDLE 0 $YAWMIDDLE 0 0 0)"  | yarp rpc /ctpservice/head/rpc
+    echo "ctpq time $TEMPO off 0 pos ($TYAWMIDDLE 0 0)"  | yarp rpc /ctpservice/torso/rpc
+    sleep $TEMPO
+
+    echo "ctpq time $TEMPO off 0 pos (-25 20 $SHLDSTART $ELBEND 0 0 0 18 21.5 25 69.5 8 22 65.5 129 172.5)" | yarp rpc /ctpservice/$ARM/rpc
+    echo "ctpq time $TEMPO off 0 pos ($PITCHEND 0 $YAWSTART 0 0 0)"  | yarp rpc /ctpservice/head/rpc
+    echo "ctpq time $TEMPO off 0 pos ($TYAWSTART 0 0)"  | yarp rpc /ctpservice/torso/rpc
+    sleep $TEMPO
+    echo "ctpq time $TEMPO off 0 pos (-25 20 $SHLDMIDDLE $ELBMIDDLE 0 0 0 18 21.5 25 69.5 8 22 65.5 129 172.5)" | yarp rpc /ctpservice/$ARM/rpc
+    echo "ctpq time $TEMPO off 0 pos ($PITCHMIDDLE 0 $YAWMIDDLE 0 0 0)"  | yarp rpc /ctpservice/head/rpc
+    echo "ctpq time $TEMPO off 0 pos ($TYAWMIDDLE 0 0)"  | yarp rpc /ctpservice/torso/rpc
+    sleep $TEMPO
+    echo "ctpq time $TEMPO off 0 pos (-25 20 $SHLDEND $ELBEND 0 0 0 18 21.5 25 69.5 8 22 65.5 129 172.5)" | yarp rpc /ctpservice/$ARM/rpc
+    echo "ctpq time $TEMPO off 0 pos ($PITCHEND 0 $YAWEND 0 0 0)"  | yarp rpc /ctpservice/head/rpc
+    echo "ctpq time $TEMPO off 0 pos ($TYAWEND 0 0)"  | yarp rpc /ctpservice/torso/rpc
+    sleep $TEMPO
+    echo "ctpq time $TEMPO off 0 pos (-25 20 $SHLDMIDDLE $ELBMIDDLE 0 0 0 18 21.5 25 69.5 8 22 65.5 129 172.5)" | yarp rpc /ctpservice/$ARM/rpc
+    echo "ctpq time $TEMPO off 0 pos ($PITCHMIDDLE 0 $YAWMIDDLE 0 0 0)"  | yarp rpc /ctpservice/head/rpc
+    echo "ctpq time $TEMPO off 0 pos ($TYAWMIDDLE 0 0)"  | yarp rpc /ctpservice/torso/rpc
+    sleep $TEMPO
+
+    echo "ctpq time $TEMPO off 0 pos (-25 20 $SHLDSTART $ELBEND 0 0 0 18 21.5 25 69.5 8 22 65.5 129 172.5)" | yarp rpc /ctpservice/$ARM/rpc
+    echo "ctpq time $TEMPO off 0 pos ($PITCHEND 0 $YAWSTART 0 0 0)"  | yarp rpc /ctpservice/head/rpc
+    echo "ctpq time $TEMPO off 0 pos ($TYAWSTART 0 0)"  | yarp rpc /ctpservice/torso/rpc
+    sleep $TEMPO
+    echo "ctpq time $TEMPO off 0 pos (-25 20 $SHLDMIDDLE $ELBMIDDLE 0 0 0 18 21.5 25 69.5 8 22 65.5 129 172.5)" | yarp rpc /ctpservice/$ARM/rpc
+    echo "ctpq time $TEMPO off 0 pos ($PITCHMIDDLE 0 $YAWMIDDLE 0 0 0)"  | yarp rpc /ctpservice/head/rpc
+    echo "ctpq time $TEMPO off 0 pos ($TYAWMIDDLE 0 0)"  | yarp rpc /ctpservice/torso/rpc
+    sleep $TEMPO
+    echo "ctpq time $TEMPO off 0 pos (-25 20 $SHLDEND $ELBEND 0 0 0 18 21.5 25 69.5 8 22 65.5 129 172.5)" | yarp rpc /ctpservice/$ARM/rpc
+    echo "ctpq time $TEMPO off 0 pos ($PITCHEND 0 $YAWEND 0 0 0)"  | yarp rpc /ctpservice/head/rpc
+    echo "ctpq time $TEMPO off 0 pos ($TYAWEND 0 0)"  | yarp rpc /ctpservice/torso/rpc
+    sleep $TEMPO
+    echo "ctpq time $TEMPO off 0 pos (-25 20 $SHLDMIDDLE $ELBMIDDLE 0 0 0 18 21.5 25 69.5 8 22 65.5 129 172.5)" | yarp rpc /ctpservice/$ARM/rpc
+    echo "ctpq time $TEMPO off 0 pos ($PITCHMIDDLE 0 $YAWMIDDLE 0 0 0)"  | yarp rpc /ctpservice/head/rpc
+    echo "ctpq time $TEMPO off 0 pos ($TYAWMIDDLE 0 0)"  | yarp rpc /ctpservice/torso/rpc
+    sleep $TEMPO
+}
+
 set_speed_eyes() {
     echo "set Teyes $1" | yarp rpc /iKinGazeCtrl/rpc
 }
