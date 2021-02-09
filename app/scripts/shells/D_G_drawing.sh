@@ -1,0 +1,745 @@
+#!/bin/bash
+#######################################################################################
+# FLATWOKEN ICON THEME CONFIGURATION SCRIPT
+# Copyright: (C) 2014 FlatWoken icons
+# Author:  Alessandro Roncone
+# email:   alecive87@gmail.com
+# Permission is granted to copy, distribute, and/or modify this program
+# under the terms of the GNU General Public License, version 2 or any
+# later version published by the Free Software Foundation.
+#  *
+# A copy of the license can be found at
+# http://www.robotcub.org/icub/license/gpl.txt
+#  *
+# This program is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
+# Public License for more details
+#######################################################################################
+
+
+#######################################################################################
+# HELP
+#######################################################################################
+usage() {
+cat << EOF
+***************************************************************************************
+DEA SCRIPTING
+Author:  Vadim Tikhanoff   <vadim.tikhanoff@iit.it>
+         Valentina Vasco   <valentina.vasco@iit.it>
+
+This script scripts through the commands available for the DeA Kids videos.
+
+USAGE:
+        $0 options
+
+***************************************************************************************
+OPTIONS:
+
+***************************************************************************************
+EXAMPLE USAGE:
+
+***************************************************************************************
+EOF
+}
+
+#######################################################################################
+# HELPER FUNCTIONS
+#######################################################################################
+gaze() {
+    echo "$1" | yarp write ... /gaze
+}
+
+speak() {
+    echo "\"$1\"" | yarp write ... /iSpeak
+}
+
+blink() {
+    echo "blink" | yarp rpc /iCubBlinker/rpc
+    sleep 0.5
+}
+
+breathers() {
+    # echo "$1"  | yarp rpc /iCubBlinker/rpc
+    # echo "$1" | yarp rpc /iCubBreatherH/rpc:i
+    echo "$1" | yarp rpc /iCubBreatherRA/rpc:i
+    sleep 0.4
+    echo "$1" | yarp rpc /iCubBreatherLA/rpc:i
+}
+
+breathersL() {
+   echo "$1" | yarp rpc /iCubBreatherLA/rpc:i
+}
+
+breathersR() {
+   echo "$1" | yarp rpc /iCubBreatherRA/rpc:i
+}
+
+stop_breathers() {
+    breathers "stop"
+}
+
+start_breathers() {
+    breathers "start"
+}
+
+go__helperL() {
+    # This is with the arms close to the legs
+     echo "ctpq time $1 off 0 pos (-24.7695	17.9352	0.203248	29.11	18	0	-0.0439454	15.3864	29.8334	1.95557	11.7389	0.351563	7.43227	2.46644	1.06018	2.38404	)" | yarp rpc /ctpservice/left_arm/rpc
+}
+
+go__helperR() {
+    # This is with the arms close to the legs
+     echo "ctpq time $1 off 0 pos (-21.7 24.1535 23.5987	28.1361	-6.7912	0	-4.42201	18.1385	28.9106	0	5.46571	0.373536	1.66993	0.379029	0	-0.422975	)" | yarp rpc /ctpservice/right_arm/rpc
+}
+
+go__helper() {
+    go__helperR $1
+    go__helperL $1
+}
+
+go_() {
+    #breathers "stop"
+    sleep 1.0
+    go__helper 2.0
+    sleep 3.0
+    #breathers "start"
+}
+
+greet_with_right_thumb_up() {
+    breathers "stop"
+    echo "ctpq time 1.5 off 0 pos (-44.0 36.0 54.0 91.0 -45.0 0.0 12.0 21.0 14.0 0.0 0.0 59.0 140.0 80.0 125.0 210.0)" | yarp rpc /ctpservice/right_arm/rpc
+    sleep 1.5 && smile && sleep 1.5
+    go_
+    breathers "start"
+}
+
+greet_with_left_thumb_up() {
+    breathers "stop"
+    echo "ctpq time 1.5 off 0 pos (-44.0 36.0 54.0 91.0 -45.0 0.0 12.0 21.0 14.0 0.0 0.0 59.0 140.0 80.0 125.0 210.0)" | yarp rpc /ctpservice/left_arm/rpc
+    sleep 1.5 && smile && sleep 1.5
+    go_
+    breathers "start"
+}
+
+smile() {
+    echo "set all hap" | yarp rpc /icub/face/emotions/in
+}
+
+surprised() {
+    echo "set mou sur" | yarp rpc /icub/face/emotions/in
+    echo "set leb sur" | yarp rpc /icub/face/emotions/in
+    echo "set reb sur" | yarp rpc /icub/face/emotions/in
+}
+
+sad() {
+    echo "set mou sad" | yarp rpc /icub/face/emotions/in
+    echo "set leb sad" | yarp rpc /icub/face/emotions/in
+    echo "set reb sad" | yarp rpc /icub/face/emotions/in
+}
+
+cun() {
+    echo "set reb cun" | yarp rpc /icub/face/emotions/in
+    echo "set leb cun" | yarp rpc /icub/face/emotions/in
+}
+
+angry() {
+    echo "set all ang" | yarp rpc /icub/face/emotions/in
+}
+
+evil() {
+    echo "set all evi" | yarp rpc /icub/face/emotions/in
+}
+
+wait_till_quiet() {
+    sleep 0.3
+    isSpeaking=$(echo "stat" | yarp rpc /iSpeak/rpc)
+    while [ "$isSpeaking" == "Response: speaking" ]; do
+        isSpeaking=$(echo "stat" | yarp rpc /iSpeak/rpc)
+        sleep 0.1
+        # echo $isSpeaking
+    done
+    echo "I'm not speaking any more :)"
+    echo $isSpeaking
+}
+
+victory() {
+    echo "ctpq time 1.0 off 7 pos                                       (18.0 40.0 50.0 167.0 0.0 0.0 0.0 0.0 222.0)" | yarp rpc /ctpservice/$1/rpc
+    echo "ctpq time 2.0 off 0 pos (-57.0 32.0 -1.0 88.0 56.0 -30.0 -11.0 18.0 40.0 50.0 167.0 0.0 0.0 0.0 0.0 222.0)" | yarp rpc /ctpservice/$1/rpc
+}
+
+point_eye() {
+    echo "ctpq time 2 off 0 pos (-50.0 33.0 45.0 95.0 -58.0 24.0 -11.0 10.0 28.0 11.0 78.0 32.0 15.0 60.0 130.0 170.0)" | yarp rpc /ctpservice/left_arm/rpc
+    sleep 3.0 && blink && blink
+    go_
+}
+
+point_ears() {
+    breathers "stop"
+
+    echo "ctpq time 1 off 0 pos (-10.0 8.0 -37.0 7.0 -21.0 1.0)" | yarp rpc /ctpservice/head/rpc
+    echo "ctpq time 2 off 0 pos (-18.0 59.0 -30.0 105.0 -22.0 28.0 -6.0 6.0 55.0 30.0 33.0 4.0 9.0 58.0 113.0 192.0)" | yarp rpc /ctpservice/left_arm/rpc
+    sleep 2.0
+
+    echo "ctpq time 2 off 0 pos (-10.0 -8.0 37.0 7.0 -21.0 1.0)" | yarp rpc /ctpservice/head/rpc
+    echo "ctpq time 2 off 0 pos (-18.0 59.0 -30.0 105.0 -22.0 28.0 -6.0 6.0 55.0 30.0 33.0 4.0 9.0 58.0 113.0 192.0)" | yarp rpc /ctpservice/right_arm/rpc
+
+    echo "ctpq time 2 off 0 pos (-0.0 0.0 -0.0 0.0 -0.0 0.0)" | yarp rpc /ctpservice/head/rpc
+    go__helperL 2.0
+    go__helperR 2.0
+
+    breathers "start"
+}
+
+point_arms() {
+    breathers "stop"
+
+    echo "ctpq time 2 off 0 pos (-60.0 32.0 80.0 85.0 -13.0 -3.0 -8.0 15.0 37.0 47.0 52.0 9.0 1.0 42.0 106.0 250.0)" | yarp rpc /ctpservice/right_arm/rpc
+    echo "ctpq time 2 off 0 pos (-64.0 43.0 6.0 52.0 -28.0 -0.0 -7.0 15.0 30.0 7.0 0.0 4.0 0.0 2.0 8.0 43.0)" | yarp rpc /ctpservice/left_arm/rpc
+    sleep 3.0
+    go__helperL 2.0
+    go__helperR 2.0
+
+    breathers "start"
+}
+
+fonzie() {
+    echo "ctpq time 2.0 off 0 pos ( -3.0 57.0   3.0 106.0 -9.0 -8.0 -10.0 22.0 0.0 0.0 20.0 62.0 146.0 90.0 130.0 250.0)" | yarp rpc /ctpservice/right_arm/rpc
+    echo "ctpq time 2.0 off 0 pos ( -3.0 57.0   3.0 106.0 -9.0 -8.0 -10.0 22.0 0.0 0.0 20.0 62.0 146.0 90.0 130.0 250.0)" | yarp rpc /ctpservice/left_arm/rpc
+    sleep 2.5
+    go__helper 2.0
+}
+
+hello_left() {
+    echo "ctpq time 1.5 off 0 pos (-60.0 44.0 -2.0 96.0 53.0 -17.0 -11.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0)" | yarp rpc /ctpservice/left_arm/rpc
+    sleep 2.0
+    echo "ctpq time 0.5 off 0 pos (-60.0 44.0 -2.0 96.0 53.0 -17.0  25.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0)" | yarp rpc /ctpservice/left_arm/rpc
+    echo "ctpq time 0.5 off 0 pos (-60.0 44.0 -2.0 96.0 53.0 -17.0 -11.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0)" | yarp rpc /ctpservice/left_arm/rpc
+    echo "ctpq time 0.5 off 0 pos (-60.0 44.0 -2.0 96.0 53.0 -17.0  25.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0)" | yarp rpc /ctpservice/left_arm/rpc
+    echo "ctpq time 0.5 off 0 pos (-60.0 44.0 -2.0 96.0 53.0 -17.0 -11.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0)" | yarp rpc /ctpservice/left_arm/rpc
+    smile
+    go_ 2.0
+    smile
+}
+
+hello_left_simple() {
+    echo "ctpq time 1.5 off 0 pos (-60.0 44.0 -2.0 96.0 53.0 -17.0 -11.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0)" | yarp rpc /ctpservice/left_arm/rpc
+    smile
+    sleep 2.0
+    go__helperL 2.0
+    smile
+}
+
+hello_right_simple() {
+    echo "ctpq time 1.5 off 0 pos (-60.0 44.0 -2.0 96.0 53.0 -17.0 -11.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0)" | yarp rpc /ctpservice/right_arm/rpc
+    smile
+    sleep 2.0
+    go__helperR 2.0
+    smile
+}
+
+hello_right() {
+    #breathers "stop"
+    echo "ctpq time 1.5 off 0 pos (-60.0 44.0 -2.0 96.0 53.0 -17.0 -11.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0)" | yarp rpc /ctpservice/right_arm/rpc
+    sleep 2.0
+    echo "ctpq time 0.5 off 0 pos (-60.0 44.0 -2.0 96.0 53.0 -17.0  25.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0)" | yarp rpc /ctpservice/right_arm/rpc
+    echo "ctpq time 0.5 off 0 pos (-60.0 44.0 -2.0 96.0 53.0 -17.0 -11.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0)" | yarp rpc /ctpservice/right_arm/rpc
+    echo "ctpq time 0.5 off 0 pos (-60.0 44.0 -2.0 96.0 53.0 -17.0  25.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0)" | yarp rpc /ctpservice/right_arm/rpc
+    echo "ctpq time 0.5 off 0 pos (-60.0 44.0 -2.0 96.0 53.0 -17.0 -11.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0)" | yarp rpc /ctpservice/right_arm/rpc
+    smile
+    go_
+    smile
+    #breathers "start"
+}
+
+hello_both() {
+    #breathers "stop"
+    echo "ctpq time 1.5 off 0 pos (-60.0 44.0 -2.0 96.0 53.0 -17.0 -11.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0)" | yarp rpc /ctpservice/left_arm/rpc
+    echo "ctpq time 1.5 off 0 pos (-60.0 44.0 -2.0 96.0 53.0 -17.0 -11.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0)" | yarp rpc /ctpservice/right_arm/rpc
+    sleep 2.0
+
+    echo "ctpq time 0.5 off 0 pos (-60.0 44.0 -2.0 96.0 53.0 -17.0  25.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0)" | yarp rpc /ctpservice/left_arm/rpc
+    echo "ctpq time 0.5 off 0 pos (-60.0 44.0 -2.0 96.0 53.0 -17.0  25.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0)" | yarp rpc /ctpservice/right_arm/rpc
+    echo "ctpq time 0.5 off 0 pos (-60.0 44.0 -2.0 96.0 53.0 -17.0 -11.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0)" | yarp rpc /ctpservice/left_arm/rpc
+    echo "ctpq time 0.5 off 0 pos (-60.0 44.0 -2.0 96.0 53.0 -17.0 -11.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0)" | yarp rpc /ctpservice/right_arm/rpc
+    echo "ctpq time 0.5 off 0 pos (-60.0 44.0 -2.0 96.0 53.0 -17.0  25.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0)" | yarp rpc /ctpservice/left_arm/rpc
+    echo "ctpq time 0.5 off 0 pos (-60.0 44.0 -2.0 96.0 53.0 -17.0  25.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0)" | yarp rpc /ctpservice/right_arm/rpc
+    echo "ctpq time 0.5 off 0 pos (-60.0 44.0 -2.0 96.0 53.0 -17.0 -11.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0)" | yarp rpc /ctpservice/left_arm/rpc
+    echo "ctpq time 0.5 off 0 pos (-60.0 44.0 -2.0 96.0 53.0 -17.0 -11.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0)" | yarp rpc /ctpservice/right_arm/rpc
+
+    smile
+    go__helper 2.0
+    smile
+    #breathers "start"
+}
+
+show_musles() {
+    #breathers "stop"
+    echo "ctpq time 1.5 off 0 pos (-27.0 78.0 -37.0 33.0 -79.0 0.0 -4.0 26.0 27.0 0.0 29.0 59.0 117.0 87.0 176.0 250.0)" | yarp rpc /ctpservice/right_arm/rpc
+    echo "ctpq time 1.5 off 0 pos (-27.0 78.0 -37.0 33.0 -79.0 0.0 -4.0 26.0 27.0 0.0 29.0 59.0 117.0 87.0 176.0 250.0)" | yarp rpc /ctpservice/left_arm/rpc
+    echo "ctpq time 1.0 off 0 pos (-27.0 78.0 -37.0 93.0 -79.0 0.0 -4.0 26.0 67.0 0.0 99.0 59.0 117.0 87.0 176.0 250.0)" | yarp rpc /ctpservice/right_arm/rpc
+    echo "ctpq time 1.0 off 0 pos (-27.0 78.0 -37.0 93.0 -79.0 0.0 -4.0 26.0 67.0 0.0 99.0 59.0 117.0 87.0 176.0 250.0)" | yarp rpc /ctpservice/left_arm/rpc
+    sleep 3.0
+    smile
+    go__helper 2.0
+    breathers "start"
+}
+
+show_musles_left() {
+    echo "ctpq time 1.5 off 0 pos (-27.0 78.0 -37.0 33.0 -79.0 0.0 -4.0 26.0 27.0 0.0 29.0 59.0 117.0 87.0 176.0 250.0)" | yarp rpc /ctpservice/left_arm/rpc
+    echo "ctpq time 1.0 off 0 pos (-27.0 78.0 -37.0 93.0 -79.0 0.0 -4.0 26.0 67.0 0.0 99.0 59.0 117.0 87.0 176.0 250.0)" | yarp rpc /ctpservice/left_arm/rpc
+    sleep 3.0
+    smile
+    go__helperL 2.0
+}
+
+show_iit() {
+    breathers "stop"
+    echo "ctpq time 1.5 off 0 pos (-27.0 64.0 -30.0 62.0 -58.0 -32.0 4.0 17.0 11.0 21.0 29.0 8.0 9.0 5.0 11.0 1.0)" | yarp rpc /ctpservice/right_arm/rpc
+    echo "ctpq time 1.5 off 0 pos (-27.0 64.0 -30.0 62.0 -58.0 -32.0 4.0 17.0 11.0 21.0 29.0 8.0 9.0 5.0 11.0 1.0)" | yarp rpc /ctpservice/left_arm/rpc
+
+    sleep 3.0
+    smile
+
+    go_
+    breathers "start"
+}
+
+talk_mic() {
+    #breathers "stop"
+    sleep 1.0
+    echo "ctpq time $1 off 0 pos (-47.582418 37.967033 62.062198 107.868132 -32.921661 -12.791209 -0.571429 0.696953 44.352648 14.550271 86.091537 52.4 64.79118 65.749353 62.754529 130.184865)" | yarp rpc /ctpservice/right_arm/rpc
+    sleep 1.0
+    #breathers "start"
+}
+
+look_at_presentatore(){
+gaze "idle"
+gaze "look 30.0 0.0 5.0"
+}
+
+look_at_schermo(){
+gaze "idle"
+gaze "look 45.0 10.0 3.0"
+}
+
+look_at_pubblico(){
+gaze "idle"
+gaze "look -30.0 -10.0 5.0"
+}
+
+look_presentatore(){
+gaze "look-around 30.0 0.0 5.0"
+}
+
+look_schermo(){
+gaze "look-around 45.0 10.0 3.0"
+}
+
+look_pubblico(){
+gaze "look-around -30.0 -10.0 5.0"
+}
+
+look_tavolo(){
+gaze "look 15.0 -10.0 -5.0"
+}
+
+torso_(){
+echo "ctpq time 2 off 0 pos (0 0 0 )" | yarp rpc /ctpservice/torso/rpc
+}
+
+torso_pubblico(){
+echo "ctpq time 2 off 0 pos (-20 0 0 )" | yarp rpc /ctpservice/torso/rpc
+}
+
+torso_presentatore(){
+echo "ctpq time 2 off 0 pos (10 0 0 )" | yarp rpc /ctpservice/torso/rpc
+}
+
+
+draw() {
+   echo "$1" | yarp write ...  /armCtrl/right_arm/xd:i
+}
+
+torso_low(){
+    echo "ctpq time 2 off 0 pos (-4.32862 1.23047 33.4864)" | yarp rpc /ctpservice/torso/rpc
+}
+
+torso_high(){
+    echo "ctpq time 2 off 0 pos (-4.32862 1.23047 22.3243)" | yarp rpc /ctpservice/torso/rpc
+}
+
+torso_right(){
+    echo "ctpq time 2 off 0 pos (13.9527 1.23047 32.4122)" | yarp rpc /ctpservice/torso/rpc
+}
+
+torso_home(){
+echo "ctpq time 2 off 0 pos (0 0 0 )" | yarp rpc /ctpservice/torso/rpc
+}
+
+left_arm_low(){
+    echo "ctpq time 1.5 off 0 pos (-3.90016 69.0492 -7.45974 54.3715 4.0265 -4.30665 -8.87697 13.1232 29.6027 -0.357057 1.62049 0 2.21375 0 0 0.900881)" | yarp rpc /ctpservice/left_arm/rpc
+}
+
+left_arm_high(){
+    echo "ctpq time 1.5 off 0 pos (-27.0 78.0 -37.0 33.0 -79.0 0.0 -4.0 26.0 27.0 0.0 29.0 59.0 117.0 87.0 176.0 250.0)" | yarp rpc /ctpservice/left_arm/rpc
+}
+
+left_arm_right(){
+    echo "ctpq time 1.5 off 0 pos (-27.0 78.0 -37.0 33.0 -79.0 0.0 -4.0 26.0 27.0 0.0 29.0 59.0 117.0 87.0 176.0 250.0)" | yarp rpc /ctpservice/left_arm/rpc
+}
+
+set_up_right_arm(){
+    echo "ctpq time 1.5 off 0 pos (-34.3159 30.0806 0.109864 49.955 0.0164795 0.181275 0.22522 23.3295 30.7783 -3.06519 53.8881 49.0925 58.8869 45.9779 83.2985 140.312)" | yarp rpc /ctpservice/right_arm/rpc
+}
+
+open_right_hand() {
+    echo "ctpq time 2.0 off 7 pos (20.0 30.0 0.0 1.0 1.0 1.0 1.0 1.0 0.0)" | yarp rpc /ctpservice/right_arm/rpc
+}
+
+right_arm_home(){
+   draw "-0.282108698046593331377 0.181726082363135865716 0.0254698106007657451566 -0.0243652369835574283963 -0.867441689747252331344 0.496941898128107961696 3.11038776267348771043"
+}
+
+#######################################################################################
+# SEQUENCE FUNCTIONS
+#######################################################################################
+set_up_hand() {
+    torso_home
+    set_up_right_arm
+    left_arm_low
+}
+
+prepare_part_1() {
+    left_arm_low
+}
+
+start_part_1() {
+    draw "-0.312099692973232367699 0.0323477147963253594543 -0.0259028330966882788799 -0.293717864467345990409 0.86283731061040169763 -0.411389829129684136966 2.57931818061652062823"
+    sleep 1.0
+    torso_low
+}
+
+part_1() {
+    #high left arm drawing
+    draw "-0.312099692973232367699 0.0323477147963253594543 -0.0629028330966882788799 -0.293717864467345990409 0.86283731061040169763 -0.411389829129684136966 2.57931818061652062823"
+    sleep 2.0
+
+    #left shoulder drawing
+    draw "-0.355636830985369190028 0.0388126252091117590615 -0.0631642155600774081181 -0.162058245455364124954 0.88017887051037080326 -0.446119133177469373575 2.60579612694132656259"
+    sleep 2.0
+
+    #go down left  neck / shoulder drawing
+    draw "-0.353578938749672666564 0.0733265228440144745115 -0.069040502935731338785 -0.139080462476080801704 0.864773202310446520436 -0.482518324546513943663 2.60992081676853482364"
+    sleep 2.0
+
+    #left  neck / face drawing
+    draw "-0.386334435421571142921 0.0753170618625696063342 -0.0600025084774475305771 -0.0558197697426994418612 0.889354215875829745563 -0.453798669025990086823 2.68235527666180484374"
+    sleep 2.0
+
+    #up face face drawing
+    draw "-0.386334435421571142921 0.0753170618625696063342 -0.040025084774475305771 -0.0558197697426994418612 0.889354215875829745563 -0.453798669025990086823 2.68235527666180484374"
+}
+
+start_part_2() {
+    torso_high
+    draw "-0.325723724067253908032 0.061830599363296217863 -0.0253764683221865031681 -0.0846392633486617862459 0.850400373120677621763 -0.519283545373823929303 2.80263529378769327138"
+}
+
+part_2() {
+
+    #low left side drawing
+    draw "-0.325723724067253908032 0.061830599363296217863 -0.0753764683221865031681 -0.0846392633486617862459 0.850400373120677621763 -0.519283545373823929303 2.80263529378769327138"
+    sleep 2.0
+
+    #left hip drawing
+    draw "-0.289944036071337554183 0.0851777355197631902417 -0.0759953769297628758395 -0.10751963389291122053 0.839232379285349883169 -0.533037092411574375816 2.54682985772410441783"
+    sleep 2.0
+
+    draw "-0.275501647220710739195 0.0640503941659466184411 -0.0757591226418964505118 -0.201684637552583395648 0.85687107052205269131 -0.474442067567447556264 2.57722785711047386314"
+    sleep 2.0
+
+    draw "-0.210324055274786971825 0.0726375747705533834075 -0.0732430696781040821985 -0.331076573016411412897 0.839284378792964691485 -0.431265619211427697621 2.33134272817010890222"
+    sleep 2.0
+    
+    draw "-0.210324055274786971825 0.0726375747705533834075 -0.0192430696781040821985 -0.331076573016411412897 0.839284378792964691485 -0.431265619211427697621 2.33134272817010890222"
+}
+
+start_part_3() {
+    draw "-0.315723724067253908032 0.11 -0.0192430696781040821985 -0.0846392633486617862459 0.850400373120677621763 -0.519283545373823929303 2.80263529378769327138"
+    sleep 1.0
+    torso_right
+}
+
+part_3() {
+    draw "-0.315723724067253908032 0.11 -0.0733764683221865031681 -0.0846392633486617862459 0.850400373120677621763 -0.519283545373823929303 2.80263529378769327138"
+    sleep 2.0
+     
+    draw "-0.2823724067253908032 0.10 -0.0733764683221865031681 -0.0846392633486617862459 0.850400373120677621763 -0.519283545373823929303 2.80263529378769327138"
+    sleep 2.0 
+    
+    draw "-0.2653724067253908032 0.115 -0.0713764683221865031681 -0.0846392633486617862459 0.850400373120677621763 -0.519283545373823929303 2.80263529378769327138"
+    sleep 2.0
+        
+    draw "-0.2023250129427876709 0.118728067975726200523 -0.0796862721934695412696 -0.00496676038412719334653 0.774492962781589078247 -0.632563026024350216758 2.56487352093593168334"
+    sleep 3.0
+
+    draw "-0.2023250129427876709 0.118728067975726200523 -0.0236862721934695412696 -0.00496676038412719334653 0.774492962781589078247 -0.632563026024350216758 2.56487352093593168334"
+}
+
+start_part_4() {
+    torso_high
+    draw "-0.353578938749672666564 0.0803265228440144745115 -0.023040502935731338785 -0.139080462476080801704 0.864773202310446520436 -0.482518324546513943663 2.60992081676853482364"
+}
+
+part_4() {
+    draw "-0.350578938749672666564 0.0803265228440144745115 -0.069040502935731338785 -0.139080462476080801704 0.864773202310446520436 -0.482518324546513943663 2.60992081676853482364"
+    sleep 2.0
+   
+    draw "-0.355263690567933779096 0.110372969207294786109 -0.0714483792852473856283 0.000476032722984540655753 0.899948998521016729768 -0.435994923656073951612 2.64223014371933695443"
+    sleep 2.0
+
+    draw "-0.252796728742653742383 0.148477115442454329575 -0.062648460877686668713 -0.0534217533651084874879 0.894491590600037245196 -0.443881640320043957537 2.61822271176086873723"
+    sleep 2.0
+
+    draw "-0.252796728742653742383 0.148477115442454329575 -0.019648460877686668713 -0.0534217533651084874879 0.894491590600037245196 -0.443881640320043957537 2.61822271176086873723"
+}
+
+start_part_5() {
+    draw "-0.313077938533828088463 0.0777121914641277429237 -0.0198548882212590064311 -0.169874296403569297054 0.808215152442865791826 -0.563853696257413439241 2.59245150059519691155"
+    sleep 1.0
+    torso_low
+}
+
+part_5() {
+    draw "-0.313077938533828088463 0.0777121914641277429237 -0.0758548882212590064311 -0.169874296403569297054 0.808215152442865791826 -0.563853696257413439241 2.59245150059519691155"
+    sleep 2.0
+
+    draw "-0.306886776896212300603 0.127579528816639274136 -0.0788054075826516292613 -0.0406193229074667538914 0.812088367509156250357 -0.582119020444146206827 2.56000409079834900794"
+    sleep 2.0 
+
+    draw "-0.306886776896212300603 0.127579528816639274136 -0.0488054075826516292613 -0.0406193229074667538914 0.812088367509156250357 -0.582119020444146206827 2.56000409079834900794"
+}
+
+start_part_6() {
+    draw "-0.300077938533828088463 0.0827121914641277429237 -0.0258548882212590064311 -0.169874296403569297054 0.808215152442865791826 -0.563853696257413439241 2.59245150059519691155"
+    sleep 1.0
+    torso_low
+}
+
+part_6() {
+    draw "-0.300077938533828088463 0.0827121914641277429237 -0.0758548882212590064311 -0.169874296403569297054 0.808215152442865791826 -0.563853696257413439241 2.59245150059519691155"
+    sleep 2.0
+
+    draw "-0.288886776896212300603 0.129579528816639274136 -0.0788054075826516292613 -0.0406193229074667538914 0.812088367509156250357 -0.582119020444146206827 2.56000409079834900794"
+    sleep 2.0
+
+    draw "-0.288886776896212300603 0.129579528816639274136 -0.0488054075826516292613 -0.0406193229074667538914 0.812088367509156250357 -0.582119020444146206827 2.56000409079834900794"    
+}
+
+raise_up() {
+    draw "-0.288886776896212300603 0.205579528816639274136 -0.0188054075826516292613 -0.0406193229074667538914 0.812088367509156250357 -0.582119020444146206827 2.56000409079834900794"
+}
+
+all_parts() {
+    start_part_1
+    sleep 2.0
+    part_1
+    sleep 2.0
+
+    start_part_2
+    sleep 2.0
+    part_2
+    sleep 2.0
+
+    #start_part_3
+    #sleep 2.0
+    #part_3
+    #sleep 2.0
+    
+    #start_part_4
+    #sleep 2.0
+    #part_4
+    #sleep 2.0
+
+    #start_part_5
+    #sleep 2.0
+    #part_5
+    #sleep 2.0
+
+    #start_part_6
+    #sleep 2.0
+    #part_6
+    #sleep 2.0
+
+    #raise_up    
+}
+
+sequence_01() {
+#    gaze "idle"
+    look_presentatore 
+    speak "Ciao Fabrizio."
+    sleep 1.0
+    look_pubblico
+    speak "Sono contento di essere qui con voi oggi."
+    sleep 1.0 
+#   gaze "idle"
+    speak "Perche non ci divertiamo un po'?"
+    wait_till_quiet
+    smile
+
+}
+
+sequence_02() {
+
+#stringe la mano
+echo "ctpq time 1.5 off 0 pos (-36.8 24.3 23.6 55.558 -22.791 0.0 -4.5	54.9 29.8 13.7824 42.16	0.0	2.0 0.0	0.0	0.0 )" | yarp rpc /ctpservice/right_arm/rpc
+#sleep 10.0
+echo "ctpq time 2 off 0 pos (10 0 5 )" | yarp rpc /ctpservice/torso/rpc
+    gaze "idle"
+    look_presentatore
+echo "set intm mode 3 comp" | yarp rpc /icub/right_arm/rpc:i
+wait_till_quiet
+smile
+}
+
+
+sequence_03() {
+#guarda lo schermo
+look_schermo
+sleep 1.0
+speak "Nonmi era mai successo di vedere cosa sentono i miei sensori!"
+wait_till_quiet
+surprised
+sleep 1.0
+look_presentatore
+smile
+sleep 1.0
+speak "Ee molto interessante"
+sleep 1.0
+look_pubblico
+speak "ma mi sembra di capire"
+speak "che anche da molto lontano qualcuno potrebbe vedere quello che ri levano i miei sensori."
+sleep 6.0
+look_presentatore
+wait_till_quiet
+smile
+}
+
+sequence_04(){
+#rilascia la mano
+echo "set intm mode 3 stiff" | yarp rpc /icub/right_arm/rpc:i
+go__helperR 2.0
+torso_
+look_pubblico
+wait_till_quiet
+smile
+}
+
+
+sequence_05(){
+# guarda in giro
+look_schermo
+}
+
+
+sequence_06(){
+# guarda in giro
+look_presentatore
+sleep 0.5
+speak "Certamente!!!!"
+wait_till_quiet
+smile
+}
+
+
+sequence_07(){
+speak "Sicuro!!!!"
+sleep 1.0
+speak "Prova a guardare sul tavolo qui di fianco"
+look_tavolo
+# point at table
+echo "ctpq time 2 off 0 pos (-60.0 32.0 42.0 15.0 -13.0 -3.0 -8.0 15.0 13.0 36.0 52.0 9.0 1.0 42.0 106.0 250.0)" | yarp rpc /ctpservice/right_arm/rpc
+sleep 3.0
+look_presentatore
+go__helperR 2.0
+speak "Troverai un aiPad, e un mio braccio nonancora completamente assemblato."
+sleep 3.0
+speak "Credo che riuscirai facilmente a capire qualcosa di piuu"
+wait_till_quiet
+smile
+
+}
+
+sequence_08() {
+gaze "idle"
+speak "Fabriiizioooo!!"
+sad
+sleep 0.3
+speak " Mi giira un po' la testa!"
+gaze "look 10.0 20.0 5.0"
+echo "ctpq time 1.5 off 0 pos (0 -10 15 )" | yarp rpc /ctpservice/torso/rpc
+sleep 0.3
+sad
+gaze "look -10.0 20.0 5.0"
+sleep 0.3
+gaze "look 0.0 20.0 5.0"
+echo "ctpq time 1.5 off 0 pos (0 10 45 )" | yarp rpc /ctpservice/torso/rpc
+sleep 0.3
+gaze "look 20.0 -70.0 -10.0"
+#echo "ctpq time 1.5 off 3 pos (0 -10 15 )" | yarp rpc /ctpservice/torso/rpc
+}
+
+sequence_09()
+{
+    torso_
+    sleep 1
+    look_presentatore
+    smile
+}
+
+sequence_10(){ 
+look_schermo
+speak "Grazie ragazzi!"
+sleep 1.0
+speak "Adesso mi sento veramente meglio!"
+look_pubblico
+fonzie
+wait_till_quiet
+smile
+}
+
+
+sequence_11(){ 
+look_presentatore
+torso_
+speak "Grazie, anche per me Ee stato divertente!"
+wait_till_quiet
+look_at_pubblico
+sleep 0.5
+smile
+
+speak "Dopo di noi vedrete molte altre cose interessanti!"
+torso_pubblico
+wait_till_quiet
+speak "Auguro a tutti una buona giornata qui con noi all'Istituto Italiano di Tecnologia."
+hello_left
+wait_till_quiet
+smile
+torso_
+}
+
+#######################################################################################
+# "MAIN" FUNCTION:                                                                    #
+#######################################################################################
+echo "********************************************************************************"
+echo ""
+
+$1 "$2"
+
+if [[ $# -eq 0 ]] ; then
+    echo "No options were passed!"
+    echo ""
+    usage
+    exit 1
+fi
