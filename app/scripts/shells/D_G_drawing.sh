@@ -324,11 +324,22 @@ talk_mic() {
 draw() {
    echo "Drawing with an offset of $OFFSET"
    echo "Reaching target $1 $2 $(bc <<< "$3+$OFFSET") $4 $5 $6 $7"
-   echo "$1 $2 $(bc <<< "$3+$OFFSET") $4 $5 $6 $7" | yarp write ...  /armCtrl/right_arm/xd:i
+
+    if [ "$HAND" = "right" ]; then
+        echo "$1 $2 $(bc <<< "$3+$OFFSET") $4 $5 $6 $7" | yarp write ...  /armCtrl/right_arm/xd:i
+    else if [ "$HAND" = "left" ]; then
+        echo "$1 $2 $(bc <<< "$3+$OFFSET") $4 $5 $6 $7" | yarp write ...  /armCtrl/left_arm/xd:i
+    fi
+    fi  
 }
 
 start_draw() {
-   echo "$1 $2 $3 $4 $5 $6 $7" | yarp write ...  /armCtrl/right_arm/xd:i
+   if [ "$HAND" = "right" ]; then
+        echo "$1 $2 $3 $4 $5 $6 $7" | yarp write ...  /armCtrl/right_arm/xd:i
+    else if [ "$HAND" = "left" ]; then
+        echo "$1 $2 $3 $4 $5 $6 $7" | yarp write ...  /armCtrl/left_arm/xd:i
+    fi
+    fi
 }
 
 torso_low(){
@@ -417,17 +428,20 @@ prepare() {
 }
 
 start_part_1() {
+
     X=-0.312099692973232367699
     Y=0.0323477147963253594543
     Z=-0.0159028330966882788799
-    AX=1.0
-    AY=0.0
-    AZ=0.0
-    THETA=3.14152
+    AX=-0.293717864467345990409
+    AY=0.86283731061040169763
+    AZ=-0.411389829129684136966
+    THETA=2.57931818061652062823
     if [ "$HAND" = "left" ]; then
         Y=$(bc <<< "$Y*-1.0")
-        AX=$AX_LEFT
-        THETA=$THETA_LEFT
+        #AX=$AX_LEFT
+        AX=$(bc <<< "$AX*-1.0")
+        AZ=$(bc <<< "$AZ*-1.0")
+        #THETA=$THETA_LEFT
     fi
     start_draw $X $Y $Z $AX $AY $AZ $THETA
     sleep 1.0
@@ -719,13 +733,17 @@ part_6() {
 }
 
 raise_up() {
+
+    #draw -0.288886776896212300603 0.129579528816639274136 -0.0488054075826516292613 -0.0406193229074667538914 0.812088367509156250357 -0.582119020444146206827 2.56000409079834900794
+  
+    echo $HAND
     X=-0.288886776896212300603
     Y=0.205579528816639274136
     Z=-0.00208054075826516292613
-    AX=1.0
-    AY=0.0
-    AZ=0.0
-    THETA=3.14152
+    AX=-0.0406193229074667538914
+    AY=0.812088367509156250357
+    AZ=-0.582119020444146206827
+    THETA=2.56000409079834900794
     if [ "$HAND" = "left" ]; then
         Y=$(bc <<< "$Y*-1.0")
         AX=$AX_LEFT
