@@ -59,7 +59,7 @@ gaze() {
 }
 
 speak() {
-    echo "\"$1\"" | yarp write ... /iSpeak
+    echo "\"$1\"" | yarp write ... /iSpeak &&  echo "\"$1\"" | yarp write ... /googleSynthesis/text:i
 }
 
 blink() {
@@ -388,6 +388,9 @@ right_arm_home(){
 
 set_up_left_arm(){
     echo "ctpq time 1.5 off 7 pos (23.3295 30.7783 -3.06519 53.8881 49.0925 58.8869 45.9779 83.2985 140.312)" | yarp rpc /ctpservice/left_arm/rpc
+    
+    #with the glove
+    #echo "ctpq time 1.5 off 8 pos (9.80532 0 139.999 47.7522 132.133 76.9429 109.127 270.001)" | yarp rpc /ctpservice/left_arm/rpc
 }
 
 open_left_hand() {
@@ -603,10 +606,10 @@ part_3() {
         draw -0.2653724067253908032 -0.115 -0.0713764683221865031681 $AX_LEFT $AY_LEFT $AZ_LEFT $THETA_LEFT
         sleep 2.0
          
-        draw -0.2023250129427876709 -0.118728067975726200523 $AX_LEFT $AY_LEFT $AZ_LEFT $THETA_LEFT
+        draw -0.2023250129427876709 -0.118728067975726200523 -0.0796862721934695412696 $AX_LEFT $AY_LEFT $AZ_LEFT $THETA_LEFT
         sleep 3.0
 
-        draw -0.2023250129427876709 -0.118728067975726200523 $AX_LEFT $AY_LEFT $AZ_LEFT $THETA_LEFT
+        draw -0.2023250129427876709 -0.118728067975726200523 -0.0236862721934695412696 $AX_LEFT $AY_LEFT $AZ_LEFT $THETA_LEFT
     fi
     fi
 }
