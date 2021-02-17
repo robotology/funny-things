@@ -40,11 +40,29 @@
     </module>
 
     <module>
+         <name>iKinCartesianSolver</name>
+         <parameters>--part left_arm</parameters>
+         <node>icubsrv</node>
+         <dependencies>
+             <port timeout="60.0" request="is_ready" reply="[ok]">/icub/yarprobotinterface</port>
+        </dependencies>
+    </module>
+
+    <module>
         <name>cartesianInterfaceControl</name>
         <parameters>--part right_arm</parameters>
         <node>icubsrv</node>
         <dependencies>
              <port timeout="60.0">/cartesianSolver/right_arm/rpc</port>
+        </dependencies>
+    </module>
+
+    <module>
+        <name>cartesianInterfaceControl</name>
+        <parameters>--part left_arm</parameters>
+        <node>icubsrv</node>
+        <dependencies>
+             <port timeout="60.0">/cartesianSolver/left_arm/rpc</port>
         </dependencies>
     </module>
 
