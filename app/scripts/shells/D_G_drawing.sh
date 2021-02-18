@@ -363,11 +363,17 @@ torso_home(){
 }
 
 left_arm_low(){
-    echo "ctpq time 1.5 off 0 pos (-3.90016 69.0492 -7.45974 54.3715 4.0265 -4.30665 -8.87697 13.1232 29.6027 -0.357057 1.62049 0 2.21375 0 0 0.900881)" | yarp rpc /ctpservice/left_arm/rpc
+    #echo "ctpq time 1.5 off 0 pos (-3.90016 69.0492 -7.45974 54.3715 4.0265 -4.30665 -8.87697 13.1232 29.6027 -0.357057 1.62049 0 2.21375 0 0 0.900881)" | yarp rpc /ctpservice/left_arm/rpc
+    echo "ctpq time 2.0 off 0 pos (-22.7 27.19 3.3 76.3715 50.0265 -15.30665 -10.87697 13.1232 15.6027 -0.357057 1.62049 0 2.21375 0 0 0.900881)" | yarp rpc /ctpservice/left_arm/rpc
+}
+
+left_arm_low_right(){
+    #echo "ctpq time 1.5 off 0 pos (-3.90016 69.0492 -7.45974 54.3715 4.0265 -4.30665 -8.87697 13.1232 29.6027 -0.357057 1.62049 0 2.21375 0 0 0.900881)" | yarp rpc /ctpservice/left_arm/rpc
+    echo "ctpq time 2.0 off 0 pos (-22.7 27.19 -17.3 76.3715 50.0265 -15.30665 -10.87697 13.1232 15.6027 -0.357057 1.62049 0 2.21375 0 0 0.900881)" | yarp rpc /ctpservice/left_arm/rpc
 }
 
 left_arm_high(){
-    echo "ctpq time 1.5 off 0 pos (-27.0 78.0 -37.0 33.0 -79.0 0.0 -4.0 26.0 27.0 0.0 29.0 59.0 117.0 87.0 176.0 250.0)" | yarp rpc /ctpservice/left_arm/rpc
+    echo "ctpq time 2.0 off 0 pos (-22.7 27.19 3.3 58.3715 50.0265 -15.30665 -10.87697 13.1232 15.6027 -0.357057 1.62049 0 2.21375 0 0 0.900881)" | yarp rpc /ctpservice/left_arm/rpc
 }
 
 left_arm_right(){
@@ -375,7 +381,7 @@ left_arm_right(){
 }
 
 set_up_right_arm(){
-    echo "ctpq time 1.5 off 7 pos (23.3295 30.7783 -3.06519 53.8881 49.0925 58.8869 45.9779 83.2985 140.312)" | yarp rpc /ctpservice/right_arm/rpc
+    echo "ctpq time 1.5 off 7 pos (23.3295 30.7783 1.06519 53.8881 49.0925 58.8869 45.9779 83.2985 140.312)" | yarp rpc /ctpservice/right_arm/rpc
 }
 
 open_right_hand() {
@@ -394,7 +400,7 @@ set_up_left_arm(){
 }
 
 open_left_hand() {
-    echo "ctpq time 2.0 off 7 pos (20.0 30.0 0.0 1.0 1.0 1.0 1.0 1.0 0.0)" | yarp rpc /ctpservice/left_arm/rpc
+    echo "ctpq time 2.0 off 7 pos (20.0 35.0 17.0 1.0 1.0 1.0 1.0 1.0 0.0)" | yarp rpc /ctpservice/left_arm/rpc
 }
 
 left_arm_home(){
@@ -448,13 +454,22 @@ start_part_1() {
     fi
     start_draw $X $Y $Z $AX $AY $AZ $THETA
     sleep 1.0
+    echo "ctpq time 2 off 0 pos (-25.0 0.0 -5.0 -15.0 -0.0 5.0)" | yarp rpc /ctpservice/head/rpc
     torso_low
+    left_arm_low
+}
+
+calib_table()
+{
+    draw -0.312099692973232367699 0.0323477147963253594543 -0.0629028330966882788799 -0.293717864467345990409 0.86283731061040169763 -0.411389829129684136966 2.57931818061652062823
 }
 
 part_1() {
     
     if [ "$HAND" = "right" ]; then
         #high left arm drawing
+        echo "ctpq time 10 off 0 pos (-15.0 0.0 -11.0 -10.0 -0.0 5.0)" | yarp rpc /ctpservice/head/rpc
+
         draw -0.312099692973232367699 0.0323477147963253594543 -0.0629028330966882788799 -0.293717864467345990409 0.86283731061040169763 -0.411389829129684136966 2.57931818061652062823
         sleep 2.0
 
@@ -512,7 +527,9 @@ start_part_2() {
         AZ=$AZ_LEFT
         THETA=$THETA_LEFT
     fi
+    echo "ctpq time 2 off 0 pos (-25.0 0.0 -11.0 -15.0 -0.0 5.0)" | yarp rpc /ctpservice/head/rpc
     torso_high
+    left_arm_high
     start_draw $X $Y $Z $AX $AY $AZ $THETA
 }
 
@@ -520,6 +537,9 @@ part_2() {
 
     if [ "$HAND" = "right" ]; then
         #low left side drawing
+
+        echo "ctpq time 10 off 0 pos (-30.0 0.0 -11.0 -25.0 -0.0 5.0)" | yarp rpc /ctpservice/head/rpc
+
         draw -0.325723724067253908032 0.061830599363296217863 -0.0753764683221865031681 -0.0846392633486617862459 0.850400373120677621763 -0.519283545373823929303 2.80263529378769327138
         sleep 2.0
 
@@ -572,8 +592,11 @@ start_part_3() {
     start_draw $X $Y $Z $AX $AY $AZ $THETA
     sleep 1.0
 
+    echo "ctpq time 2 off 0 pos (-25.0 0.0 -0.0 -15.0 -0.0 5.0)" | yarp rpc /ctpservice/head/rpc
+
     if [ "$HAND" = "right" ]; then
         torso_right
+        left_arm_low_right
     else if [ "$HAND" = "left" ]; then
         torso_left
     fi
@@ -582,6 +605,7 @@ start_part_3() {
 
 part_3() {
 
+    echo "ctpq time 10 off 0 pos (-30.0 0.0 -0.0 -25.0 -0.0 5.0)" | yarp rpc /ctpservice/head/rpc
     if [ "$HAND" = "right" ]; then
         draw -0.315723724067253908032 0.11 -0.0733764683221865031681 -0.0846392633486617862459 0.850400373120677621763 -0.519283545373823929303 2.80263529378769327138
         sleep 2.0
@@ -629,12 +653,16 @@ start_part_4() {
         AZ=$AZ_LEFT
         THETA=$THETA_LEFT
     fi
-    
+    echo "ctpq time 2 off 0 pos (-25.0 0.0 -11.0 -10.0 -0.0 5.0)" | yarp rpc /ctpservice/head/rpc
     torso_high
+    left_arm_high
     start_draw $X $Y $Z $AX $AY $AZ $THETA
 }
 
 part_4() {
+
+     echo "ctpq time 6 off 0 pos (-30.0 0.0 -20.0 -25.0 -0.0 5.0)" | yarp rpc /ctpservice/head/rpc
+
     if [ "$HAND" = "right" ]; then
         draw -0.350578938749672666564 0.0803265228440144745115 -0.069040502935731338785 -0.139080462476080801704 0.864773202310446520436 -0.482518324546513943663 2.60992081676853482364
         sleep 2.0
@@ -679,11 +707,17 @@ start_part_5() {
     
     start_draw $X $Y $Z $AX $AY $AZ $THETA
     sleep 1.0
+    
+    echo "ctpq time 2 off 0 pos (-25.0 0.0 -11.0 -20.0 -0.0 5.0)" | yarp rpc /ctpservice/head/rpc
+
     torso_low
+    left_arm_low
 }
 
 part_5() {
     
+     echo "ctpq time 5 off 0 pos (-25.0 0.0 -18.0 -20.0 -0.0 5.0)" | yarp rpc /ctpservice/head/rpc
+
     if [ "$HAND" = "right" ]; then
         draw -0.313077938533828088463 0.0777121914641277429237 -0.0758548882212590064311 -0.169874296403569297054 0.808215152442865791826 -0.563853696257413439241 2.59245150059519691155
         sleep 2.0
@@ -721,10 +755,13 @@ start_part_6() {
     fi
     start_draw $X $Y $Z $AX $AY $AZ $THETA
     sleep 1.0
+    echo "ctpq time 2 off 0 pos (-25.0 0.0 -11.0 -20.0 -0.0 5.0)" | yarp rpc /ctpservice/head/rpc
     torso_low
+    left_arm_low
 }
 
 part_6() {
+    echo "ctpq time 5 off 0 pos (-25.0 0.0 -18.0 -20.0 -0.0 5.0)" | yarp rpc /ctpservice/head/rpc
     if [ "$HAND" = "right" ]; then
         draw -0.300077938533828088463 0.0827121914641277429237 -0.0758548882212590064311 -0.169874296403569297054 0.808215152442865791826 -0.563853696257413439241 2.59245150059519691155
         sleep 2.0
@@ -764,6 +801,7 @@ raise_up() {
         AZ=$AZ_LEFT
         THETA=$THETA_LEFT
     fi
+    echo "ctpq time 3 off 0 pos (-25.0 0.0 -5.0 -18.0 -0.0 5.0)" | yarp rpc /ctpservice/head/rpc
 
     draw $X $Y $Z $AX $AY $AZ $THETA 
 }
