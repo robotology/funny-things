@@ -384,6 +384,10 @@ set_up_right_arm(){
     echo "ctpq time 1.5 off 7 pos (23.3295 30.7783 1.06519 53.8881 49.0925 58.8869 45.9779 83.2985 140.312)" | yarp rpc /ctpservice/right_arm/rpc
 }
 
+set_up_right_arm_black(){
+    echo "ctpq time 1.5 off 7 pos (23.3474 58.3551 40.5071 73.0783 50 72.6937 45.725 101.281 225.149)" | yarp rpc /ctpservice/right_arm/rpc
+}
+
 open_right_hand() {
     echo "ctpq time 2.0 off 7 pos (20.0 30.0 0.0 1.0 1.0 1.0 1.0 1.0 0.0)" | yarp rpc /ctpservice/right_arm/rpc
 }
