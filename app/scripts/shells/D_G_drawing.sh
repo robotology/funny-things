@@ -67,6 +67,15 @@ blink() {
     sleep 0.5
 }
 
+look_down() {
+    echo "ctpq time 1 off 0 pos (-29.8609 0.0659181 1.6095 -22.1155 0.549318 0.0)" | yarp rpc /ctpservice/head/rpc
+}
+
+look_up() {
+    echo "ctpq time 1 off 0 pos (1.07666 0.0659181 1.69739 -1.98853 0.58777 0.0)" | yarp rpc /ctpservice/head/rpc
+    speak_08
+}
+
 breathers() {
     # echo "$1"  | yarp rpc /iCubBlinker/rpc
     # echo "$1" | yarp rpc /iCubBreatherH/rpc:i
@@ -103,7 +112,7 @@ go__helperR() {
 
 go__helper() {
     go__helperR $1
-    go__helperL $1
+    #go__helperL $1
 }
 
 go_() {
@@ -256,7 +265,7 @@ hello_right() {
     echo "ctpq time 0.5 off 0 pos (-60.0 44.0 -2.0 96.0 53.0 -17.0 -11.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0)" | yarp rpc /ctpservice/right_arm/rpc
     smile
     go_
-    smile
+    #smile
     #breathers "start"
 }
 
@@ -384,14 +393,6 @@ set_up_right_arm(){
     echo "ctpq time 1.5 off 7 pos (23.3295 30.7783 1.06519 53.8881 49.0925 58.8869 45.9779 83.2985 140.312)" | yarp rpc /ctpservice/right_arm/rpc
 }
 
-set_up_right_arm_black(){
-    echo "ctpq time 1.5 off 7 pos (23.3474 58.3551 40.5071 73.0783 50 72.6937 45.725 101.281 225.149)" | yarp rpc /ctpservice/right_arm/rpc
-}
-
-open_right_hand() {
-    echo "ctpq time 2.0 off 7 pos (20.0 30.0 0.0 1.0 1.0 1.0 1.0 1.0 0.0)" | yarp rpc /ctpservice/right_arm/rpc
-}
-
 right_arm_home(){
    draw -0.282108698046593331377 0.181726082363135865716 0.0254698106007657451566 -0.0243652369835574283963 -0.867441689747252331344 0.496941898128107961696 3.11038776267348771043
 }
@@ -418,6 +419,14 @@ right_arm_low(){
 #######################################################################################
 # SEQUENCE FUNCTIONS
 #######################################################################################
+set_up_right_arm_black(){
+    echo "ctpq time 1.5 off 7 pos (23.3474 58.3551 40.5071 73.0783 50 72.6937 45.725 101.281 225.149)" | yarp rpc /ctpservice/right_arm/rpc
+}
+
+open_right_hand() {
+    echo "ctpq time 2.0 off 7 pos (20.0 30.0 0.0 1.0 1.0 1.0 1.0 1.0 0.0)" | yarp rpc /ctpservice/right_arm/rpc
+}
+
 set_up_hand() {
     if [ "$HAND" = "right" ]; then
         echo "Using right hand"
@@ -847,6 +856,98 @@ all_parts() {
     raise_up    
 }
 
+###################################################################
+# 21 feb 
+###################################################################
+
+speak_01() 
+{
+    echo "\"Ciao Domenico e Stefano!!!\"" | yarp write ... /iSpeak
+    mplayer /home/vvasco/stilisti/audio_01.mp3 
+}
+
+#speak_02() 
+#{
+#    echo "\"Come sono felice ed emozionato di essere qui a Milano tra voi!!!!\"" | yarp write ... /iSpeak
+#    mplayer /home/vvasco/stilisti/audio_02.mp3
+#}
+
+#speak_03() 
+#{
+#    echo "\"Cosa mi potete insegnare????\"" | yarp write ... /iSpeak
+#    mplayer /home/vvasco/stilisti/audio_03.mp3 
+#}
+
+speak_02() 
+{
+    echo "\"Vorrei tanto imparare a disegnare!!!!\"" | yarp write ... /iSpeak
+    mplayer /home/vvasco/stilisti/audio_02.mp3
+}
+
+#speak_05() 
+#{
+#    echo "\"Come posso aiutarvi per preparare questa sfilata???\"" | yarp write ... /iSpeak
+#    mplayer /home/vvasco/stilisti/audio_05.mp3
+#}
+
+#speak_06() 
+#{
+#    echo "\"Wow che bel look!!!\"" | yarp write ... /iSpeak
+#    mplayer /home/vvasco/stilisti/audio_06.mp3
+#}
+
+#speak_07() 
+#{
+#    echo "\"Grazie Stefano e Domenico, ci vediamo alla sfilata!!!\"" | yarp write ... /iSpeak
+#    mplayer /home/vvasco/stilisti/audio_07.mp3
+#}
+
+#speak_08()
+#{
+#    echo "\"Mi spiegate come si fa?\"" | yarp write ... /iSpeak
+#    mplayer /home/vvasco/stilisti/audio_08.mp3
+#}
+
+
+###################################################################
+# 22 feb 
+###################################################################
+speak_03()
+{
+    echo "\"Wow!!!\"" | yarp write ... /iSpeak
+    mplayer /home/vvasco/stilisti/audio_03.mp3
+}
+
+speak_04() 
+{
+    echo "\"Wow che bel look!!!\"" | yarp write ... /iSpeak
+    mplayer /home/vvasco/stilisti/audio_04.mp3
+}
+
+speak_05() 
+{
+    echo "\"Wow che bello!!!\"" | yarp write ... /iSpeak
+    mplayer /home/vvasco/stilisti/audio_05.mp3
+}
+
+
+speak_06() 
+{
+    echo "\"Interessante questo articolo!!!\"" | yarp write ... /iSpeak
+    mplayer /home/vvasco/stilisti/audio_06.mp3
+}
+
+speak_07() 
+{
+    echo "\"Grazie Stefano e Domenico!!!\"" | yarp write ... /iSpeak
+    mplayer /home/vvasco/stilisti/audio_07.mp3
+}
+
+speak_08() 
+{
+    echo "\"Grazie Stefano e Domenico, ci vediamo alla sfilata!!!\"" | yarp write ... /iSpeak
+    mplayer /home/vvasco/stilisti/audio_08.mp3
+}
 
 #######################################################################################
 # "MAIN" FUNCTION:                                                                    #
