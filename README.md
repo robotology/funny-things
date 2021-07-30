@@ -30,7 +30,7 @@ Step-by-step guide
 
 For more info, see:
 
-  * http://robotology.github.io/funny-things/
+  * https://robotology.github.io/funny-things/
   * https://github.com/robotology/funny-things
-  * http://robotology.github.io/funny-things/doxygen/doc/html/modules.html
+  * https://robotology.github.io/funny-things/doxygen/doc/html/modules.html
 
