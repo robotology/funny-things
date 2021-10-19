@@ -7,6 +7,9 @@ gui/iCubBarMenu/build/*
 .DS_Store
 *.local.*
 .vscode
+
+# node gitignore
+*/funnyThingsApp/dist/*
 node_modules*
 *-lock.json
 *.funnythings
