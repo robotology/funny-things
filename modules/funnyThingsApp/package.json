@@ -9,7 +9,10 @@
   },
   "build": {
     "appId": "com.iit.funnythings",
-    "productName": "FunnyThingsApp",
+    "artifactName": "funnyThingsApp.${ext}",
+    "directories": {
+      "output": "../../build/bin"
+    },
     "files": [
       "**/*",
       "../script/**"
