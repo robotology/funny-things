@@ -6,6 +6,7 @@
 
 add_custom_target(funnyThingsApp ALL)
 
+# Build the app running the npm commands
 add_custom_command(TARGET funnyThingsApp POST_BUILD
   COMMAND npm install --prefix ${CMAKE_CURRENT_SOURCE_DIR}
   COMMAND npm run build --prefix ${CMAKE_CURRENT_SOURCE_DIR}
