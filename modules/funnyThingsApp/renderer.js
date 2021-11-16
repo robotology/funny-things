@@ -8,7 +8,7 @@ const fs = require('fs');
 const { remote } = window.require('electron')
 const dialog = electron.remote.dialog;
 
-const scriptPath = process.env.ELECTRON_ENV === "development" ? path.join(__dirname, '../script') : path.join(process.resourcesPath, 'script');
+const scriptPath = process.env.ELECTRON_ENV === "development" ? path.join(__dirname, './script') : path.join(process.resourcesPath, 'script');
 
 
 let actionBlockParameters = {}
