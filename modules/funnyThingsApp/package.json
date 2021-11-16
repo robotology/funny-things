@@ -19,7 +19,7 @@
     },
     "extraResources": [
       {
-        "from": "../script",
+        "from": "./script",
         "to": "script"
       }
     ],
