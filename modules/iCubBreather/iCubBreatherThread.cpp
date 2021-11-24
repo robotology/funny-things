@@ -56,8 +56,8 @@ bool iCubBreatherThread::threadInit()
 
         for (int i = 0; i < jnts; i++)
         {
-            noiseStDvtns.push_back(bns->get(i).asDouble());
-            refSpeeds.push_back(brf->get(i).asDouble());
+            noiseStDvtns.push_back(bns->get(i).asFloat64());
+            refSpeeds.push_back(brf->get(i).asFloat64());
         }
     }
     else

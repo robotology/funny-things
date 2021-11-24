@@ -134,7 +134,7 @@ protected:
         Bottle options;
         Bottle &straightOpt=options.addList();
         straightOpt.addString("straightness");
-        straightOpt.addDouble(straightness);
+        straightOpt.addFloat64(straightness);
         icart->tweakSet(options);
     }
 
@@ -206,8 +206,8 @@ protected:
 
                 for (int i=0; i<points.size(); i+=2)
                 {
-                    wp.x[0]=scale*points.get(i).asDouble();
-                    wp.x[1]=scale*points.get(i+1).asDouble();
+                    wp.x[0]=scale*points.get(i).asFloat64();
+                    wp.x[1]=scale*points.get(i+1).asFloat64();
                     path.push_back(wp);
 
                     top_left_corner[0]=std::min(top_left_corner[0],wp.x[0]);
@@ -348,19 +348,19 @@ public:
             return false;
         }
         
-        scale=bWriting.check("scale",Value(1.0)).asDouble();
-        scale*=bWriting.check("conversion",Value(1.0)).asDouble();
-        reach_above=bWriting.check("reach_above",Value(0.05)).asDouble();
-        segment_time=bWriting.check("segment_time",Value(1.0)).asDouble();
-        cartesian_time=bWriting.check("cartesian_time",Value(1.0)).asDouble();
-        cartesian_straightness=bWriting.check("cartesian_straightness",Value(1.0)).asDouble();
+        scale=bWriting.check("scale",Value(1.0)).asFloat64();
+        scale*=bWriting.check("conversion",Value(1.0)).asFloat64();
+        reach_above=bWriting.check("reach_above",Value(0.05)).asFloat64();
+        segment_time=bWriting.check("segment_time",Value(1.0)).asFloat64();
+        cartesian_time=bWriting.check("cartesian_time",Value(1.0)).asFloat64();
+        cartesian_straightness=bWriting.check("cartesian_straightness",Value(1.0)).asFloat64();
 
         orientation.resize(4,0.0);
         if (Bottle *pB=bWriting.find("orientation").asList())
         {
             int len=std::min(orientation.length(),pB->size());
             for (int i=0; i<len; i++)
-                orientation[i]=pB->get(i).asDouble();
+                orientation[i]=pB->get(i).asFloat64();
         }
 
         Vector top_left_corner(3,0.0);
@@ -368,7 +368,7 @@ public:
         {
             int len=std::min(top_left_corner.length(),pB->size());
             for (int i=0; i<len; i++)
-                top_left_corner[i]=pB->get(i).asDouble();
+                top_left_corner[i]=pB->get(i).asFloat64();
         }
         top_left_corner.push_back(1.0);
 
@@ -395,14 +395,14 @@ public:
                 {
                     int len=std::min(orientation.length(),pB->size());
                     for (int j=0; j<len; j++)
-                        segParams[i].orientation[j]=pB->get(j).asDouble();
+                        segParams[i].orientation[j]=pB->get(j).asFloat64();
                 }
 
-                segParams[i].delta_z=bSegment.check("delta_z",Value(segParams[i].delta_z)).asDouble();
-                segParams[i].reach_above=bSegment.check("reach_above",Value(segParams[i].reach_above)).asDouble();
-                segParams[i].segment_time=bSegment.check("segment_time",Value(segParams[i].segment_time)).asDouble();
-                segParams[i].cartesian_time=bSegment.check("cartesian_time",Value(segParams[i].cartesian_time)).asDouble();
-                segParams[i].cartesian_straightness=bSegment.check("cartesian_straightness",Value(segParams[i].cartesian_straightness)).asDouble();
+                segParams[i].delta_z=bSegment.check("delta_z",Value(segParams[i].delta_z)).asFloat64();
+                segParams[i].reach_above=bSegment.check("reach_above",Value(segParams[i].reach_above)).asFloat64();
+                segParams[i].segment_time=bSegment.check("segment_time",Value(segParams[i].segment_time)).asFloat64();
+                segParams[i].cartesian_time=bSegment.check("cartesian_time",Value(segParams[i].cartesian_time)).asFloat64();
+                segParams[i].cartesian_straightness=bSegment.check("cartesian_straightness",Value(segParams[i].cartesian_straightness)).asFloat64();
 
                 for (size_t j=0; j<wayPoints[i].size(); j++)
                 {
@@ -440,7 +440,7 @@ public:
                 {
                     int len=std::min(stiffness.length(),pB->size());
                     for (int i=0; i<len; i++)
-                        stiffness[i]=pB->get(i).asDouble();
+                        stiffness[i]=pB->get(i).asFloat64();
                 }
 
                 Vector damping(stiffness.length(),0.0);
@@ -448,7 +448,7 @@ public:
                 {
                     int len=std::min(damping.length(),pB->size());
                     for (int i=0; i<len; i++)
-                        damping[i]=pB->get(i).asDouble();
+                        damping[i]=pB->get(i).asFloat64();
                 }
 
                 string robot=bGeneral.check("robot",Value("icub")).asString().c_str();
@@ -490,7 +490,7 @@ public:
                 {
                     int len=std::min(offset.length(),pB->size());
                     for (int i=0; i<len; i++)
-                        offset[i]=pB->get(i).asDouble();
+                        offset[i]=pB->get(i).asFloat64();
                 }
 
                 Property driverOption("(device gazecontrollerclient)");
@@ -515,20 +515,20 @@ public:
     /************************************************************************/
     bool respond(const Bottle &command, Bottle &reply)
     {
-        int ack=Vocab::encode("ack");
-        int nack=Vocab::encode("nack");
+        int ack=Vocab32::encode("ack");
+        int nack=Vocab32::encode("nack");
 
         if (command.size()>0)
         {
-            switch (command.get(0).asVocab())
+            switch (command.get(0).asVocab32())
             {
                 //-----------------
-                case createVocab('g','o'):
+                case createVocab32('g','o'):
                 {
                     if (doWriting())
-                        reply.addVocab(ack);
+                        reply.addVocab32(ack);
                     else
-                        reply.addVocab(nack);
+                        reply.addVocab32(nack);
 
                     return true;
                 }
@@ -539,7 +539,7 @@ public:
             }
         }
 
-        reply.addVocab(nack);
+        reply.addVocab32(nack);
         return true;
     }
 

@@ -552,7 +552,7 @@ protected:
             return true;
 
         Bottle cmd,reply;
-        cmd.addVocab(Vocab::encode("status"));
+        cmd.addVocab32("status");
         if (iolPortStatus.write(cmd,reply))
         {
             if (reply.size()>1)
@@ -561,7 +561,7 @@ protected:
                     (reply.get(1).asString()=="idle"))
                 {
                     cmd.clear();
-                    cmd.addVocab(Vocab::encode("attention"));
+                    cmd.addVocab32("attention");
                     cmd.addString("stop");
                     printf("sending: %s\n",cmd.toString().c_str());
                     bool ok=iolPortHuman.write(cmd,reply);
@@ -582,7 +582,7 @@ protected:
             return true;
 
         Bottle cmd,reply;
-        cmd.addVocab(Vocab::encode("attention"));
+        cmd.addVocab32("attention");
         cmd.addString("start");
         printf("sending: %s\n",cmd.toString().c_str());
         bool ok=iolPortHuman.write(cmd,reply);
@@ -599,7 +599,7 @@ protected:
         if (iolPortHuman.getOutputCount()>0)
         {
             Bottle cmd,reply;
-            cmd.addVocab(Vocab::encode("say"));
+            cmd.addVocab32("say");
             cmd.addString(sentence.c_str());
             if (iolPortHuman.write(cmd,reply))
                 return (reply.get(0).asString()=="ack");
@@ -635,7 +635,7 @@ protected:
     /*********************************************/
     void configureEmotions(ResourceFinder &rf)
     {
-        int numEmotions=rf.check("num_emotions",Value(0)).asInt();
+        int numEmotions=rf.check("num_emotions",Value(0)).asInt32();
         for (int i=0; i<numEmotions; i++)
         {
             ostringstream tag;
@@ -735,8 +735,8 @@ public:
     /*********************************************/
     bool respond(const Bottle &cmd, Bottle &reply)
     {
-        int ack=Vocab::encode("ack");
-        int nack=Vocab::encode("nack");
+        int ack=Vocab32::encode("ack");
+        int nack=Vocab32::encode("nack");
 
         Value item=cmd.get(0);
         if (item.isString())
@@ -747,10 +747,10 @@ public:
                 {
                     posture("foo","home");
                     giveGrant();
-                    reply.addVocab(ack);
+                    reply.addVocab32(ack);
                 }
                 else
-                    reply.addVocab(nack);
+                    reply.addVocab32(nack);
 
                 return true;
             }
@@ -768,7 +768,7 @@ public:
                 if (cmd.size()>1)
                     if (Bottle *where=cmd.get(1).asList())
                         for (int i=0; i<where->size(); i++)
-                            x[i]=where->get(i).asDouble();
+                            x[i]=where->get(i).asFloat64();
                 
                 if (getGrant())
                 {
@@ -782,11 +782,11 @@ public:
         
         Bottle rep;
         if (ans==ack)
-            reply.addVocab(ack);
+            reply.addVocab32(ack);
         else if (RFModule::respond(cmd,rep))
             reply=rep;
         else
-            reply.addVocab(nack);
+            reply.addVocab32(nack);
 
         return true;
     }

@@ -325,17 +325,17 @@ private:
     bool retrieveInteractionMode_params(Bottle &int_mode)
     {
         // If the parameters are not found, it will default to the idle mode
-        blinkper_nrm = int_mode.check("blinkper_nrm",Value(5.2)).asDouble();
-        blinkper_sgm = int_mode.check("blinkper_sgm",Value(3.7)).asDouble();
+        blinkper_nrm = int_mode.check("blinkper_nrm",Value(5.2)).asFloat64();
+        blinkper_sgm = int_mode.check("blinkper_sgm",Value(3.7)).asFloat64();
 
-        closure_nrm = int_mode.check("closure_nrm",Value(0.111)).asDouble();
-        closure_sgm = int_mode.check("closure_sgm",Value(0.031)).asDouble();
+        closure_nrm = int_mode.check("closure_nrm",Value(0.111)).asFloat64();
+        closure_sgm = int_mode.check("closure_sgm",Value(0.031)).asFloat64();
 
-        sustain_nrm = int_mode.check("sustain_nrm",Value(0.020)).asDouble();
-        sustain_sgm = int_mode.check("sustain_sgm",Value(0.005)).asDouble();
+        sustain_nrm = int_mode.check("sustain_nrm",Value(0.020)).asFloat64();
+        sustain_sgm = int_mode.check("sustain_sgm",Value(0.005)).asFloat64();
 
-        opening_nrm = int_mode.check("opening_nrm",Value(0.300)).asDouble();
-        opening_sgm = int_mode.check("opening_sgm",Value(0.123)).asDouble();
+        opening_nrm = int_mode.check("opening_nrm",Value(0.300)).asFloat64();
+        opening_sgm = int_mode.check("opening_sgm",Value(0.123)).asFloat64();
 
         return true;
     }
@@ -393,7 +393,7 @@ public:
         robot=rf->check("robot",Value("icub")).asString().c_str();
         blinkingBehavior=rf->check("blinkingBehavior",Value("fast")).asString().c_str();
         blinkingPeriod=rf->check("blinkingPeriod",Value("fixed")).asString().c_str();
-        fixed_blinkper=rf->check("fixedBlinkPer",Value(5.0)).asDouble();
+        fixed_blinkper=rf->check("fixedBlinkPer",Value(5.0)).asFloat64();
 
         isBlinking=rf->check("autoStart");
 
@@ -451,8 +451,8 @@ public:
 
         if (calib.size() > 0)
         {
-            sMin = calib.check("sMin",Value(00)).asInt();
-            sMax = calib.check("sMax",Value(70)).asInt();
+            sMin = calib.check("sMin",Value(00)).asInt32();
+            sMax = calib.check("sMax",Value(70)).asInt32();
 
             yInfo("[iCubBlinker] Eyelid calibs loaded: (%i %i)", sMin, sMax);
         }
@@ -605,8 +605,8 @@ public:
 
         if (calib.size() > 0)
         {
-            sMin = calib.check("sMin",Value(00)).asInt();
-            sMax = calib.check("sMax",Value(70)).asInt();
+            sMin = calib.check("sMin",Value(00)).asInt32();
+            sMax = calib.check("sMax",Value(70)).asInt32();
 
             yInfo("[iCubBlinker::load] Eyelid calibs loaded: (%i %i)", sMin, sMax);
 

@@ -112,37 +112,37 @@ class iCubBreather: public RFModule
 
         bool respond(const Bottle &command, Bottle &reply)
         {
-            int ack =Vocab::encode("ack");
-            int nack=Vocab::encode("nack");
+            int ack =Vocab32::encode("ack");
+            int nack=Vocab32::encode("nack");
 
             if (command.size()>0)
             {
-                switch (command.get(0).asVocab())
+                switch (command.get(0).asVocab32())
                 {
-                    case createVocab('s','t','a','r'):
+                    case createVocab32('s','t','a','r'):
                     {
-                        int res=Vocab::encode("started");
+                        int res=Vocab32::encode("started");
                         if (iCubBreatherThrd -> startBreathing())
                         {
-                            reply.addVocab(ack);
+                            reply.addVocab32(ack);
                         }
                         else
-                            reply.addVocab(nack);
+                            reply.addVocab32(nack);
                         
-                        reply.addVocab(res);
+                        reply.addVocab32(res);
                         return true;
                     }
-                    case createVocab('s','t','o','p'):
+                    case createVocab32('s','t','o','p'):
                     {
-                        int res=Vocab::encode("stopped");
+                        int res=Vocab32::encode("stopped");
                         if (iCubBreatherThrd -> stopBreathing())
                         {
-                            reply.addVocab(ack);
+                            reply.addVocab32(ack);
                         }
                         else
-                            reply.addVocab(nack);
+                            reply.addVocab32(nack);
                         
-                        reply.addVocab(res);
+                        reply.addVocab32(res);
                         return true;
                     }
                     //-----------------
@@ -151,7 +151,7 @@ class iCubBreather: public RFModule
                 }
             }
 
-            reply.addVocab(nack);
+            reply.addVocab32(nack);
             return true;
         }
 
@@ -179,7 +179,7 @@ class iCubBreather: public RFModule
             //****************** rate ******************
                 if (rf.check("rate"))
                 {
-                    rate = rf.find("rate").asInt();
+                    rate = rf.find("rate").asInt32();
                     yInfo(("*** "+name+": thread working at %i ms").c_str(), rate);
                 }
                 else yInfo(("*** "+name+": could not find rate in the config file; using %i ms as default").c_str(), rate);
@@ -187,7 +187,7 @@ class iCubBreather: public RFModule
             //******************* VERBOSE ******************
                 if (rf.check("verbosity"))
                 {
-                    verbosity = rf.find("verbosity").asInt();
+                    verbosity = rf.find("verbosity").asInt32();
                     yInfo(("*** "+name+": verbosity set to %i").c_str(),verbosity);
                 }
                 else yInfo(("*** "+name+": could not find verbosity option in the config file; using %i as default").c_str(),verbosity);
@@ -195,7 +195,7 @@ class iCubBreather: public RFModule
             //******************* NOISESTD ******************
                 if (rf.check("noiseStd"))
                 {
-                    noiseStd = rf.find("noiseStd").asDouble();
+                    noiseStd = rf.find("noiseStd").asFloat64();
                     yInfo(("*** "+name+": noiseStd set to %g").c_str(),noiseStd);
                 }
                 else yInfo(("*** "+name+": could not find noiseStd option in the config file; using %g as default").c_str(),noiseStd);
@@ -203,7 +203,7 @@ class iCubBreather: public RFModule
             //******************* REFPEEDS ******************
                 if (rf.check("refSpeeds"))
                 {
-                    refSpeeds = rf.find("refSpeeds").asDouble();
+                    refSpeeds = rf.find("refSpeeds").asFloat64();
                     yInfo(("*** "+name+": refSpeeds set to %g").c_str(),refSpeeds);
                 }
                 else yInfo(("*** "+name+": could not find refSpeeds option in the config file; using %g as default").c_str(),refSpeeds);

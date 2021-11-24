@@ -10,7 +10,7 @@ set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED 11)
 
 find_package(ICUBcontrib REQUIRED)
-find_package(YARP 3.3.0 REQUIRED COMPONENTS os sig dev math gsl idl_tools)
+find_package(YARP 3.5.1 REQUIRED COMPONENTS os sig dev math gsl idl_tools)
 list(APPEND CMAKE_MODULE_PATH ${ICUBCONTRIB_MODULE_PATH})
 
 include(ICUBcontribHelpers)
