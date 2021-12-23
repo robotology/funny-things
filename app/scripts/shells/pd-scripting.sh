@@ -54,7 +54,7 @@ speak() {
 }
 
 blink() {
-    echo "blink" | yarp rpc /iCubBlinker/rpc
+    echo "blink_single" | yarp rpc /iCubBlinker/rpc
     sleep 0.5
 }
 
@@ -367,12 +367,12 @@ sequence_00() {
 
 sequence_01() {
 #    gaze "idle"
-    look_presentatore 
+    look_presentatore
     speak "Ciao Fabrizio."
     sleep 1.0
     look_pubblico
     speak "Sono contento di essere qui con voi oggi."
-    sleep 1.0 
+    sleep 1.0
 #   gaze "idle"
     speak "Perche non ci divertiamo un po'?"
     wait_till_quiet
@@ -488,7 +488,7 @@ sequence_09()
     smile
 }
 
-sequence_10(){ 
+sequence_10(){
 look_schermo
 speak "Grazie ragazzi!"
 sleep 1.0
@@ -500,7 +500,7 @@ smile
 }
 
 
-sequence_11(){ 
+sequence_11(){
 look_presentatore
 torso_home
 speak "Grazie, anche per me Ee stato divertente!"

@@ -54,7 +54,7 @@ speak() {
 }
 
 blink() {
-    echo "blink" | yarp rpc /iCubBlinker/rpc
+    echo "blink_single" | yarp rpc /iCubBlinker/rpc
     sleep 0.5
 }
 
@@ -339,9 +339,9 @@ sequence_02() {
     sleep 1.0
     show_musles
     speak "Sono nato grazie alle idee di tanti super mega ingegneri!. Ecco perche' qui all'ENEL mi sento a casa... A proposito: buon pomeriggio presidente, ben trovato Ing. Starace e ciao a tutti ragazzi!"
-    sleep 2.0    
-    greet_with_right_thumb_up    
-    
+    sleep 2.0
+    greet_with_right_thumb_up
+
     hello_both
     wait_till_quiet
     smile && blink
@@ -360,7 +360,7 @@ sequence_03() {
     sleep 1.0 && blink
     speak "Famoso come Robo kop. E Jig robot. Voglio stampare gli autografi in 3D. e farmi i selfie con le star di Hollywood."
     speak "E quindi, per cominciare, ho pensato di salire su questo palco e provare a fare il presentatore"
-    
+
     sleep 15.0 && blink
     fonzie
     speak "Dai mettimi alla prova, Fammi fare un'intervista"
@@ -377,7 +377,7 @@ sequence_04() {
     wait_till_quiet
     smile
     sleep 2.0
-    # look presidente 
+    # look presidente
     gaze "look 15.0 0.0 3.0"
     speak "Presidente, quale' secondo lei, la caratteristica che i bambini di oggi, crescendo, non dovranno mai dimenticare, per lavorare in un contesto fortemente automatizzato"
     smile && blink
@@ -386,7 +386,7 @@ sequence_04() {
 
 
 sequence_05() {
-    # look Ingegnere 
+    # look Ingegnere
     gaze "look 15.0 0.0 3.0"
     sleep 2.0
     speak "Ingegnere, quali sono secondo lei, le conoscenze di cui avra' bisogno Enel, per svolgere i lavori del futuro?"
@@ -403,7 +403,7 @@ sequence_06() {
     #speak "Dott. Starace, ma se io sono figlio di ingegneri ... e lei e' un ingegnere, noi siamo anche un po parenti?"
     #wait_till_quiet
     speak "ora vi devo lasciare. ma torno presto, e' troppo bello stare sul palco di wi are enerji! CIAO CIAO!"
-    sleep 4.0    
+    sleep 4.0
     hello_right
     wait_till_quiet
     smile && blink
@@ -413,7 +413,7 @@ sequence_06() {
 sequence_07() {
     gaze "look 15.0 0.0 3.0"
     speak "Eccomi! sono qui, scusami... ma mi sono dovuto allontanare un momento."
-    sleep 1.0    
+    sleep 1.0
     hello_right_simple
     smile && blink
 }

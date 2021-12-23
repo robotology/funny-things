@@ -54,7 +54,7 @@ speak() {
 }
 
 blink() {
-    echo "blink" | yarp rpc /iCubBlinker/rpc
+    echo "blink_single" | yarp rpc /iCubBlinker/rpc
     sleep 0.5
 }
 
@@ -464,7 +464,7 @@ seq_01() {
 
 seq_02() {
     speak "Mi chiamo aicab!"
-    speak "Piacere di conoscervi!" 
+    speak "Piacere di conoscervi!"
     sleep 1.0 && blink && hello_both
     wait_till_quiet
     go_home_walking
@@ -525,7 +525,7 @@ seq_10() {
 
 #### Day 01/06
 seq2_01() {
-    speak "Buongiorno a tutti!" && hello_both 
+    speak "Buongiorno a tutti!" && hello_both
     go_home_walking
     speak "Io sono aicab, il robot dalle sembianze di un bambino."
     sleep 1.0 && blink

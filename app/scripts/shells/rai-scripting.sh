@@ -25,7 +25,7 @@ usage() {
 cat << EOF
 ***************************************************************************************
 DEA SCRIPTING
-Author:  Alessandro Roncone   <alessandro.roncone@iit.it> 
+Author:  Alessandro Roncone   <alessandro.roncone@iit.it>
 
 This script scripts through the commands available for the DeA Kids videos.
 
@@ -50,7 +50,7 @@ speak() {
 }
 
 blink() {
-    echo "blink" | yarp rpc /iCubBlinker/rpc
+    echo "blink_single" | yarp rpc /iCubBlinker/rpc
     sleep 0.5
 }
 
@@ -172,7 +172,7 @@ wait_till_quiet() {
     isSpeaking=$(echo "stat" | yarp rpc /iSpeak/rpc)
     while [ "$isSpeaking" == "Response: speaking" ]; do
         isSpeaking=$(echo "stat" | yarp rpc /iSpeak/rpc)
-        sleep 0.1        
+        sleep 0.1
         # echo $isSpeaking
     done
     echo "I'm not speaking any more :)"
@@ -183,7 +183,7 @@ wait_till_quiet() {
 # FUNZIONI LANCIO
 #######################################################################################
 
-vittoria() {    
+vittoria() {
     echo "ctpq time 1.0 off 7 pos                                       (18.0 40.0 50.0 167.0 0.0 0.0 0.0 0.0 222.0)" | yarp rpc /ctpservice/$1/rpc
     echo "ctpq time 2.0 off 0 pos (-57.0 32.0 -1.0 88.0 56.0 -30.0 -11.0 18.0 40.0 50.0 167.0 0.0 0.0 0.0 0.0 222.0)" | yarp rpc /ctpservice/$1/rpc
 }
@@ -195,7 +195,7 @@ lancio_destro() {
     sleep 3.0 && smile && sleep 3.0
 
     go_home_helperR 2.0
-    breathers "start"    
+    breathers "start"
 }
 
 
@@ -206,7 +206,7 @@ lancio_sinistro() {
     sleep 3.0 && smile && sleep 3.0
 
     go_home_helperL 2.0
-    breathers "start"  
+    breathers "start"
 }
 
 lancio_due_mani() {
@@ -217,7 +217,7 @@ lancio_due_mani() {
     sleep 3.0 && smile && sleep 3.0
 
     go_home
-    breathers "start"  
+    breathers "start"
 }
 
 #######################################################################################
@@ -226,7 +226,7 @@ lancio_due_mani() {
     #risposta_1() {
     #    breathers "start"
     #    smile
-    #    sleep 0.5 
+    #    sleep 0.5
     #    speak "Grazie Annalisa per avermi invitato."
     #    sleep 1.0 && blink
     #    sleep 2.5 && blink
@@ -236,7 +236,7 @@ lancio_due_mani() {
     risposta_1() {
         breathers "start"
         smile
-        sleep 0.5 
+        sleep 0.5
         speak "Grazie Annalisa per avermi invitato."
         sleep 1.0 && blink
         wait_till_quiet
@@ -249,16 +249,16 @@ lancio_due_mani() {
         sleep 1.0 && blink
         wait_till_quiet
         blink
-        smile      
+        smile
     }
 
-    risposta_3() {        
-        sleep 0.5 
+    risposta_3() {
+        sleep 0.5
         speak "cucciolo intelligente, perche' ho le dimensioni e la forma di un bambino, e come i bambini posso imparare cose nuove."
         sleep 3.0 && blink
         wait_till_quiet
         blink
-        smile   
+        smile
     }
 
     risposta_4() {
@@ -266,16 +266,16 @@ lancio_due_mani() {
         sleep 2.0 && blink
         wait_till_quiet
         blink
-        smile   
+        smile
     }
 
     risposta_5() {
-        speak "sono nato dieci anni fa, dal disegno degli ingegneri che mi hanno costruito? e in questi anni mi hanno insegnato a compiere azioni come un bambino di quattro anni" 
+        speak "sono nato dieci anni fa, dal disegno degli ingegneri che mi hanno costruito? e in questi anni mi hanno insegnato a compiere azioni come un bambino di quattro anni"
         sleep 2.0 && blink
         sleep 1.0 && blink
         wait_till_quiet
         blink
-        smile   
+        smile
     }
 
     risposta_6() {
@@ -283,18 +283,18 @@ lancio_due_mani() {
         sleep 2.0 && blink
         wait_till_quiet
         blink
-        smile 
-        sleep 0.4  
+        smile
+        sleep 0.4
 
         speak "Sono capace di stare in piedi senza cadere, e ora sto imparando a camminare come voi umani."
         sleep 1.5 && blink
         wait_till_quiet
         blink
-        smile   
+        smile
     }
 
     risposta_7() {
-        sleep 0.5 
+        sleep 0.5
         speak "la mia casa e' all'Istituto Italiano di Tecnologia a Genova, ma prima di venire a RaiNext ero a Ma drid, per incontrare scienziati interessati a sviluppare la mia intelligenza."
         sleep 2.0 && blink
         sleep 2.5 && blink
@@ -305,10 +305,10 @@ lancio_due_mani() {
         sleep 3.0 && blink
         wait_till_quiet
         blink
-        smile   
+        smile
     }
-    
-    
+
+
     risposta_8() {
         speak "oltre a me, esistono altri 30 aicab nel mondo, in laboratori che studiano l'intelligenza artificiale, come negli Stati Uniti? in Giappone e in alcune citta' Europee."
         sleep 2.0 && blink
@@ -318,7 +318,7 @@ lancio_due_mani() {
     }
 
     risposta_9() {
-        
+
         speak "Mi hanno inventato scienziati italiani ed europei per realizzare una macchina in grado di sviluppare un'intelligenza simile a quella degli umani. Il responsabile del mio progetto e' Giorgio Metta? all'Istituto Italiano di Tecnologia, che e' uno dei miei papa'. ma ho anche tanti zii e amici che lavorano per migliorarmi.. Tra qualche anno? potro' aiutarvi nei lavori domestici o in altre attivita' delicate per cui avrete bisogno di supporto. come per esempio l'assistenza degli anziani\!"
         sleep 5.0 && blink
         sleep 5.0 && blink
@@ -326,17 +326,17 @@ lancio_due_mani() {
         sleep 5.0 && blink
         wait_till_quiet
         blink
-        smile   
+        smile
     }
 
     risposta_10() {
 
-        
+
         speak "Sono un robot particolare\! un robot umanoide\! cioe' con le sembianze simili a un essere umano."
         sleep 5.0 && blink
         wait_till_quiet
         blink
-        smile   
+        smile
     }
 
     risposta_11() {
@@ -344,39 +344,39 @@ lancio_due_mani() {
         sleep 4.0 && blink
         wait_till_quiet
         blink
-        smile   
+        smile
     }
 
     risposta_12() {
 
-        
+
         blink && sleep 0.5
         speak "Sono fatto di metallo, plastica? e circuiti elettrici. ma i miei progettisti stanno pensando a nuovi materiali, per rendermi piu' leggero e sicuro"
         sleep 5.0 && blink
         wait_till_quiet
         blink
-        smile   
+        smile
     }
 
     risposta_13() {
 
-        
+
         speak "in questo momento? costo duecentocinquantamila euro, ma il mio progetto e' oo pen surs. Su internet si trova il disegno per costruire il mio corpo e il softuer per la base della mia intelligenza\!"
         sleep 8.0 blink
         wait_till_quiet
         blink
         blink
-        smile   
+        smile
     }
 
     risposta_14() {
 
-        
+
         speak "In futuro costero' meno di una siticar, sotto i diecimila euro. cosi' che le persone potranno comprarmi per avermi in casa? o in un ambiente lavorativo, e aiutarli in diversi compiti."
         sleep 8.0 && blink
         wait_till_quiet
         blink
-        smile   
+        smile
     }
 
     risposta_15() {
@@ -385,7 +385,7 @@ lancio_due_mani() {
         sleep 9.0 && blink
         sleep 5.0 && blink && blink
         wait_till_quiet
-        smile   
+        smile
     }
 
 #######################################################################################
@@ -396,7 +396,7 @@ echo ""
 
 $1 "$2"
 
-if [[ $# -eq 0 ]] ; then 
+if [[ $# -eq 0 ]] ; then
     echo "No options were passed!"
     echo ""
     usage
