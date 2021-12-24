@@ -36,7 +36,7 @@ speak() {
 }
 
 blink() {
-    echo "blink" | yarp rpc /iCubBlinker/rpc
+    echo "blink_single" | yarp rpc /iCubBlinker/rpc
     sleep 0.5
 }
 
@@ -358,7 +358,7 @@ sequence_02() {
     go_home_helper 2.0
     wait_till_quiet
     smile && blink
-   
+
 }
 
 sequence_03() {
@@ -366,7 +366,7 @@ sequence_03() {
     sleep 1.0
     speak "No, preferisco rimanere un robot, e affiancare gli umani nella vita di tutti i giorni, cercando di svolgere al meglio le mansioni che mi verranno affidate."
     sleep 1.0
-    fonzie_right 
+    fonzie_right
     sleep 2.0
     go_home_helper 2.0
     sleep 2.0 && blink
@@ -380,11 +380,11 @@ sequence_04() {
     gaze "look-around 15.0 0.0 5.0"
     sleep 1.0
     speak "Perchè, i robot, e le tecnologie sviluppate grazie a me, potranno aiutarvi nella cura e nel supporto alla disabilità, a casa come pure al lavoro"
-    sleep 2.0    
-    fonzie_right    
+    sleep 2.0
+    fonzie_right
     speak "farvi correre meno rischi e risparmiare le risorse del nostro pianeta, che inizia ad essere un po' sovraffollato."
     sleep 10.0
-    gaze "look -15.0 0.0 5.0"    
+    gaze "look -15.0 0.0 5.0"
     show_iit
     gaze "look-around 15.0 0.0 5.0"
     wait_till_quiet

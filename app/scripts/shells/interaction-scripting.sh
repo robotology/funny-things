@@ -114,7 +114,7 @@ attend_left() {
 #######################################################################################
 
 blink() {
-    echo "blink" | yarp rpc /iCubBlinker/rpc
+    echo "blink_single" | yarp rpc /iCubBlinker/rpc
     sleep 0.5
 }
 
@@ -123,16 +123,16 @@ blink() {
 #######################################################################################
 
 point_right() {
-    echo "point (-0.430766 0.204718 -0.127849) right no_head" | yarp rpc /actionsRenderingEngine/cmd:io &    
-    sleep 4.0     
+    echo "point (-0.430766 0.204718 -0.127849) right no_head" | yarp rpc /actionsRenderingEngine/cmd:io &
+    sleep 4.0
     home_gaze
     sleep 2.0
     gaze_person
 }
 
 point_left() {
-    echo "point (-0.430766 -0.204718 -0.127849) left no_head" | yarp rpc /actionsRenderingEngine/cmd:io &    
-    sleep 4.0     
+    echo "point (-0.430766 -0.204718 -0.127849) left no_head" | yarp rpc /actionsRenderingEngine/cmd:io &
+    sleep 4.0
     home_gaze
     sleep 2.0
     gaze_person
@@ -145,15 +145,15 @@ expect_right() {
 
 expect_left() {
     look_hand_left
-    echo "expect left near" | yarp rpc /actionsRenderingEngine/cmd:io   
+    echo "expect left near" | yarp rpc /actionsRenderingEngine/cmd:io
 }
 
 look_hand_right() {
-    echo "look hand right" | yarp rpc /actionsRenderingEngine/cmd:io   
+    echo "look hand right" | yarp rpc /actionsRenderingEngine/cmd:io
 }
 
 look_hand_left() {
-    echo "look hand left" | yarp rpc /actionsRenderingEngine/cmd:io 
+    echo "look hand left" | yarp rpc /actionsRenderingEngine/cmd:io
 }
 
 return_home() {

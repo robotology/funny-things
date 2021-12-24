@@ -53,7 +53,7 @@ speak() {
 }
 
 blink() {
-    echo "blink" | yarp rpc /iCubBlinker/rpc
+    echo "blink_single" | yarp rpc /iCubBlinker/rpc
     sleep 0.5
 }
 
@@ -357,8 +357,8 @@ show_agitation() {
     echo "bind roll 0.0 0.0" | yarp rpc /iKinGazeCtrl/rpc
     sleep 0.2
     echo "bind yaw 0.0 0.0" | yarp rpc /iKinGazeCtrl/rpc
-    sleep 0.2    
-    
+    sleep 0.2
+
     gaze "look -30.0 0.0 5.0"
     sleep 1.5
     gaze "look 30.0 0.0 5.0"
@@ -374,7 +374,7 @@ show_agitation() {
     sleep 0.2
     echo "clear yaw" | yarp rpc /iKinGazeCtrl/rpc
     sleep 0.2
-    
+
     echo "ctpq time 1.0 off 0 pos (0.0 0.0 0.0)" | yarp rpc /ctpservice/torso/rpc
 }
 
@@ -429,7 +429,7 @@ sequence_01() {
 
 sequence_02() {
     speak "Senti Corsini!"
-    echo "ctpq time 1.2 off 0 pos (30.0 0.0 0.0)" | yarp rpc /ctpservice/torso/rpc    
+    echo "ctpq time 1.2 off 0 pos (30.0 0.0 0.0)" | yarp rpc /ctpservice/torso/rpc
     echo "look ang (abs 60.0 0.0 3.0)" | yarp rpc /iKinGazeCtrl/rpc
     sleep 1.0
     wait_till_quiet
@@ -440,9 +440,9 @@ sequence_02() {
     wait_till_quiet
 
     speak "Andiamo a lavorare assieme nel gioint lab appena creato"
-    echo "ctpq time 1.0 off 0 pos (0.0 0.0 0.0)" | yarp rpc /ctpservice/torso/rpc        
+    echo "ctpq time 1.0 off 0 pos (0.0 0.0 0.0)" | yarp rpc /ctpservice/torso/rpc
     echo "look ang (abs 0.0 0.0 3.0)" | yarp rpc /iKinGazeCtrl/rpc
-    echo "ctpq time 1.5 off 0 pos (-48.1752 17.8473 47.082 82.1615 -34.2005 9.58559 25.5543 14.4965 40.0 70.0 3.0 10.0 15.0 20.0 25.0 50.0)" | yarp rpc /ctpservice/right_arm/rpc 
+    echo "ctpq time 1.5 off 0 pos (-48.1752 17.8473 47.082 82.1615 -34.2005 9.58559 25.5543 14.4965 40.0 70.0 3.0 10.0 15.0 20.0 25.0 50.0)" | yarp rpc /ctpservice/right_arm/rpc
     sleep 2.0
     go_home_helper 2.0
     wait_till_quiet
@@ -450,8 +450,8 @@ sequence_02() {
     speak "dopo tanti anni che mi dici che sono ancora troppo immaturo, non vedo l'ora di andare in impianto, e farti vedere di cosa sono capace."
     sad
     echo "look ang (abs 0.0 -30.0 3.0)" | yarp rpc /iKinGazeCtrl/rpc
-    echo "ctpq time 1.5 off 0 pos (-29.3665 24.0876 10.2558 101.937 -60.0459 25.1423 0.505372 30.4981 62.3201 0.0 5.09218 0.0 0.0 0.0 0.0 0.928347)" | yarp rpc /ctpservice/right_arm/rpc 
-    echo "ctpq time 1.5 off 0 pos (-29.3665 24.0876 10.2558 101.937 -60.0459 25.1423 0.505372 30.4981 62.3201 0.0 5.09218 0.0 0.0 0.0 0.0 0.928347)" | yarp rpc /ctpservice/left_arm/rpc 
+    echo "ctpq time 1.5 off 0 pos (-29.3665 24.0876 10.2558 101.937 -60.0459 25.1423 0.505372 30.4981 62.3201 0.0 5.09218 0.0 0.0 0.0 0.0 0.928347)" | yarp rpc /ctpservice/right_arm/rpc
+    echo "ctpq time 1.5 off 0 pos (-29.3665 24.0876 10.2558 101.937 -60.0459 25.1423 0.505372 30.4981 62.3201 0.0 5.09218 0.0 0.0 0.0 0.0 0.928347)" | yarp rpc /ctpservice/left_arm/rpc
     sleep 2.0
     echo "look ang (abs 0.0 0.0 3.0)" | yarp rpc /iKinGazeCtrl/rpc
     smile

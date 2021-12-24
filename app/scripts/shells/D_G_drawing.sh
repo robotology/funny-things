@@ -63,7 +63,7 @@ speak() {
 }
 
 blink() {
-    echo "blink" | yarp rpc /iCubBlinker/rpc
+    echo "blink_single" | yarp rpc /iCubBlinker/rpc
     sleep 0.5
 }
 
@@ -150,7 +150,7 @@ draw() {
     else if [ "$HAND" = "left" ]; then
         echo "$1 $2 $(bc <<< "$3+$OFFSET") $4 $5 $6 $7" | yarp write ...  /armCtrl/left_arm/xd:i
     fi
-    fi  
+    fi
 }
 
 start_draw() {
@@ -210,7 +210,7 @@ right_arm_home(){
 
 set_up_left_arm(){
     echo "ctpq time 1.5 off 7 pos (23.3295 30.7783 -3.06519 53.8881 49.0925 58.8869 45.9779 83.2985 140.312)" | yarp rpc /ctpservice/left_arm/rpc
-    
+
     #with the glove
     #echo "ctpq time 1.5 off 8 pos (9.80532 0 139.999 47.7522 132.133 76.9429 109.127 270.001)" | yarp rpc /ctpservice/left_arm/rpc
 }
@@ -246,7 +246,7 @@ set_up_hand() {
         echo "Using left hand"
         set_up_left_arm
     fi
-    fi    
+    fi
 }
 
 prepare() {
@@ -289,7 +289,7 @@ calib_table()
 }
 
 part_1() {
-    
+
     if [ "$HAND" = "right" ]; then
         #high left arm drawing
         echo "ctpq time 10 off 0 pos (-15.0 0.0 -11.0 -10.0 -0.0 5.0)" | yarp rpc /ctpservice/head/rpc
@@ -311,7 +311,7 @@ part_1() {
 
         #up face face drawing
         draw -0.386334435421571142921 0.0753170618625696063342 -0.040025084774475305771 -0.0558197697426994418612 0.889354215875829745563 -0.453798669025990086823 2.68235527666180484374
-    
+
     else if [ "$HAND" = "left" ]; then
         #high left arm drawing
         draw -0.312099692973232367699 -0.0323477147963253594543 -0.0629028330966882788799 $AX_LEFT $AY_LEFT $AZ_LEFT $THETA_LEFT
@@ -340,7 +340,7 @@ start_part_2() {
     X=-0.325723724067253908032
     Y=0.061830599363296217863
     Z=-0.0253764683221865031681
-    AX=-0.0846392633486617862459 
+    AX=-0.0846392633486617862459
     AY=0.850400373120677621763
     AZ=-0.519283545373823929303
     THETA=2.80263529378769327138
@@ -376,7 +376,7 @@ part_2() {
 
         draw -0.210324055274786971825 0.0726375747705533834075 -0.0732430696781040821985 -0.331076573016411412897 0.839284378792964691485 -0.431265619211427697621 2.33134272817010890222
         sleep 2.0
-    
+
         draw -0.210324055274786971825 0.0726375747705533834075 -0.0192430696781040821985 -0.331076573016411412897 0.839284378792964691485 -0.431265619211427697621 2.33134272817010890222
     else if [ "$HAND" = "left" ]; then
         draw -0.325723724067253908032 -0.061830599363296217863 -0.0753764683221865031681 $AX_LEFT $AY_LEFT $AZ_LEFT $THETA_LEFT
@@ -391,7 +391,7 @@ part_2() {
 
         draw -0.210324055274786971825 -0.0726375747705533834075 -0.0732430696781040821985 $AX_LEFT $AY_LEFT $AZ_LEFT $THETA_LEFT
         sleep 2.0
-    
+
         draw -0.210324055274786971825 -0.0726375747705533834075 -0.0192430696781040821985 $AX_LEFT $AY_LEFT $AZ_LEFT $THETA_LEFT
     fi
     fi
@@ -412,7 +412,7 @@ start_part_3() {
         AZ=$AZ_LEFT
         THETA=$THETA_LEFT
     fi
-    
+
     start_draw $X $Y $Z $AX $AY $AZ $THETA
     sleep 1.0
 
@@ -433,13 +433,13 @@ part_3() {
     if [ "$HAND" = "right" ]; then
         draw -0.315723724067253908032 0.11 -0.0733764683221865031681 -0.0846392633486617862459 0.850400373120677621763 -0.519283545373823929303 2.80263529378769327138
         sleep 2.0
-     
+
         draw -0.2823724067253908032 0.10 -0.0733764683221865031681 -0.0846392633486617862459 0.850400373120677621763 -0.519283545373823929303 2.80263529378769327138
-        sleep 2.0 
-    
+        sleep 2.0
+
         draw -0.2653724067253908032 0.115 -0.0713764683221865031681 -0.0846392633486617862459 0.850400373120677621763 -0.519283545373823929303 2.80263529378769327138
         sleep 2.0
-         
+
         draw -0.2023250129427876709 0.118728067975726200523 -0.0796862721934695412696 -0.00496676038412719334653 0.774492962781589078247 -0.632563026024350216758 2.56487352093593168334
         sleep 3.0
 
@@ -447,13 +447,13 @@ part_3() {
     else if [ "$HAND" = "left" ]; then
         draw -0.315723724067253908032 -0.11 -0.0733764683221865031681 $AX_LEFT $AY_LEFT $AZ_LEFT $THETA_LEFT
         sleep 2.0
-     
+
         draw -0.2823724067253908032 -0.10 -0.0733764683221865031681 $AX_LEFT $AY_LEFT $AZ_LEFT $THETA_LEFT
-        sleep 2.0 
-    
+        sleep 2.0
+
         draw -0.2653724067253908032 -0.115 -0.0713764683221865031681 $AX_LEFT $AY_LEFT $AZ_LEFT $THETA_LEFT
         sleep 2.0
-         
+
         draw -0.2023250129427876709 -0.118728067975726200523 -0.0796862721934695412696 $AX_LEFT $AY_LEFT $AZ_LEFT $THETA_LEFT
         sleep 3.0
 
@@ -490,7 +490,7 @@ part_4() {
     if [ "$HAND" = "right" ]; then
         draw -0.350578938749672666564 0.0803265228440144745115 -0.069040502935731338785 -0.139080462476080801704 0.864773202310446520436 -0.482518324546513943663 2.60992081676853482364
         sleep 2.0
-   
+
         draw -0.355263690567933779096 0.110372969207294786109 -0.0714483792852473856283 0.000476032722984540655753 0.899948998521016729768 -0.435994923656073951612 2.64223014371933695443
         sleep 2.0
 
@@ -501,7 +501,7 @@ part_4() {
     else if [ "$HAND" = "left" ]; then
         draw -0.350578938749672666564 -0.0803265228440144745115 -0.069040502935731338785 $AX_LEFT $AY_LEFT $AZ_LEFT $THETA_LEFT
         sleep 2.0
-   
+
         draw -0.355263690567933779096 -0.110372969207294786109 -0.0714483792852473856283 $AX_LEFT $AY_LEFT $AZ_LEFT $THETA_LEFT
         sleep 2.0
 
@@ -528,10 +528,10 @@ start_part_5() {
         AZ=$AZ_LEFT
         THETA=$THETA_LEFT
     fi
-    
+
     start_draw $X $Y $Z $AX $AY $AZ $THETA
     sleep 1.0
-    
+
     echo "ctpq time 2 off 0 pos (-25.0 0.0 -11.0 -20.0 -0.0 5.0)" | yarp rpc /ctpservice/head/rpc
 
     torso_low
@@ -539,7 +539,7 @@ start_part_5() {
 }
 
 part_5() {
-    
+
      echo "ctpq time 5 off 0 pos (-25.0 0.0 -18.0 -20.0 -0.0 5.0)" | yarp rpc /ctpservice/head/rpc
 
     if [ "$HAND" = "right" ]; then
@@ -547,7 +547,7 @@ part_5() {
         sleep 2.0
 
         draw -0.306886776896212300603 0.127579528816639274136 -0.0788054075826516292613 -0.0406193229074667538914 0.812088367509156250357 -0.582119020444146206827 2.56000409079834900794
-        sleep 2.0 
+        sleep 2.0
 
         draw -0.306886776896212300603 0.127579528816639274136 -0.0488054075826516292613 -0.0406193229074667538914 0.812088367509156250357 -0.582119020444146206827 2.56000409079834900794
     else if [ "$HAND" = "left" ]; then
@@ -555,7 +555,7 @@ part_5() {
         sleep 2.0
 
         draw -0.306886776896212300603 -0.127579528816639274136 -0.0788054075826516292613 $AX_LEFT $AY_LEFT $AZ_LEFT $THETA_LEFT
-        sleep 2.0 
+        sleep 2.0
 
         draw -0.306886776896212300603 -0.127579528816639274136 -0.0488054075826516292613 $AX_LEFT $AY_LEFT $AZ_LEFT $THETA_LEFT
     fi
@@ -601,7 +601,7 @@ part_6() {
         draw -0.288886776896212300603 -0.129579528816639274136 -0.0788054075826516292613 $AX_LEFT $AY_LEFT $AZ_LEFT $THETA_LEFT
         sleep 2.0
 
-        draw -0.288886776896212300603 -0.129579528816639274136 -0.0488054075826516292613 $AX_LEFT $AY_LEFT $AZ_LEFT $THETA_LEFT  
+        draw -0.288886776896212300603 -0.129579528816639274136 -0.0488054075826516292613 $AX_LEFT $AY_LEFT $AZ_LEFT $THETA_LEFT
     fi
     fi
 }
@@ -609,7 +609,7 @@ part_6() {
 raise_up() {
 
     #draw -0.288886776896212300603 0.129579528816639274136 -0.0488054075826516292613 -0.0406193229074667538914 0.812088367509156250357 -0.582119020444146206827 2.56000409079834900794
-  
+
     echo $HAND
     X=-0.288886776896212300603
     Y=0.205579528816639274136
@@ -627,7 +627,7 @@ raise_up() {
     fi
     echo "ctpq time 3 off 0 pos (-25.0 0.0 -5.0 -18.0 -0.0 5.0)" | yarp rpc /ctpservice/head/rpc
 
-    draw $X $Y $Z $AX $AY $AZ $THETA 
+    draw $X $Y $Z $AX $AY $AZ $THETA
 }
 
 all_parts() {
@@ -648,7 +648,7 @@ all_parts() {
     sleep 2.0
     part_3
     sleep 2.0
-    
+
     start_part_4
     sleep 2.0
     part_4
@@ -664,50 +664,50 @@ all_parts() {
     part_6
     sleep 2.0
 
-    raise_up    
+    raise_up
 }
 
 ###################################################################
-# 21 feb 
+# 21 feb
 ###################################################################
 
-speak_01() 
+speak_01()
 {
     echo "\"Ciao Domenico e Stefano!!!\"" | yarp write ... /iSpeak
-    mplayer /home/vvasco/stilisti/audio_01.mp3 
+    mplayer /home/vvasco/stilisti/audio_01.mp3
 }
 
-#speak_02() 
+#speak_02()
 #{
 #    echo "\"Come sono felice ed emozionato di essere qui a Milano tra voi!!!!\"" | yarp write ... /iSpeak
 #    mplayer /home/vvasco/stilisti/audio_02.mp3
 #}
 
-#speak_03() 
+#speak_03()
 #{
 #    echo "\"Cosa mi potete insegnare????\"" | yarp write ... /iSpeak
-#    mplayer /home/vvasco/stilisti/audio_03.mp3 
+#    mplayer /home/vvasco/stilisti/audio_03.mp3
 #}
 
-speak_02() 
+speak_02()
 {
     echo "\"Vorrei tanto imparare a disegnare!!!!\"" | yarp write ... /iSpeak
     mplayer /home/vvasco/stilisti/audio_02.mp3
 }
 
-#speak_05() 
+#speak_05()
 #{
 #    echo "\"Come posso aiutarvi per preparare questa sfilata???\"" | yarp write ... /iSpeak
 #    mplayer /home/vvasco/stilisti/audio_05.mp3
 #}
 
-#speak_06() 
+#speak_06()
 #{
 #    echo "\"Wow che bel look!!!\"" | yarp write ... /iSpeak
 #    mplayer /home/vvasco/stilisti/audio_06.mp3
 #}
 
-#speak_07() 
+#speak_07()
 #{
 #    echo "\"Grazie Stefano e Domenico, ci vediamo alla sfilata!!!\"" | yarp write ... /iSpeak
 #    mplayer /home/vvasco/stilisti/audio_07.mp3
@@ -721,7 +721,7 @@ speak_02()
 
 
 ###################################################################
-# 22 feb 
+# 22 feb
 ###################################################################
 speak_03()
 {
@@ -729,32 +729,32 @@ speak_03()
     mplayer /home/vvasco/stilisti/audio_03.mp3
 }
 
-speak_04() 
+speak_04()
 {
     echo "\"Wow che bel look!!!\"" | yarp write ... /iSpeak
     mplayer /home/vvasco/stilisti/audio_04.mp3
 }
 
-speak_05() 
+speak_05()
 {
     echo "\"Wow che bello!!!\"" | yarp write ... /iSpeak
     mplayer /home/vvasco/stilisti/audio_05.mp3
 }
 
 
-speak_06() 
+speak_06()
 {
     echo "\"Interessante questo articolo!!!\"" | yarp write ... /iSpeak
     mplayer /home/vvasco/stilisti/audio_06.mp3
 }
 
-speak_07() 
+speak_07()
 {
     echo "\"Grazie Stefano e Domenico!!!\"" | yarp write ... /iSpeak
     mplayer /home/vvasco/stilisti/audio_07.mp3
 }
 
-speak_08() 
+speak_08()
 {
     echo "\"Grazie Stefano e Domenico, ci vediamo alla sfilata!!!\"" | yarp write ... /iSpeak
     mplayer /home/vvasco/stilisti/audio_08.mp3
@@ -811,16 +811,16 @@ point_left_front() {
 }
 
 follow_left() {
-    point_left_wide 
-    point_left_front 
+    point_left_wide
+    point_left_front
     sleep 5.0
-    home_left_arm 
+    home_left_arm
 }
 
 follow_both() {
     for i in {1..$1}
     do
-        follow_left 
+        follow_left
         sleep 6.0
         follow_right
         sleep 6.0
@@ -1023,7 +1023,7 @@ sequence_14() {
     sleep 0.7
     echo "ctpq time 1.0 off 0 pos (-22.0 34.0 48.0 73.0 37.0 3.0 -7.0    12.0 -6.0 37.0 2.0 0.0 3.0 2.0 1.0 0.0)" | yarp rpc /ctpservice/left_arm/rpc
     sleep 3.0
-   
+
     home_left_arm
     home_right_arm
 }

@@ -50,7 +50,7 @@ speak() {
 }
 
 blink() {
-    echo "blink" | yarp rpc /iCubBlinker/rpc
+    echo "blink_single" | yarp rpc /iCubBlinker/rpc
     sleep 0.5
 }
 
@@ -266,12 +266,12 @@ noi_robot(){
   sleep 1.0
   me_and_you
   sleep 3.0
-  go_home  
+  go_home
 }
 
 questo_film(){
   show_iit
-  speak "In questo breve filmato vi mostrerò come le mie capacità si siano evolute nel corso degli anni." 
+  speak "In questo breve filmato vi mostrerò come le mie capacità si siano evolute nel corso degli anni."
   sleep 3.0
   mostra_muscoli
   sleep 1.0

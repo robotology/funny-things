@@ -34,7 +34,7 @@ service iCubBlinker_IDL
   * Performs a single blink.
   * @return true/false on success/failure.
   */
-  bool blink();
+  bool blink_single();
 
   /**
   * Performs a fast blink.

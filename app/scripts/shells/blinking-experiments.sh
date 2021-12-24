@@ -25,7 +25,7 @@ usage() {
 cat << EOF
 ***************************************************************************************
 BLINKING EXPERIMENTS
-Author:  Alessandro Roncone   <alessandro.roncone@iit.it> 
+Author:  Alessandro Roncone   <alessandro.roncone@iit.it>
 
 This script scripts through the commands available for the DeA Kids videos.
 
@@ -51,7 +51,7 @@ speak() {
 }
 
 blink() {
-    echo "blink" | yarp rpc /iCubBlinker/rpc
+    echo "blink_single" | yarp rpc /iCubBlinker/rpc
 }
 
 wait_till_quiet() {
@@ -70,7 +70,7 @@ speak_hri() {
     speak "$1"
     sleep 0.15
     wait_till_quiet
-    # blink    
+    # blink
 }
 
 #do a blink only at the beginning (onset)
@@ -134,7 +134,7 @@ echo ""
 
 $1 "$2"
 
-if [[ $# -eq 0 ]] ; then 
+if [[ $# -eq 0 ]] ; then
     echo "[BlinkingScript] No options were passed!"
     echo ""
     usage

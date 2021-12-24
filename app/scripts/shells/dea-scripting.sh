@@ -25,7 +25,7 @@ usage() {
 cat << EOF
 ***************************************************************************************
 DEA SCRIPTING
-Author:  Alessandro Roncone   <alessandro.roncone@iit.it> 
+Author:  Alessandro Roncone   <alessandro.roncone@iit.it>
 
 This script scripts through the commands available for the DeA Kids videos.
 
@@ -50,7 +50,7 @@ speak() {
 }
 
 blink() {
-    echo "blink" | yarp rpc /iCubBlinker/rpc
+    echo "blink_single" | yarp rpc /iCubBlinker/rpc
     sleep 0.5
 }
 
@@ -310,7 +310,7 @@ closing_remarks() {
     sleep 3.0 && blink && smile
     speak "In bocca al lupo meikers"
     smile
-    greet_with_right_thumb_up   
+    greet_with_right_thumb_up
     smile
 }
 
@@ -369,7 +369,7 @@ angry() {
         sleep 1.0 && blink
         sleep 1.0 && smile
         speak "E' stata usata una stampante 3D? proprio come quelle del laboratorio degli X meikers!"
-        sleep 4.0 && blink 
+        sleep 4.0 && blink
         speak " Solo? Un po' piu' grande."
         sleep 6.0 && smile # && blink
     }
@@ -650,7 +650,7 @@ angry() {
         sleep 3.0 && blink
         sleep 2.0 && smile
     }
-    
+
     puntata1_3() {
         attacco_grafica "Il 70% dei ragazzi ha rilevato? nei normali monopattini, un grosso difetto: utilizzarli a lungo e' molto faticoso."
         sleep 3.0 && blink
@@ -712,7 +712,7 @@ angry() {
         sleep 2.0 && blink
         sleep 2.0 && blink
     }
-    
+
     puntata2_5() {
         breathers "stop"
         echo "ctpq time 1.5 off 0 pos (-42.0 36.0 -12.0 101.0 85.0 -45.0 -4.0 17.0 57.0 87.0 140.0 0.0 0.0 87.0 176.0 250.0)" | yarp rpc /ctpservice/right_arm/rpc
@@ -732,7 +732,7 @@ angry() {
     }
 
     puntata2_c() {
-        closing_remarks "0 3 FT2"  
+        closing_remarks "0 3 FT2"
     }
 
     puntata2_total() {
@@ -761,7 +761,7 @@ angry() {
         meteo_bot
         speak "Le macchinine si bloccano quando affrontano alcuni tipi di terreno, come la ghiaia, il fango? o i tappeti. Il 67% dei ragazzi lo trova insopportabile."
         sleep 4.0 && blink
-        sleep 2.0 && blink 
+        sleep 2.0 && blink
         sleep 6.0 && blink
     }
 
@@ -788,7 +788,7 @@ angry() {
         sleep 1.0 && blink
         sleep 1.0 && blink
         sleep 3.0 && blink
-    }    
+    }
 
     puntata3_c() {
         closing_remarks "3 6 TL 2 4"
@@ -818,7 +818,7 @@ angry() {
         meteo_bot
         speak "Il 50 percento dei ragazzi vorrebbe un televisore meno anonimo, piu' colorato? piu' giocoso? piu' adatto allo stile delle loro camerette."
         sleep 4.0 && blink
-        sleep 4.0 && blink 
+        sleep 4.0 && blink
     }
 
     puntata4_3() {
@@ -838,10 +838,10 @@ angry() {
         attacco_grafica "Infine, il 60 percento dei ragazzi perde il telecomando almeno una volta al giorno. La percentuale sale al 90 percento tra i ragazzi particolarmente disordinati che lasciano vestiti e giocattoli in giro."
         sleep 3.0 && blink
         sleep 6.0 && blink
-    }  
+    }
 
     puntata4_c() {
-        closing_remarks "0 5 ics, 1 2"  
+        closing_remarks "0 5 ics, 1 2"
     }
 
 #######################################################################################
@@ -860,7 +860,7 @@ angry() {
         meteo_bot
         speak "Il 70 percento degli umani vorrebbe un taabl-et in grado di distinguersi dalla massa. Dovrebbe farsi notare anche quando non lo si usa."
         sleep 3.0 && blink
-        sleep 7.0 && blink 
+        sleep 7.0 && blink
     }
 
     puntata5_3() {
@@ -876,7 +876,7 @@ angry() {
         attacco_grafica "Infine? il 79% vorrebbe poter condividere quello che c'e' sullo schermo con i propri amici, anche quando gli amici sono tanti e sono tutti nello stesso posto."
         sleep 1.0 && blink
         sleep 3.0 && blink
-    }    
+    }
 
     puntata5_c() {
         closing_remarks "1 9 t 6 2"
@@ -899,7 +899,7 @@ angry() {
         meteo_bot
         speak "Il 70 percento dei ragazzi vorrebbe una bicicletta aggressiva, simile a una moto. I ragazzi la definiscono tosta? anche se aicab non capisce il significato di questa parola."
         sleep 5.0 && blink
-        sleep 4.0 && no_testa 
+        sleep 4.0 && no_testa
         echo "set reb cun" | yarp rpc /icub/face/emotions/in
         echo "set leb cun" | yarp rpc /icub/face/emotions/in
         sleep 3.0 && smile
@@ -918,7 +918,7 @@ angry() {
     }
 
     puntata6_c() {
-        closing_remarks "0 4 y 5 4"  
+        closing_remarks "0 4 y 5 4"
     }
 
 #######################################################################################
@@ -953,7 +953,7 @@ angry() {
     puntata7_5() {
         attacco_grafica "Per finire? il 65 percento sogna uno zaino da supereroe in grado di proteggerli dagli scherzi dei compagni, e soprattutto, dai bulli della scuola."
         sleep 2.0  && blink
-        sleep 3.0  && angry 
+        sleep 3.0  && angry
         sleep 2.25 && angry
         sleep 2.0  && smile
     }
@@ -1158,7 +1158,7 @@ angry() {
         sleep 0.5
         # speak "Rimarra' a disposizione di tutti gli aspiranti meikers? nella galleria dei prototipi? sul sito vuvuvu punto dea kidz punto it"
         speak "Rimarra' a disposizione di tutti gli aspiranti meikers? nella galleria dei prototipi sul nostro sito."
-        
+
         head "start"
         sleep 16.0
         breathers "stop"
@@ -1169,7 +1169,7 @@ angry() {
         sleep 1.5
         breathers "start"
     }
-    
+
     chiusura_1() {
         chiusura "Il protocollo? Super Monopattino e' chiuso e archiviato."
     }
@@ -1232,7 +1232,7 @@ echo ""
 
 $1 "$2"
 
-if [[ $# -eq 0 ]] ; then 
+if [[ $# -eq 0 ]] ; then
     echo "No options were passed!"
     echo ""
     usage

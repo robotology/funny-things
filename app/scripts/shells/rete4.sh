@@ -54,7 +54,7 @@ speak() {
 }
 
 blink() {
-    echo "blink" | yarp rpc /iCubBlinker/rpc
+    echo "blink_single" | yarp rpc /iCubBlinker/rpc
     sleep 0.5
 }
 
@@ -343,8 +343,8 @@ show_agitation() {
     echo "bind roll 0.0 0.0" | yarp rpc /iKinGazeCtrl/rpc
     sleep 0.2
     echo "bind yaw 0.0 0.0" | yarp rpc /iKinGazeCtrl/rpc
-    sleep 0.2    
-    
+    sleep 0.2
+
     gaze "look -30.0 0.0 5.0"
     sleep 1.5
     gaze "look 30.0 0.0 5.0"
@@ -360,7 +360,7 @@ show_agitation() {
     sleep 0.2
     echo "clear yaw" | yarp rpc /iKinGazeCtrl/rpc
     sleep 0.2
-    
+
     echo "ctpq time 1.0 off 0 pos (0.0 0.0 0.0)" | yarp rpc /ctpservice/torso/rpc
 }
 
@@ -408,7 +408,7 @@ sequence_01() {
 sequence_02() {
     speak "Ho solo 10 anni, e per me e' tardi, dovrei andare a dormire, tra poco. ma stasera staro' sveglio. Questa occasione non posso perderla!"
     sleep 1.0
-    greet_with_right_thumb_up    
+    greet_with_right_thumb_up
     wait_till_quiet
     smile && blink
 }
@@ -422,26 +422,26 @@ sequence_03_() {
     sequence_04
 }
 
-sequence_04() {    
+sequence_04() {
     speak "Si, sono creature bellissime, e ci sono tanti cuccioli come me! Ma, morderanno??"
     sleep 1.5
     #greet_with_right_thumb_up
 }
 
-sequence_05() {  
-    surprised  
+sequence_05() {
+    surprised
     sleep 1.0
     speak "Questi sono davvero tanti!...Vai avanti tu, ACP, che devi presentarli. io ti seguo...da qua."
     smile
 }
 
-sequence_06() {   
-    victory right_arm 
+sequence_06() {
+    victory right_arm
     speak "Sono decisamente piu' carino, e molto piu' giovane!."
     go_home
 }
 
-sequence_07() {   
+sequence_07() {
     speak "Belli i felini! Saranno bravi genitori? Guardiamo, io vi aspetto dopo."
     sleep 1.0
     question
@@ -461,7 +461,7 @@ sequence_09() {
 
 sequence_10() {
     speak "Oltre 30, nati dopo di me, e sparsi per il mondo, dagli stati uniti al giappone."
-    sleep 3.5    
+    sleep 3.5
     question_right
     sleep 1.5
     question_left
@@ -472,7 +472,7 @@ sequence_10() {
 
 sequence_11() {
     speak "Ho tante mamme e papa'; all'Istituto Italiano di Tecnologia di Genova. Oggi mi ha accompagnato qui Vadiim "
-    sleep 2.0    
+    sleep 2.0
     hello_left_simple
     go_home_helper 2.0
 }
@@ -499,18 +499,18 @@ sequence_13() {
     #go_home
 }
 
-sequence_14() { 
+sequence_14() {
     speak "Io restero' con i ricercatori, e continuero' a imparare e crescere. sara' R1 ad entrare nelle vostre case per aiutarvi"
 }
 
 # Skin DEMO.
 
-sequence_15() { 
+sequence_15() {
     speak "16961, ti dice niente questo numero?"
     interaction_right
 }
 
-sequence_16() { 
+sequence_16() {
     speak "Grazie Alessandro, e' ora che io vada a dormire. Mi e' piaciuta la TV."
     echo "ctpq time 1.0 off 0 pos (-12.0 37.0 6.0 67.0 -52.0 -14.0 9.0    12.0 -6.0 37.0 2.0 0.0 3.0 2.0 1.0 0.0)" | yarp rpc /ctpservice/left_arm/rpc
     sleep 2.0
