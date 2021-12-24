@@ -520,7 +520,7 @@ public:
         return res;
     }
 
-    bool blink()
+    bool blink_single()
     {
         t0=Time::now();
         return doBlink();
