@@ -28,10 +28,14 @@ Funny Things
 ### `funnyThingsApp`
 
 Enabling `CREATE_FUNNYTHINGSAPP` at configure time, it is possible to build the `funny-things` [electron](https://www.electronjs.org/) app, that allows to quickly and easily design awesome demos.
-Here the dependencies:
- - npm >= 6.14.15
- - nodejs >= 10.19.0
- - electron-builder >= 22.11.7
+Here how to install the dependencies:
+```
+sudo apt update
+sudo apt install -y curl
+curl -fsSL https://deb.nodesource.com/setup_17.x | sudo -E bash -
+sudo apt install -y nodejs
+sudo npm install -g npm@latest
+```
 
 And here the `funnyThingsApp.AppImage` in action:
 
