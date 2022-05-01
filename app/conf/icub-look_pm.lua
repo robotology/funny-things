@@ -45,8 +45,8 @@ end
 PortMonitor.update = function(thing)
     
     bt = thing:asBottle()
-    u = bt:get(0):asInt()
-    v = bt:get(1):asInt()
+    u = bt:get(0):asInt32()
+    v = bt:get(1):asInt32()
     bt:clear()
     bt:addString("left")
     bt:addInt(u)
