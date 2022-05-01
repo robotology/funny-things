@@ -47,8 +47,8 @@ PortMonitor.update = function(thing)
     
     bt = thing:asBottle()
     
-    px = bt:get(0):asInt()
-    py = bt:get(1):asInt()
+    px = bt:get(0):asInt32()
+    py = bt:get(1):asInt32()
     
     local tx = yarp.Property()
     th = yarp.Things()

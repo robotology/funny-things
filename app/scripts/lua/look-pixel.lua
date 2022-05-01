@@ -36,8 +36,8 @@ port_rx:open("/look-pixel/rx")
 while not interrupting do
     local pixel = port_rx:read(false)
     if pixel ~= nil then
-        local u = pixel:get(0):asInt()
-        local v = pixel:get(1):asInt()
+        local u = pixel:get(0):asInt32()
+        local v = pixel:get(1):asInt32()
 
         local cmd = port_tx:prepare()
         cmd:clear()

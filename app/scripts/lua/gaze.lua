@@ -82,25 +82,25 @@ while state ~= "quit" and not interrupting do
 
             if state == "look" then
 
-                azi = cmd:get(1):asDouble()
-                ele = cmd:get(2):asDouble()
-                ver = cmd:get(3):asDouble()
+                azi = cmd:get(1):asFloat64()
+                ele = cmd:get(2):asFloat64()
+                ver = cmd:get(3):asFloat64()
                 print("received: look ", azi,ele,ver)
 
             elseif state == "look-around" then
 
                 if cmd:size()>1 then
 
-                    azi = cmd:get(1):asDouble()
-                    ele = cmd:get(2):asDouble()
-                    ver = cmd:get(3):asDouble()
+                    azi = cmd:get(1):asFloat64()
+                    ele = cmd:get(2):asFloat64()
+                    ver = cmd:get(3):asFloat64()
 
                 else
 
                     local fp = port_gaze_rx:read(true)
-                    azi = fp:get(0):asDouble()
-                    ele = fp:get(1):asDouble()
-                    ver = fp:get(2):asDouble()
+                    azi = fp:get(0):asFloat64()
+                    ele = fp:get(1):asFloat64()
+                    ver = fp:get(2):asFloat64()
 
                 end
                 print("received: look around ", azi,ele,ver)
@@ -109,9 +109,9 @@ while state ~= "quit" and not interrupting do
 
         elseif cmd_rx == "set-delta" then
 
-            azi_delta = cmd:get(1):asDouble()
-            ele_delta = cmd:get(2):asDouble()
-            ver_delta = cmd:get(3):asDouble()
+            azi_delta = cmd:get(1):asFloat64()
+            ele_delta = cmd:get(2):asFloat64()
+            ver_delta = cmd:get(3):asFloat64()
             print("received: set delta ", azi_delta,ele_delta,ver_delta)
 
         else
@@ -124,9 +124,9 @@ while state ~= "quit" and not interrupting do
     if state == "init" then
 
         local fp = port_gaze_rx:read(true)
-        azi = fp:get(0):asDouble()
-        ele = fp:get(1):asDouble()
-        ver = fp:get(2):asDouble()
+        azi = fp:get(0):asFloat64()
+        ele = fp:get(1):asFloat64()
+        ver = fp:get(2):asFloat64()
         state = "look-around"
 
     elseif state == "look" then
