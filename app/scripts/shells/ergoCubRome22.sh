@@ -54,27 +54,27 @@ THETA_LEFT=3.14152
 #######################################################################################
 
 look_down() {
-    echo "ctpq time 1 off 0 pos (-29.8609 0.0659181 1.6095 -10)" | yarp rpc /ctpservice/head/rpc
+    echo "ctpq time 2 off 0 pos (-15.8609 0 0 -20)" | yarp rpc /ctpservice/head/rpc
 }
 
 look_up() {
-    echo "ctpq time 1 off 0 pos (1.07666 0.0659181 1.69739 10)" | yarp rpc /ctpservice/head/rpc
+    echo "ctpq time 2 off 0 pos (7.07666 0 0 20)" | yarp rpc /ctpservice/head/rpc
 }
 
 look_left_down() {
-    echo "ctpq time 1 off 0 pos (-29.8609 0.0659181 20 -10)" | yarp rpc /ctpservice/head/rpc
+    echo "ctpq time 2 off 0 pos (-15.8609 0.0659181 20 -20)" | yarp rpc /ctpservice/head/rpc
 }
 
 look_right_up() {
-    echo "ctpq time 1 off 0 pos (1.07666 0.0659181 -20 10)" | yarp rpc /ctpservice/head/rpc
+    echo "ctpq time 2 off 0 pos (7.07666 0.0659181 -20 20)" | yarp rpc /ctpservice/head/rpc
 }
 
 look_left_up() {
-    echo "ctpq time 1 off 0 pos (-29.8609 0.0659181 20 10)" | yarp rpc /ctpservice/head/rpc
+    echo "ctpq time 2 off 0 pos (7.07666 0.0659181 20 20)" | yarp rpc /ctpservice/head/rpc
 }
 
 look_right_down() {
-    echo "ctpq time 1 off 0 pos (1.07666 0.0659181 -20 -10)" | yarp rpc /ctpservice/head/rpc
+    echo "ctpq time 2 off 0 pos (-15.8609 0.0659181 -20 -20)" | yarp rpc /ctpservice/head/rpc
 }
 
 
@@ -83,6 +83,7 @@ look_around() {
     look_right_up
     look_left_up
     look_right_down
+    home_head
 }
 
 
@@ -91,15 +92,15 @@ torso_low(){
 }
 
 torso_high(){
-    echo "ctpq time 2 off 0 pos (-4.32862 1.23047 22.3243)" | yarp rpc /ctpservice/torso/rpc
+    echo "ctpq time 2 off 1 pos (1.23047 22.3243)" | yarp rpc /ctpservice/torso/rpc
 }
 
 torso_right(){
-    echo "ctpq time 2 off 0 pos (13.9527 1.23047 32.4122)" | yarp rpc /ctpservice/torso/rpc
+    echo "ctpq time 2 off 1 pos (1.23047 32.4122)" | yarp rpc /ctpservice/torso/rpc
 }
 
 torso_left(){
-    echo "ctpq time 2 off 0 pos (-13.9527 1.23047 32.4122)" | yarp rpc /ctpservice/torso/rpc
+    echo "ctpq time 2 off 1 pos (1.23047 32.4122)" | yarp rpc /ctpservice/torso/rpc
 }
 
 
@@ -139,20 +140,34 @@ prepare() {
 }
 
 
+wave()
+{
+    echo "ctpq time 2.0 off 0 pos (-34 17.0 -27.0 87.0 73 -45 0 10 10 10)" | yarp rpc /ctpservice/right_arm/rpc
+    echo "ctpq time 1.0 off 0 pos (-34 17.0 5 98.0 73 -45 15 20 10 10)"    | yarp rpc /ctpservice/right_arm/rpc
+    echo "ctpq time 1.0 off 0 pos (-23 17.0 -41 91.0 73 -45 -20 10 10 10)" | yarp rpc /ctpservice/right_arm/rpc
+    home_right_arm
+    
+}
+
+
 ###################################################################
 #               ACTIONS FOR RUNWAY                                #
 ###################################################################
 home_left_arm()
 {
-    echo "ctpq time 2.5 off 0 pos (-6.0 23.0 25.0 29.0 -24.0 -3.0 -3.0 19.0 29.0 8.0 30.0 32.0 42.0 50.0 50.0 114.0)" | yarp rpc /ctpservice/left_arm/rpc
+    echo "ctpq time 2.5 off 0 pos (-34 30.0 0.0 45.0 0 0 0 10 10 10)" | yarp rpc /ctpservice/right_arm/rpc
 }
 
 home_right_arm()
 {
-    echo "ctpq time 2.5 off 0 pos (-6.0 23.0 25.0 29.0 -24.0 -3.0 -3.0 19.0 29.0 8.0 30.0 32.0 42.0 50.0 50.0 114.0)" | yarp rpc /ctpservice/right_arm/rpc
+    echo "ctpq time 2.5 off 0 pos (-34 30.0 0.0 45.0 0 0 0 10 10 10)" | yarp rpc /ctpservice/right_arm/rpc
 }
 home_torso(){
-    echo "ctpq time 2 off 0 pos (0 0 0)" | yarp rpc /ctpservice/torso/rpc
+    echo "ctpq time 2 off 1 pos (0 0)" | yarp rpc /ctpservice/torso/rpc
+}
+
+home_head() {
+    echo "ctpq time 2 off 0 pos (0 0 0 0)" | yarp rpc /ctpservice/head/rpc
 }
 
 
