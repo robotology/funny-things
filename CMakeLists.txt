@@ -17,6 +17,9 @@ include(ICUBcontribHelpers)
 include(ICUBcontribOptions)
 icubcontrib_set_default_prefix()
 
+#CER app related options
+option(ENABLE_CER_APPS "Enable CER related apps" OFF)
+
 add_subdirectory(modules)
 add_subdirectory(app)
 

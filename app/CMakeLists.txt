@@ -21,3 +21,8 @@ foreach(_bin IN ITEMS ${lua_bin})
                      COMMENT "Copying ${_bin} to ${CMAKE_BINARY_DIR}/bin/${CMAKE_CFG_INTDIR}/${_bin_name}")
 endforeach()
 install(PROGRAMS ${lua_bin} DESTINATION bin)
+
+# CER app folders
+if(ENABLE_CER_APPS)
+  add_subdirectory(greeting)
+endif()
