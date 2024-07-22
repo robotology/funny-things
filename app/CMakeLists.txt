@@ -25,4 +25,7 @@ install(PROGRAMS ${lua_bin} DESTINATION bin)
 # CER app folders
 if(ENABLE_CER_APPS)
   add_subdirectory(greeting)
+  if(CREATE_GESTICULATE)
+    add_subdirectory(gesticulate)
+  endif()
 endif()

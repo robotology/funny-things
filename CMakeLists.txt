@@ -19,6 +19,9 @@ icubcontrib_set_default_prefix()
 
 #CER app related options
 option(ENABLE_CER_APPS "Enable CER related apps" OFF)
+if(ENABLE_CER_APPS)
+  option(CREATE_GESTICULATE "Build gesticulate (CER)" OFF)
+endif()
 
 add_subdirectory(modules)
 add_subdirectory(app)
