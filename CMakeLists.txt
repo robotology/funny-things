@@ -17,12 +17,12 @@ include(ICUBcontribHelpers)
 include(ICUBcontribOptions)
 icubcontrib_set_default_prefix()
 
-#CER app related options
-option(ENABLE_CER_APPS "Enable CER related apps" OFF)
-if(ENABLE_CER_APPS)
-  option(CREATE_GESTICULATE "Build gesticulate (CER)" OFF)
+#R1 app related options
+option(ENABLE_R1_APPS "Enable R1 related apps" OFF)
+if(ENABLE_R1_APPS)
+  option(CREATE_R1_GESTICULATE "Build gesticulate (R1)" OFF)
   if(DEFINED ENV{R1_OBR_BUILD_DIR})
-    option(CREATE_IDLEMANAGER "Build idleManager (CER)" OFF)
+    option(CREATE_R1_IDLEMANAGER "Build idleManager (R1)" OFF)
   endif()
 endif()
 
