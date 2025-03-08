@@ -2,7 +2,7 @@
 # Author: Alessandro Roncone
 # CopyPolicy: Released under the terms of the GNU GPL v2.0.
 
-cmake_minimum_required(VERSION 3.5)
+cmake_minimum_required(VERSION 3.5...3.10)
 project(funny-things)
 
 set(CMAKE_CXX_EXTENSIONS OFF)
