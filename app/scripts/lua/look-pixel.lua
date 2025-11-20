@@ -42,9 +42,9 @@ while not interrupting do
         local cmd = port_tx:prepare()
         cmd:clear()
         cmd:addString("left")
-        cmd:addDouble(u)
-        cmd:addDouble(v)
-        cmd:addDouble(1.0)
+        cmd:addFloat64(u)
+        cmd:addFloat64(v)
+        cmd:addFloat64(1.0)
         port_tx:write()
         print("looking at ", u,v)
     end
