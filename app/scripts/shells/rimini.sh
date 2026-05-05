@@ -89,6 +89,12 @@ home_head() {
     echo "ctpq time $time_val off 0 pos (0.0 0.0 0.0 0.0)" | yarp rpc /ctpservice/head/rpc
 }
 
+home() {
+    home_head
+    home_arms
+    home_torso
+}
+
 speak() {
     # This function takes the input string and sends it to the /iSpeak YARP port.
     # It automatically wraps the text in double quotes as required by the module.
@@ -133,7 +139,7 @@ open_left(){
 honor() {
     local t=${1:-2.0}
     # Links internal open_right to main time (Defaults: 3.0 and 4.0)
-    open_right $(echo "$t + 1.0" | bc) $(echo "$t + 1.0" | bc)
+    open_right $(echo "$t " | bc) $(echo "$t + 1.0" | bc)
     sleep 4.0
     echo "ctpq time $t off 0 pos (0.0 0.0 10.0)" | yarp rpc /ctpservice/torso/rpc
     sleep 2.0
@@ -166,9 +172,9 @@ passing_the_floor() {
 #######################################################################################
 timeline_sweep() {
     local t=${1:-5.0}
-    echo "ctpq time $t off 0 pos (-25.0 8.0 -12.0 80.0 -23.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0)" | yarp rpc /ctpservice/left_arm/rpc
-    echo "ctpq time $t off 0 pos (-25.0 8.0 -12.0 80.0 -23.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0)" | yarp rpc /ctpservice/right_arm/rpc
-    sleep 3.0
+    echo "ctpq time $(echo "$t - 1.0" | bc) off 0 pos (-25.0 8.0 -12.0 80.0 -23.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0)" | yarp rpc /ctpservice/left_arm/rpc
+    echo "ctpq time $(echo "$t - 1.0" | bc) off 0 pos (-25.0 8.0 -12.0 80.0 -23.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0)" | yarp rpc /ctpservice/right_arm/rpc
+    sleep 2.0
     
     # Sweep outwards (arms open to the sides to stretch the timeline)
     echo "ctpq time $(echo "$t - 1.0" | bc) off 0 pos (-24.0 15.0 -49.0 68.0 -10.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0)" | yarp rpc /ctpservice/left_arm/rpc
@@ -196,8 +202,8 @@ next_year(){
 
 move_torso(){
     local t=${1:-4.0}
-    echo "ctpq time $t off 0 pos (0.0 0.0 10.0)" | yarp rpc /ctpservice/torso/rpc
     echo "ctpq time $t off 0 pos (0.0 0.0 -10.0)" | yarp rpc /ctpservice/torso/rpc
+    echo "ctpq time $t off 0 pos (0.0 0.0 10.0)" | yarp rpc /ctpservice/torso/rpc
     home_torso $t
 }
 stay(){
@@ -247,6 +253,12 @@ hello_right(){
     echo "ctpq time $t2 off 0 pos (-50.0 55.0 -15.0 95.0 37.0 0.0 18.0 0.0 10.0 0.0 0.0 0.0)" | yarp rpc /ctpservice/right_arm/rpc
     echo "ctpq time $t2 off 0 pos (-50.0 55.0 -15.0 90.0 37.0 0.0 -15.0 0.0 10.0 0.0 0.0 0.0)" | yarp rpc /ctpservice/right_arm/rpc
 }
+
+up_right(){
+    local t1=${1:-4.0}
+    echo "ctpq time $t1 off 0 pos (-50.0 55.0 -15.0 95.0 37.0 0.0 18.0 0.0 10.0 0.0 0.0 0.0)" | yarp rpc /ctpservice/right_arm/rpc
+}
+
 hello_left(){
     local t1=${1:-4.0}
     local t2=${2:-0.5}
@@ -263,21 +275,26 @@ double_hello(){
     hello_left $t1 $t2
 }
 
-show_president(){
+show_president_left(){
     local t1=${1:-4.0}
     echo "ctpq time $t1 off 0 pos (0.0 27.0 -42.0 40.0 -44.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0)" | yarp rpc /ctpservice/left_arm/rpc
+}
+
+show_president_right(){
+    local t1=${1:-4.0}
+    echo "ctpq time $t1 off 0 pos (0.0 27.0 -42.0 40.0 -44.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0)" | yarp rpc /ctpservice/right_arm/rpc
 }
 #######################################################################################
 # 3. EMPHASIS & EXPLANATION MOVEMENTS
 #######################################################################################
 making_a_point_right() {
     local t=${1:-7.0}
-    echo "ctpq time $t off 0 pos (-60.0 20.0 0.0 90.0 0.0 0.0 0.0 30.0 60.0 0.0 0.0 55.0 46.0)" | yarp rpc /ctpservice/right_arm/rpc
+    echo "ctpq time $t off 0 pos (-60.0 20.0 0.0 90.0 0.0 0.0 0.0 20.0 60.0 0.0 0.0 55.0 46.0)" | yarp rpc /ctpservice/right_arm/rpc
 }
 
 making_a_point_left() {
     local t1=${1:-7.0}
-    echo "ctpq time $t1 off 0 pos (-60.0 20.0 0.0 90.0 0.0 0.0 0.0 30.0 60.0 0.0 0.0 55.0 46.0)" | yarp rpc /ctpservice/left_arm/rpc
+    echo "ctpq time $t1 off 0 pos (-60.0 20.0 0.0 90.0 0.0 0.0 0.0 20.0 60.0 0.0 0.0 55.0 46.0)" | yarp rpc /ctpservice/left_arm/rpc
 }
 
 new_millenial() {
@@ -341,7 +358,7 @@ room_scan() {
     sleep 3.0
     echo "ctpq time $t off 0 pos (0.0 0.0 -30.0 0.0)" | yarp rpc /ctpservice/head/rpc
     sleep 3.0
-    home_head $(echo "$t - 1.0" | bc)
+    home_head $t
 }
 
 nodding() {
@@ -361,11 +378,12 @@ demo(){
     wait
 }
 
+
+
 ### UPDATED DEMO FUNCTION
 movements(){
     # home_arms 3.0
     open_welcoming_arms 2.0
-    # open_welcoming_arms 1.0
     sleep 3.0
     move_torso 2.5
     
@@ -377,35 +395,49 @@ movements(){
     honor 2.0
     
     # "un percorso che attraversa cento anni di storia tecnica..."
-    room_scan 3.0
     sleep 2.5
-    timeline_sweep 3.0 
+    timeline_sweep 3.0 & room_scan 3.0
     home_right_arm 3.0
-    stay_left 3.0
+    stay_left 2.0
+    ###
+    room_scan 1.6
+    ##
+
     home_arms 4.0
     # 3. HISTORICAL CONTEXT
     # "Il modo in cui verifichiamo la sicurezza... Negli anni della prima industrializzazione..."
-    stay 4.0
-    # stay 4.0
+    stay 2.0
+    sleep 3.0
+
     home_arms 3.0
     room_scan 3.0
-    stay_right 3.0
-    stay_left 3.0
-    sleep 3.0
+    stay_right 2.0
+    stay_left 2.0
+    sleep 1.0
     making_a_point_right 4.5 
     move_torso 4.0
     home_right_arm 3.0
-    sleep 2.0
+    
+    ####
+    room_scan 1.5 
+    #### 
+
     # 4. EVOLUTION OF SAFETY
     # "Negli anni successivi è cresciuta la consapevolezza..."
     next_year 4.0
-    sleep 4.0
     home_arms
     # # "Con il nuovo millennio si è affermato un principio chiave..."
     nodding 2.0
     sleep 7.0
+    ###
+    room_scan 2.5
+    ###
+
     new_millenial
-    
+
+    ###
+    room_scan 1.8
+    ###
     home_arms 3.0
     sleep 3.0
     nodding
@@ -414,67 +446,66 @@ movements(){
     making_a_point_left 4.5
     sleep 4.0
     home_left_arm 3.0
-    stay_right 3.0
-    sleep 3.0
-    timeline_sweep 3.0
-    home_right_arm 3.0
-    stay_left 3.0
-    sleep 5.0
+    stay_right 2.0
+    ###
+    room_scan 2.0
+    ###
+    stay_left 2.0
+  
     # # "Sensori, acquisizione digitale, verifiche da remoto..."arms_front
-    home_arms 3.0
     nodding
-    sleep 1.5
     arms_front 3.0 3.0
     sleep 1.5
 
     # # 6. SELF-INTRODUCTION (ergoCub)
     # # "Ed è qui che entra in gioco anche la mia presenza."
-    hello_right 4.0 1.0
-    hello_right 1.0 1.0
+    up_right 4.0
+    move_torso 4.0
+    sleep 2.0
+    room_scan 2.0
 
     # # "Io, ergoCab, rappresento il risultato concreto di questa evoluzione..."
-    sleep 16.0
-    calming_stability 2.0 1.3 1.2
-    stay 4.0
-    sleep 7.0
-    
-    # # "Sono il frutto dell'esperienza maturata nell'analisi di casi reali..."
-    # honor 2.0
-    # sleep 2.0
-    # home_arms 3.0
-    # sleep 2.0
-    # # 7. CONCLUSION & HANDOVER
-    making_a_point_right 4.5
-    home_right_arm 3.0
-    # # "Questo evento si colloca esattamente in questo punto di incontro..."
-    timeline_sweep 5.0
-    stay 4.0
-    nodding
-    sleep 8.0
-    waving_hands
     home_arms 3.0
-    sleep 4.0
+    sleep 7.5
+    arms_front 3.0 3.0
+    stay 2.0
+    ###
+    nodding     
+    # # "Sono il frutto dell'esperienza maturata nell'analisi di casi reali..."
+    # # 7. CONCLUSION & HANDOVER
+    home_right_arm 3.0
+    sleep 2.0
+    # # "Questo evento si colloca esattamente in questo punto di incontro..."
+    stay 2.0
+    nodding
+    sleep 3.0
+    waving_hands
+    sleep 2.0
 
     # # "A nome mio, e della tecnologia che rappresento..."
     room_scan 3.0
-    home_head 2.0
-    home_arms 3.0
-    # stay_right 4.0 
-    sleep 2.0
     open_welcoming_arms 3.0
-    sleep 3.0
+    sleep 7.0
 
     # # "Vi ringrazio per l’attenzione e con grande piacere passo la parola al Presidente..."
     home_arms 3.0
     room_scan 3.0
-    stay_left 4.0
-    show_president 3.0
-
+    show_president_left 3.0
+    ############### Enable if president on its right ####################
+    # show_president_right 3.0
+    move_torso 4.0
     sleep 8.0
     double_hello 4.0 1.0
     sleep 5.0
     double_hello 1.0 1.0
-    # home_arms
+    home_arms
+
+
+
+    sleep 5.0
+    room_scan 2.0
+        sleep 5.0
+    room_scan 2.0
 }
 #######################################################################################
 # "MAIN" FUNCTION                                                                     #
