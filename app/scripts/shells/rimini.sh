@@ -19,30 +19,55 @@ USAGE:
         $0 [COMMANDS]
 
 ***************************************************************************************
+***************************************************************************************
 COMMANDS:
     --- HOME POSITIONS ---
+        home_left_arm         Moves the left arm to the home position.
+        home_right_arm        Moves the right arm to the home position.
         home_arms             Moves both arms to the home position.
         home_torso            Moves the torso to the home position.
         home_head             Moves the head to the home position.
         home                  Moves both arms, head and torso to the home position.
 
+    --- UTILITIES & AUDIO ---
+        speak                 Sends text to the speech synthesizer.
+        demo                  Plays the speech audio and syncs all movements.
+
     --- 1. WELCOME & CLOSURE ---
         open_welcoming_arms   Opens arms wide to greet the audience.
+        open_right            Opens only the right arm forward.
+        open_double           Opens both arms forward symmetrically.
+        open_left             Opens only the left arm forward.
+        honor                 An honor gesture using the right arm and torso.
         bow                   A respectful bow with torso and head.
 
     --- 2. TEMPORAL & NARRATIVE ---
-        timeline_sweep        A horizontal sweep with the right arm to indicate time.
-        waving_hands          Moves hands up and down to compare concepts.
+        timeline_sweep        A horizontal sweep with both arms to indicate a timeline.
+        next_year             An introductory gesture for chronological transitions.
+        move_torso            Moves the torso left and right for generic emphasis.
+        stay                  Holds a neutral stance with both arms slightly raised.
+        stay_right            Holds a neutral stance using only the right arm.
+        stay_left             Holds a neutral stance using only the left arm.
+        arms_front            Brings arms to the front while panning the head.
+        hello_right           Waves the right hand.
+        up_right              Raises the right arm up high.
+        hello_left            Waves the left hand.
+        double_hello          Waves both hands simultaneously.
+        show_president_left   Gestures towards the left side (e.g., to present the President).
+        show_president_right  Gestures towards the right side (e.g., to present the President).
 
     --- 3. EMPHASIS & EXPLANATION ---
         making_a_point_right  Raises the right arm with an implied index finger point.
         making_a_point_left   Raises the left arm with an implied index finger point.
-        calming_stability     Lowers both arms gently to indicate stability/safety.
+        new_millenial         A complex narrative sequence for the "new millennium" section.
+        waving_hands          Moves hands up and down alternately to weigh concepts.
 
     --- 5. HEAD & GAZE ---
         room_scan             Slowly rotates the head left and right to look at the audience.
         nodding               Nods the head up and down to confirm a point.
 
+    --- CORE FLOW ---
+        movements             The full sequence of movements synchronized with the text.
         usage                 Displays this help message.
 ***************************************************************************************
 EXAMPLE USAGE:
@@ -281,23 +306,6 @@ new_millenial() {
     sleep 3.0
 }
 
-calming_stability() {
-    local t1=${1:-2.0}
-    local t2=${2:-1.3}
-    local t3=${3:-1.2}
-    # Arms slightly raised, then pushed down with palms facing down to convey safety
-    echo "ctpq time $t1 off 0 pos (-20.0 30.0 0.0 80.0 37.0 -15.0 0.0 0.0 0.0 0.0 0.0 0.0)" | yarp rpc /ctpservice/left_arm/rpc
-    echo "ctpq time $t1 off 0 pos (-20.0 30.0 0.0 80.0 37.0 -15.0 0.0 0.0 0.0 0.0 0.0 0.0)" | yarp rpc /ctpservice/right_arm/rpc
-    sleep 1.0
-    echo "ctpq time $t2 off 0 pos (-20.0 30.0 0.0 50.0 37.0 -15.0 8.0 0.0 0.0 0.0 0.0 0.0)" | yarp rpc /ctpservice/left_arm/rpc
-    echo "ctpq time $t2 off 0 pos (-20.0 30.0 0.0 50.0 37.0 -15.0 8.0 0.0 0.0 0.0 0.0 0.0)" | yarp rpc /ctpservice/right_arm/rpc
-    sleep 1.0
-    echo "ctpq time $t3 off 0 pos (-20.0 30.0 0.0 80.0 37.0 -15.0 0.0 0.0 0.0 0.0 0.0 0.0)" | yarp rpc /ctpservice/left_arm/rpc
-    echo "ctpq time $t3 off 0 pos (-20.0 30.0 0.0 80.0 37.0 -15.0 0.0 0.0 0.0 0.0 0.0 0.0)" | yarp rpc /ctpservice/right_arm/rpc
-    sleep 1.0
-    echo "ctpq time $t3 off 0 pos (-20.0 30.0 0.0 50.0 37.0 -15.0 8.0 0.0 0.0 0.0 0.0 0.0)" | yarp rpc /ctpservice/left_arm/rpc
-    echo "ctpq time $t3 off 0 pos (-20.0 30.0 0.0 50.0 37.0 -15.0 8.0 0.0 0.0 0.0 0.0 0.0)" | yarp rpc /ctpservice/right_arm/rpc
-}
 
 waving_hands() {
     local t=${1:-3.0}
@@ -436,7 +444,7 @@ movements() {
     # show_president_right 3.0
     move_torso 4.0
     sleep 8.0
-    double_hello 4.0 1.0
+    double_hello 3.0 1.0
     sleep 5.0
     double_hello 1.0 1.0
     home_arms
