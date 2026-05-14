@@ -1,0 +1,58 @@
+<application>
+    <name>SAFAP</name>
+
+    
+    <!-- Movements -->
+    <module>
+        <name>ctpService</name>
+        <parameters>--robot ergocub --part head</parameters>
+        <node>ergocub001-lap</node>
+    </module>
+    <module>
+        <name>ctpService</name>
+        <parameters>--robot ergocub --part left_arm</parameters>
+        <node>ergocub001-lap</node>
+    </module>
+    <module>
+        <name>ctpService</name>
+        <parameters>--robot ergocub --part right_arm</parameters>
+        <node>ergocub001-lap</node>
+    </module>
+    <module>
+        <name>ctpService</name>
+        <parameters>--robot ergocub --part torso</parameters>
+        <node>ergocub001-lap</node>
+    </module>
+    <module>
+    	<name>yarprobotinterface</name>
+    	<parameters>--config head_speakers.xml</parameters>
+    	<node>ergocub-head</node>
+    </module>
+    <module>
+    	<name>yarpAudioPlayer</name>
+    	<parameters>--split_size 32000</parameters>
+    	<node>ergocub001-lap</node>
+    </module>
+    
+    <connection>
+        <from>/yarpAudioPlayer/audio:o</from>
+        <to>/audioPlayerWrapper/audio:i</to>
+        <protocol>tcp</protocol>
+    </connection>
+    <!--module>
+        <name>yarpdev</name>
+        <parameters>--device speech --lingware-context speech --default-language it-IT --robot ergoCub --pitch 80 --speed 100</parameters>
+        <node>ergocub-head</node>
+    </module>
+    <module>
+        <name>iSpeak</name>
+        <parameters>--package speech-dev</parameters>
+        <node>ergocub-head</node>
+    </module>
+
+    <connection>
+        <from>/iSpeak/speech-dev/rpc</from>
+        <to>/ergoCub/speech:rpc</to>
+        <protocol>tcp</protocol>
+    </connection> -->
+</application>
