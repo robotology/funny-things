@@ -47,7 +47,9 @@ void setControlModes(yarp::dev::IControlMode* controlMode, const std::vector<int
     }
     controlMode->setControlModes(yarpModes);
 #else
-    controlMode->setControlModes(modes.data());
+    // YARP 3 exposes this input-only argument as a non-const int pointer.
+    auto yarpModes = modes;
+    controlMode->setControlModes(yarpModes.data());
 #endif
 }
 }
