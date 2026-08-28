@@ -1,5 +1,57 @@
 #include "iCubBreatherThread.h"
 
+#include <yarp/conf/version.h>
+
+namespace
+{
+void getNumberOfAxes(yarp::dev::IEncoders* encoders, int& axes)
+{
+#if YARP_VERSION_MAJOR >= 4
+    std::size_t yarpAxes = 0;
+    encoders->getAxes(yarpAxes);
+    axes = static_cast<int>(yarpAxes);
+#else
+    encoders->getAxes(&axes);
+#endif
+}
+
+void setTrajectorySpeeds(yarp::dev::IPositionControl* positionControl, const double* speeds)
+{
+#if YARP_VERSION_MAJOR >= 4
+    positionControl->setTrajSpeeds(speeds);
+#else
+    positionControl->setRefSpeeds(speeds);
+#endif
+}
+
+void getControlModes(yarp::dev::IControlMode* controlMode, std::vector<int>& modes)
+{
+#if YARP_VERSION_MAJOR >= 4
+    std::vector<yarp::dev::ControlModeEnum> yarpModes(modes.size());
+    controlMode->getControlModes(yarpModes);
+    for (std::size_t i = 0; i < modes.size(); ++i) {
+        modes[i] = static_cast<int>(yarpModes[i]);
+    }
+#else
+    controlMode->getControlModes(modes.data());
+#endif
+}
+
+void setControlModes(yarp::dev::IControlMode* controlMode, const std::vector<int>& modes)
+{
+#if YARP_VERSION_MAJOR >= 4
+    std::vector<yarp::dev::SelectableControlModeEnum> yarpModes;
+    yarpModes.reserve(modes.size());
+    for (const auto mode : modes) {
+        yarpModes.push_back(static_cast<yarp::dev::SelectableControlModeEnum>(mode));
+    }
+    controlMode->setControlModes(yarpModes);
+#else
+    controlMode->setControlModes(modes.data());
+#endif
+}
+}
+
 iCubBreatherThread::iCubBreatherThread(int _rate, string _name, string _robot, string _part, bool _autoStart,
                                        double _noiseStd, double _refSpeed, int _v, const ResourceFinder &_rf) :
                                        PeriodicThread((double)_rate/1000.0), name(_name), robot(_robot),
@@ -45,7 +97,7 @@ bool iCubBreatherThread::threadInit()
         return false;
     }
 
-    iencs -> getAxes(&jnts);
+    getNumberOfAxes(iencs, jnts);
     encs_0.resize(jnts,0.0);
 
     // Find the standard deviations and the ref speeds
@@ -94,7 +146,7 @@ bool iCubBreatherThread::threadInit()
     {
         tmp[i] = refSpeeds[i];
     }
-    ipos->setRefSpeeds(tmp.data());
+    setTrajectorySpeeds(ipos, tmp.data());
 
     double t0   = yarp::os::Time::now();
     double seed = 1000.0 * (t0 -(long)t0);
@@ -180,7 +232,7 @@ bool iCubBreatherThread::goToTarget(const Vector &nT)
 bool iCubBreatherThread::areJointsHealthyAndSet(vector<int> &jointsToSet,const string &_s)
 {
     vector<int> modes(jnts);
-    imod->getControlModes(modes.data());
+    getControlModes(imod, modes);
 
     for (size_t i=0; i<modes.size(); i++)
     {
@@ -227,7 +279,7 @@ bool iCubBreatherThread::setCtrlModes(const string &_s)
         }
     }
 
-    imod -> setControlModes(modes.data());
+    setControlModes(imod, modes);
 
     Time::delay(0.1);
 

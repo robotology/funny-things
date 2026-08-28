@@ -24,6 +24,7 @@
 #include <yarp/dev/IPositionControl.h>
 #include <yarp/dev/IControlMode.h>
 #include <yarp/dev/IControlLimits.h>
+#include <yarp/conf/version.h>
 #include <yarp/math/Rand.h>
 #include <yarp/math/NormRand.h>
 
@@ -59,6 +60,51 @@ string double2string(const double _a)
     std::ostringstream ss;
     ss << _a;
     return ss.str();
+}
+
+bool checkPositionMotionDone(yarp::dev::IPositionControl* positionControl,
+                             int joint,
+                             bool& motionDone)
+{
+#if YARP_VERSION_MAJOR >= 4
+    return static_cast<bool>(positionControl->checkMotionDone(joint, motionDone));
+#else
+    return positionControl->checkMotionDone(joint, &motionDone);
+#endif
+}
+
+bool getPositionLimits(yarp::dev::IControlLimits* controlLimits,
+                       int joint,
+                       double& min,
+                       double& max)
+{
+#if YARP_VERSION_MAJOR >= 4
+    return static_cast<bool>(controlLimits->getPosLimits(joint, &min, &max));
+#else
+    return controlLimits->getLimits(joint, &min, &max);
+#endif
+}
+
+bool setTrajectorySpeed(yarp::dev::IPositionControl* positionControl,
+                        int joint,
+                        double speed)
+{
+#if YARP_VERSION_MAJOR >= 4
+    return static_cast<bool>(positionControl->setTrajSpeed(joint, speed));
+#else
+    return positionControl->setRefSpeed(joint, speed);
+#endif
+}
+
+bool setTrajectoryAcceleration(yarp::dev::IPositionControl* positionControl,
+                               int joint,
+                               double acceleration)
+{
+#if YARP_VERSION_MAJOR >= 4
+    return static_cast<bool>(positionControl->setTrajAcceleration(joint, acceleration));
+#else
+    return positionControl->setRefAcceleration(joint, acceleration);
+#endif
 }
 
 /***************************************************************/
@@ -147,7 +193,7 @@ private:
             bool motion_done = false;
             while (!motion_done) {
                 Time::delay(0.001);
-                auto ok = _iPos->checkMotionDone(_joint_eylids, &motion_done);
+                auto ok = checkPositionMotionDone(_iPos, _joint_eylids, motion_done);
                 if(!ok) {
                     yError()<<"Unable to check if the motion of the eyelids is done";
                     return false;
@@ -210,7 +256,7 @@ private:
                 bool motion_done = false;
                 while (!motion_done) {
                     Time::delay(0.001);
-                    auto ok = _iPos->checkMotionDone(_joint_eylids, &motion_done);
+                    auto ok = checkPositionMotionDone(_iPos, _joint_eylids, motion_done);
                     if(!ok) {
                         yError()<<"Unable to check if the motion of the eyelids is done";
                         return false;
@@ -231,7 +277,7 @@ private:
                 bool motion_done = false;
                 while (!motion_done) {
                     Time::delay(0.001);
-                    auto ok = _iPos->checkMotionDone(_joint_eylids, &motion_done);
+                    auto ok = checkPositionMotionDone(_iPos, _joint_eylids, motion_done);
                     if(!ok) {
                         yError()<<"Unable to check if the motion of the eyelids is done";
                         return false;
@@ -412,12 +458,12 @@ public:
             if (iCM)
                 ok &= iCM->setControlMode(_joint_eylids, VOCAB_CM_POSITION); // TODO, maybe it is better POSITION_DIRECT? 
             if (iCtrlLim) {
-                ok &= iCtrlLim->getLimits(_joint_eylids, &_minPoly, &_maxPoly);
+                ok &= getPositionLimits(iCtrlLim, _joint_eylids, _minPoly, _maxPoly);
                 _maxPoly = _maxPoly - 25.0; // safe zone for avoiding hw fault
             }
             if (_iPos) {
-                ok &= _iPos->setRefSpeed(_joint_eylids, 50.0); // max velocity that doesn't give problems
-                ok &= _iPos->setRefAcceleration(_joint_eylids, std::numeric_limits<double>::max());
+                ok &= setTrajectorySpeed(_iPos, _joint_eylids, 50.0); // max velocity that doesn't give problems
+                ok &= setTrajectoryAcceleration(_iPos, _joint_eylids, std::numeric_limits<double>::max());
             }
             if (!ok)
             {
@@ -836,5 +882,4 @@ int main(int argc, char *argv[])
     Blinker blinker;
     return blinker.runModule(rf);
 }
-
 

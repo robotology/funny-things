@@ -77,6 +77,7 @@ tested_os_sec Tested OS Windows, Linux
 
 #include <yarp/os/all.h>
 #include <yarp/dev/all.h>
+#include <yarp/conf/version.h>
 #include <yarp/sig/all.h>
 #include <yarp/math/Math.h>
 
@@ -87,6 +88,35 @@ using namespace yarp::sig;
 using namespace yarp::math;
 
 constexpr double DEG2RAD = M_PI / 180.0;
+
+void setTrajectoryAcceleration(IPositionControl* positionControl, int joint, double acceleration)
+{
+#if YARP_VERSION_MAJOR >= 4
+    positionControl->setTrajAcceleration(joint, acceleration);
+#else
+    positionControl->setRefAcceleration(joint, acceleration);
+#endif
+}
+
+void setTrajectorySpeed(IPositionControl* positionControl, int joint, double speed)
+{
+#if YARP_VERSION_MAJOR >= 4
+    positionControl->setTrajSpeed(joint, speed);
+#else
+    positionControl->setRefSpeed(joint, speed);
+#endif
+}
+
+void getNumberOfAxes(IEncoders* encoders, int& axes)
+{
+#if YARP_VERSION_MAJOR >= 4
+    std::size_t yarpAxes = 0;
+    encoders->getAxes(yarpAxes);
+    axes = static_cast<int>(yarpAxes);
+#else
+    encoders->getAxes(&axes);
+#endif
+}
 
 
 /*********************************************/
@@ -139,8 +169,8 @@ protected:
         for (int i=i0; i<nEncs; i++)
         {
             imode->setControlMode(i,VOCAB_CM_POSITION);
-            iposs->setRefAcceleration(i,std::numeric_limits<double>::max());
-            iposs->setRefSpeed(i,vels[i-i0]);
+            setTrajectoryAcceleration(iposs, i, std::numeric_limits<double>::max());
+            setTrajectorySpeed(iposs, i, vels[i-i0]);
             iposs->positionMove(i,poss[i-i0]);
         }
     }
@@ -711,7 +741,7 @@ public:
         drvArmL.view(iencsL); drvArmL.view(ipossL); drvCartL.view(icartL);
         drvArmR.view(iencsR); drvArmR.view(ipossR); drvCartR.view(icartR);
         drvGaze.view(igaze);
-        iencsL->getAxes(&nEncs);
+        getNumberOfAxes(iencsL, nEncs);
 
         attach(rpcPort);
 
@@ -843,5 +873,4 @@ int main(int argc, char *argv[])
     PosturesModule mod;
     return mod.runModule(rf);
 }
-
 
